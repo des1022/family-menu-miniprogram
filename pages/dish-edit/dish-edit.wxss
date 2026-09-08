@@ -1,0 +1,173 @@
+.page {
+  padding: 20rpx 0 60rpx;
+}
+
+.card-title {
+  padding: 28rpx 32rpx 16rpx;
+  font-size: 30rpx;
+  font-weight: 600;
+}
+
+.required {
+  color: #F5222D;
+}
+
+/* ===== 图片 ===== */
+.img-wrap {
+  position: relative;
+  margin: 0 32rpx 32rpx;
+  height: 340rpx;
+  border-radius: 16rpx;
+  overflow: hidden;
+  background: #F7F8FA;
+}
+
+.dish-img {
+  width: 100%;
+  height: 340rpx;
+}
+
+.img-placeholder {
+  height: 340rpx;
+  border: 2rpx dashed #DCDFE5;
+  border-radius: 16rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.img-plus {
+  font-size: 72rpx;
+  color: #C9CDD4;
+  line-height: 1;
+}
+
+.img-tip {
+  font-size: 26rpx;
+  color: #B4B9C0;
+  margin-top: 16rpx;
+}
+
+.img-mask {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  color: #fff;
+  font-size: 26rpx;
+}
+
+/* ===== 表单 ===== */
+.form-row {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  min-height: 100rpx;
+  border-bottom: 2rpx solid #F5F6F7;
+}
+
+.form-row:last-child {
+  border-bottom: none;
+}
+
+.form-row--top {
+  align-items: flex-start;
+}
+
+.form-label {
+  width: 200rpx;
+  font-size: 30rpx;
+  color: #1F2329;
+  flex-shrink: 0;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 30rpx;
+  color: #1F2329;
+  text-align: right;
+}
+
+.form-textarea {
+  flex: 1;
+  font-size: 30rpx;
+  color: #1F2329;
+  min-height: 120rpx;
+  line-height: 1.6;
+}
+
+.ph {
+  color: #B4B9C0;
+}
+
+.picker-view {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 30rpx;
+  color: #1F2329;
+  min-height: 60rpx;
+}
+
+.arrow {
+  font-size: 40rpx;
+  color: #C9CDD4;
+  margin-left: 8rpx;
+  line-height: 1;
+}
+
+/* ===== 按钮 ===== */
+.btn-row {
+  display: flex;
+  margin: 40rpx 24rpx 0;
+}
+
+.btn-row .btn {
+  flex: 1;
+  margin: 0 12rpx;
+}
+
+
+/* ===== 食材/标签 ===== */
+.form-tip {
+  font-size: 22rpx;
+  color: #B4B9C0;
+}
+
+.tag-group {
+  margin-top: 16rpx;
+}
+
+.tag-group-name {
+  font-size: 24rpx;
+  color: #8A9099;
+  margin-bottom: 10rpx;
+}
+
+.tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+}
+
+.tag-chip {
+  padding: 8rpx 24rpx;
+  border-radius: 999rpx;
+  background: #F5F6F7;
+  color: #5A6068;
+  font-size: 26rpx;
+  border: 2rpx solid #F5F6F7;
+}
+
+.tag-chip--on {
+  background: #FFF0E8;
+  color: #FF7A45;
+  border-color: #FFC9AE;
+  font-weight: 600;
+}

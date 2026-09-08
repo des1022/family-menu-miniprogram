@@ -1,0 +1,93 @@
+<view class="page page--tab">
+  <!-- 搜索（P2 扩展） -->
+  <view class="search-wrap">
+    <view class="search-box">
+      <input
+        class="search-input"
+        value="{{keyword}}"
+        placeholder="搜索菜名"
+        placeholder-class="search-ph"
+        confirm-type="search"
+        bindinput="onSearchInput"
+        bindconfirm="onSearch"
+      />
+      <view class="search-clear" wx:if="{{keyword}}" bindtap="onClearSearch">×</view>
+    </view>
+  </view>
+
+  <!-- 分类标签栏 -->
+  <scroll-view class="cat-bar" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view class="cat-inner">
+      <view
+        class="cat-item {{activeCat === item ? 'cat-item--active' : ''}}"
+        wx:for="{{categories}}"
+        wx:key="*this"
+        data-cat="{{item}}"
+        bindtap="onSwitchCat"
+      >{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 标签筛选行 -->
+  <scroll-view class="cat-bar tag-bar" scroll-x enable-flex show-scrollbar="{{false}}" wx:if="{{tagPool.length || activeTags.length}}">
+    <view class="cat-inner">
+      <view
+        class="cat-item cat-item--tag {{activeTags.length ? 'cat-item--clear' : ''}}"
+        wx:if="{{activeTags.length}}"
+        bindtap="onClearTags"
+      >标签 ✕</view>
+      <view
+        class="cat-item cat-item--tag {{activeTagMap[item] ? 'cat-item--active' : ''}}"
+        wx:for="{{tagPool}}"
+        wx:key="*this"
+        data-tag="{{item}}"
+        bindtap="onToggleTag"
+      >{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 菜品列表 -->
+  <view class="dish-list">
+    <skeleton wx:if="{{loading && !showList.length}}" count="4" />
+
+    <block wx:for="{{showList}}" wx:key="_id">
+      <dish-row
+        dish="{{item}}"
+        num="{{numMap[item._id] || 0}}"
+        bind:add="onAddDish"
+        bind:dec="onDecDish"
+      />
+    </block>
+
+    <empty
+      wx:if="{{!loading && !showList.length}}"
+      text="{{allDishes.length ? '没有找到相关菜品' : '还没有上架的菜品'}}"
+      sub="{{allDishes.length ? '换个关键词或标签试试' : '到「我的 → 上传菜品」添加第一道菜'}}"
+    />
+  </view>
+</view>
+
+<!-- 底部悬浮购物车（第 4 个入口） -->
+<cart-bar id="cartBar" />
+
+<!-- 首次使用引导 -->
+<view class="guide-mask" wx:if="{{showGuide}}" catchtouchmove="noop">
+  <view class="guide-card">
+    <view class="guide-title">欢迎使用家庭菜单</view>
+    <view class="guide-steps">
+      <view class="guide-step">
+        <text class="guide-num">1</text>
+        <text class="guide-text">在菜品右侧点「＋」点菜，可重复点加份数</text>
+      </view>
+      <view class="guide-step">
+        <text class="guide-num">2</text>
+        <text class="guide-text">点底部「今日点单」查看清单、加备注</text>
+      </view>
+      <view class="guide-step">
+        <text class="guide-num">3</text>
+        <text class="guide-text">确认点单后，日历里就留下这顿饭啦</text>
+      </view>
+    </view>
+    <view class="btn btn-primary btn-block" bindtap="onCloseGuide">我知道了</view>
+  </view>
+</view>

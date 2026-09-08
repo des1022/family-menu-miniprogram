@@ -1,0 +1,11 @@
+{
+  "navigationBarTitleText": "家庭点菜",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "dark",
+  "usingComponents": {
+    "dish-row": "/components/dish-row/index",
+    "cart-bar": "/components/cart-bar/index",
+    "empty": "/components/empty/index",
+    "skeleton": "/components/skeleton/index"
+  }
+}

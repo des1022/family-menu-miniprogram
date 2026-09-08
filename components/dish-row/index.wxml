@@ -1,0 +1,35 @@
+<view class="dish-row">
+  <image
+    class="dish-img"
+    src="{{dish.image}}"
+    mode="aspectFill"
+    lazy-load="{{true}}"
+    bindtap="onPreview"
+  />
+
+  <view class="dish-main">
+    <view class="dish-name-line">
+      <text class="dish-name">{{dish.name}}</text>
+      <text class="dish-fav" wx:if="{{favorite}}">⭐</text>
+    </view>
+    <view class="dish-tags" wx:if="{{tagList.length}}">
+      <text class="dish-tag" wx:for="{{tagList}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="dish-desc" wx:if="{{dish.desc}}">{{dish.desc}}</view>
+    <view class="dish-foot">
+      <text class="dish-price" wx:if="{{dish.price > 0}}">¥{{dish.priceText}}</text>
+      <text class="dish-price dish-price--none" wx:else>{{dish.category}}</text>
+    </view>
+  </view>
+
+  <view class="add-wrap">
+    <view class="add-btn" wx:if="{{num <= 0}}" bindtap="onAdd" hover-class="add-btn--hover">
+      <text class="add-plus">＋</text>
+    </view>
+    <view class="stepper" wx:else>
+      <view class="step-btn" bindtap="onDec" hover-class="step-btn--hover">－</view>
+      <text class="step-num">{{num}}</text>
+      <view class="step-btn step-btn--plus" bindtap="onAdd" hover-class="step-btn--hover">＋</view>
+    </view>
+  </view>
+</view>

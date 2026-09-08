@@ -1,0 +1,91 @@
+.form-row {
+  display: flex;
+  align-items: center;
+  padding: 28rpx 32rpx 8rpx;
+  min-height: 88rpx;
+}
+
+.form-label {
+  width: 180rpx;
+  font-size: 30rpx;
+  color: #1F2329;
+  flex-shrink: 0;
+}
+
+.form-input {
+  flex: 1;
+  font-size: 30rpx;
+  color: #1F2329;
+  text-align: right;
+}
+
+.form-hint {
+  padding: 0 32rpx 24rpx;
+  font-size: 24rpx;
+  color: #B4B9C0;
+}
+
+.ph {
+  color: #B4B9C0;
+}
+
+.card-title {
+  padding: 28rpx 32rpx 8rpx;
+  font-size: 32rpx;
+  font-weight: 600;
+}
+
+.help-item {
+  display: flex;
+  padding: 14rpx 32rpx;
+}
+
+.help-num {
+  width: 36rpx;
+  height: 36rpx;
+  border-radius: 50%;
+  background: #FFF3ED;
+  color: #FF7A45;
+  font-size: 24rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 16rpx;
+  margin-top: 6rpx;
+}
+
+.help-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #4E5969;
+  line-height: 1.7;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 32rpx;
+  min-height: 104rpx;
+}
+
+.cell-title {
+  font-size: 30rpx;
+  color: #1F2329;
+}
+
+.cell-arrow {
+  font-size: 40rpx;
+  color: #C9CDD4;
+  line-height: 1;
+}
+
+/* 隐蔽入口 */
+.admin-entry {
+  margin-top: 60rpx;
+  text-align: center;
+  font-size: 24rpx;
+  color: #C9CDD4;
+  padding: 24rpx;
+}

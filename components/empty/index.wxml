@@ -1,0 +1,7 @@
+<!-- 空状态占位 -->
+<view class="empty">
+  <view class="empty-icon"></view>
+  <view class="empty-text">{{text}}</view>
+  <view class="empty-sub" wx:if="{{sub}}">{{sub}}</view>
+  <slot></slot>
+</view>

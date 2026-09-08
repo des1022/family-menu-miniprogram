@@ -1,0 +1,12 @@
+<!-- 首屏加载骨架屏 -->
+<view class="sk-list">
+  <view class="sk-item" wx:for="{{items}}" wx:key="*this">
+    <view class="sk-img sk-anim"></view>
+    <view class="sk-main">
+      <view class="sk-line sk-line--title sk-anim"></view>
+      <view class="sk-line sk-line--desc sk-anim"></view>
+      <view class="sk-line sk-line--price sk-anim"></view>
+    </view>
+    <view class="sk-btn sk-anim"></view>
+  </view>
+</view>

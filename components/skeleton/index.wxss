@@ -1,0 +1,66 @@
+.sk-list {
+  padding: 20rpx 24rpx;
+}
+
+.sk-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 20rpx;
+  padding: 20rpx;
+  margin-bottom: 20rpx;
+}
+
+.sk-img {
+  width: 180rpx;
+  height: 180rpx;
+  border-radius: 16rpx;
+  flex-shrink: 0;
+}
+
+.sk-main {
+  flex: 1;
+  padding: 0 20rpx;
+}
+
+.sk-line {
+  height: 28rpx;
+  border-radius: 8rpx;
+  margin-bottom: 20rpx;
+}
+
+.sk-line--title {
+  width: 60%;
+  height: 36rpx;
+}
+
+.sk-line--desc {
+  width: 85%;
+}
+
+.sk-line--price {
+  width: 35%;
+  margin-bottom: 0;
+}
+
+.sk-btn {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.sk-anim {
+  background: linear-gradient(90deg, #F2F3F5 25%, #E9EBEF 37%, #F2F3F5 63%);
+  background-size: 400% 100%;
+  animation: sk-shine 1.4s ease infinite;
+}
+
+@keyframes sk-shine {
+  0% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0 50%;
+  }
+}

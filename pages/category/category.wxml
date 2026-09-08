@@ -1,0 +1,37 @@
+<view class="page">
+  <!-- 新增分类 -->
+  <view class="card">
+    <view class="add-row">
+      <input
+        class="add-input"
+        value="{{newName}}"
+        maxlength="8"
+        placeholder="输入新分类，如：热菜 / 汤羹"
+        placeholder-class="ph"
+        bindinput="onInput"
+      />
+      <view class="add-btn" bindtap="onAdd">添加</view>
+    </view>
+  </view>
+
+  <view class="section-title">已有分类（{{categories.length}}）</view>
+
+  <view class="card">
+    <view class="cat-item" wx:for="{{categories}}" wx:key="_id">
+      <view class="cat-info">
+        <text class="cat-name">{{item.name}}</text>
+        <text class="cat-count">{{item.count}} 道菜</text>
+      </view>
+      <view
+        class="cat-del"
+        data-id="{{item._id}}"
+        data-name="{{item.name}}"
+        bindtap="onDelete"
+      >删除</view>
+    </view>
+  </view>
+
+  <empty wx:if="{{!categories.length}}" text="还没有分类" sub="先添加几个分类，方便家人筛选" />
+
+  <view class="tip">提示：删除分类时，若该分类下还有菜品，会先让你把菜品转移到其他分类。</view>
+</view>

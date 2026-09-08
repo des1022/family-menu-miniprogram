@@ -1,0 +1,142 @@
+<view class="page">
+  <!-- 菜品图片（必填） -->
+  <view class="card">
+    <view class="card-title">菜品图片 <text class="required">*</text></view>
+    <view class="img-wrap" bindtap="onChooseImage">
+      <image wx:if="{{form.image}}" class="dish-img" src="{{form.image}}" mode="aspectFill" />
+      <view wx:else class="img-placeholder">
+        <view class="img-plus">＋</view>
+        <view class="img-tip">点击从相册选择</view>
+      </view>
+      <view class="img-mask" wx:if="{{form.image}}">点击更换</view>
+    </view>
+  </view>
+
+  <!-- 基本信息 -->
+  <view class="card">
+    <view class="form-row">
+      <text class="form-label">菜品名称 <text class="required">*</text></text>
+      <input
+        class="form-input"
+        value="{{form.name}}"
+        maxlength="10"
+        placeholder="最多 10 个字"
+        placeholder-class="ph"
+        bindinput="onInput"
+        data-field="name"
+      />
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">菜品分类 <text class="required">*</text></text>
+      <picker
+        range="{{pickerRange}}"
+        value="{{pickerIndex}}"
+        bindchange="onCategoryPick"
+      >
+        <view class="picker-view">
+          <text class="{{form.category ? '' : 'ph'}}">{{form.category || '请选择分类'}}</text>
+          <text class="arrow">›</text>
+        </view>
+      </picker>
+    </view>
+
+    <!-- 手动输入新增分类 -->
+    <view class="form-row" wx:if="{{showNewCat}}">
+      <text class="form-label">新分类名</text>
+      <input
+        class="form-input"
+        value="{{newCategory}}"
+        maxlength="8"
+        placeholder="输入新分类名称"
+        placeholder-class="ph"
+        bindinput="onInput"
+        data-field="newCategory"
+      />
+    </view>
+
+    <view class="form-row">
+      <text class="form-label">价格</text>
+      <input
+        class="form-input"
+        value="{{form.price}}"
+        type="digit"
+        maxlength="8"
+        placeholder="选填，留空表示时价"
+        placeholder-class="ph"
+        bindinput="onInput"
+        data-field="price"
+      />
+    </view>
+
+    <view class="form-row form-row--top">
+      <text class="form-label">描述</text>
+      <textarea
+        class="form-textarea"
+        value="{{form.desc}}"
+        maxlength="30"
+        placeholder="选填，最多 30 字"
+        placeholder-class="ph"
+        auto-height
+        bindinput="onInput"
+        data-field="desc"
+      />
+    </view>
+  </view>
+
+  <!-- 食材清单 -->
+  <view class="card">
+    <view class="form-row">
+      <text class="form-label">食材清单</text>
+      <text class="form-tip">选填，点单页可汇总成买菜清单</text>
+    </view>
+    <textarea
+      class="form-textarea"
+      value="{{form.ingredients}}"
+      maxlength="80"
+      placeholder="如：西红柿,鸡蛋,葱（逗号/顿号分隔）"
+      placeholder-class="ph"
+      auto-height
+      bindinput="onInput"
+      data-field="ingredients"
+    />
+  </view>
+
+  <!-- 标签 -->
+  <view class="card">
+    <view class="form-row">
+      <text class="form-label">标签</text>
+      <text class="form-tip">选填，首页可按标签筛选</text>
+    </view>
+    <view class="tag-group" wx:for="{{tagGroups}}" wx:key="name" wx:for-item="group">
+      <view class="tag-group-name">{{group.name}}</view>
+      <view class="tag-chips">
+        <view
+          class="tag-chip {{selectedMap[option] ? 'tag-chip--on' : ''}}"
+          wx:for="{{group.options}}"
+          wx:key="*this"
+          wx:for-item="option"
+          data-tag="{{option}}"
+          bindtap="onToggleTag"
+        >{{option}}</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 上架状态：新增默认上架 -->
+  <view class="card" wx:if="{{isEdit}}">
+    <view class="form-row">
+      <text class="form-label">上架状态</text>
+      <switch
+        color="#FF7A45"
+        checked="{{form.status === 1}}"
+        bindchange="onStatusChange"
+      />
+    </view>
+  </view>
+
+  <view class="btn-row">
+    <view class="btn btn-ghost btn-block" bindtap="onCancel">取消</view>
+    <view class="btn btn-primary btn-block" bindtap="onSave">保存</view>
+  </view>
+</view>

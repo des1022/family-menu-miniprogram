@@ -1,0 +1,144 @@
+.page {
+  padding: 24rpx 24rpx 180rpx;
+}
+
+.filter-bar {
+  margin-bottom: 16rpx;
+}
+
+.filter-inner {
+  display: flex;
+  gap: 14rpx;
+  padding: 4rpx 0;
+}
+
+.filter-chip {
+  flex-shrink: 0;
+  padding: 10rpx 28rpx;
+  border-radius: 999rpx;
+  background: #fff;
+  color: #5A6068;
+  font-size: 26rpx;
+  border: 2rpx solid #EDEEF0;
+}
+
+.filter-chip--on {
+  background: #FF7A45;
+  color: #fff;
+  border-color: #FF7A45;
+  font-weight: 600;
+}
+
+.group {
+  margin-bottom: 20rpx;
+}
+
+.group-name {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #3A2E24;
+  padding: 8rpx 8rpx 12rpx;
+}
+
+.manage-row {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 18rpx;
+  padding: 18rpx;
+  margin-bottom: 14rpx;
+  box-shadow: 0 2rpx 10rpx rgba(31, 35, 41, 0.04);
+}
+
+.manage-img {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 12rpx;
+  background: #F2F3F5;
+  flex-shrink: 0;
+}
+
+.manage-info {
+  flex: 1;
+  min-width: 0;
+  padding: 0 16rpx;
+}
+
+.manage-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1F2329;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.manage-meta {
+  margin-top: 8rpx;
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+}
+
+.manage-status {
+  font-size: 22rpx;
+  color: #8A9099;
+  background: #F2F3F5;
+  border-radius: 8rpx;
+  padding: 2rpx 10rpx;
+}
+
+.manage-status--on {
+  color: #52A256;
+  background: #E9F6EA;
+}
+
+.manage-price {
+  font-size: 24rpx;
+  color: #FF7A45;
+}
+
+.manage-ops {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8rpx;
+}
+
+.op-btn {
+  font-size: 24rpx;
+  text-align: center;
+  padding: 6rpx 20rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid #EDEEF0;
+  color: #5A6068;
+  background: #FAFBFC;
+}
+
+.op-edit {
+  color: #FF7A45;
+  border-color: #FFC9AE;
+  background: #FFF0E8;
+}
+
+.op-del {
+  color: #C0392B;
+  border-color: #F5C6C0;
+  background: #FDF3F2;
+}
+
+.admin-ft {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #fff;
+  padding: 16rpx 24rpx;
+  display: flex;
+  gap: 20rpx;
+  box-shadow: 0 -4rpx 16rpx rgba(31, 35, 41, 0.06);
+}
+
+.btn-flex {
+  flex: 1;
+}

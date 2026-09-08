@@ -1,0 +1,49 @@
+<view class="page">
+  <!-- 分类过滤 -->
+  <scroll-view class="filter-bar" scroll-x enable-flex show-scrollbar="{{false}}">
+    <view class="filter-inner">
+      <view
+        class="filter-chip {{filterCat === item ? 'filter-chip--on' : ''}}"
+        wx:for="{{catOptions}}"
+        wx:key="*this"
+        data-cat="{{item}}"
+        bindtap="onFilter"
+      >{{item}}</view>
+    </view>
+  </scroll-view>
+
+  <!-- 分组列表 -->
+  <view class="group" wx:for="{{groups}}" wx:key="name" wx:for-item="group">
+    <view class="group-name">{{group.name}}（{{group.dishes.length}}）</view>
+    <view class="manage-row" wx:for="{{group.dishes}}" wx:key="_id">
+      <image class="manage-img" src="{{item.image}}" mode="aspectFill" lazy-load />
+      <view class="manage-info">
+        <view class="manage-name">{{item.name}}</view>
+        <view class="manage-meta">
+          <text class="manage-status manage-status--on" wx:if="{{item.status === 1}}">上架中</text>
+          <text class="manage-status" wx:else>已下架</text>
+          <text class="manage-price" wx:if="{{item.price > 0}}">¥{{item.priceText}}</text>
+        </view>
+      </view>
+      <view class="manage-ops">
+        <view class="op-btn op-edit" data-id="{{item._id}}" bindtap="onEdit">编辑</view>
+        <view class="op-btn op-toggle" data-id="{{item._id}}" data-status="{{item.status}}" bindtap="onToggleStatus">
+          {{item.status === 1 ? '下架' : '上架'}}
+        </view>
+        <view class="op-btn op-del" data-id="{{item._id}}" data-image="{{item.image}}" data-name="{{item.name}}" bindtap="onDelete">删除</view>
+      </view>
+    </view>
+  </view>
+
+  <empty
+    wx:if="{{!loading && !allDishes.length}}"
+    text="还没有菜品"
+    sub="点右下角「添加菜品」录入第一道菜"
+  />
+
+  <!-- 底部操作 -->
+  <view class="admin-ft safe-bottom">
+    <view class="btn btn-ghost btn-flex" bindtap="goCategory">分类管理</view>
+    <view class="btn btn-primary btn-flex" bindtap="goAdd">＋ 添加菜品</view>
+  </view>
+</view>

@@ -1,0 +1,215 @@
+.page {
+  padding: 24rpx 24rpx 60rpx;
+}
+
+/* 月份切换 */
+.cal-header {
+  display: flex;
+  align-items: center;
+  padding: 8rpx 0 20rpx;
+}
+
+.cal-arrow {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  background: #fff;
+  color: #FF7A45;
+  font-size: 44rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2rpx 10rpx rgba(31, 35, 41, 0.06);
+}
+
+.cal-month {
+  flex: 1;
+  text-align: center;
+}
+
+.cal-month-text {
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #1F2329;
+}
+
+.cal-month-sub {
+  font-size: 24rpx;
+  color: #8A9099;
+  margin-top: 4rpx;
+}
+
+/* 星期表头 */
+.cal-week {
+  display: flex;
+  padding: 8rpx 0;
+}
+
+.cal-week-item {
+  flex: 1;
+  text-align: center;
+  font-size: 24rpx;
+  color: #8A9099;
+}
+
+/* 网格 */
+.cal-row {
+  display: flex;
+}
+
+.cal-cell {
+  flex: 1;
+  height: 104rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  padding-top: 10rpx;
+}
+
+.cal-day {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cal-day--today {
+  background: #FFF0E8;
+}
+
+.cal-day-num {
+  font-size: 30rpx;
+  color: #1F2329;
+}
+
+.cal-day-num--today {
+  color: #FF7A45;
+  font-weight: 700;
+}
+
+.cal-mark {
+  margin-top: 4rpx;
+  font-size: 18rpx;
+  line-height: 1.2;
+  color: #556C45;
+  background: #D5E5C8;
+  border-radius: 999rpx;
+  padding: 2rpx 12rpx;
+}
+
+.cal-tip {
+  margin-top: 20rpx;
+  text-align: center;
+  font-size: 22rpx;
+  color: #B4B9C0;
+}
+
+/* 当日明细弹层 */
+.detail-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+
+.detail-sheet {
+  width: 100%;
+  max-height: 75vh;
+  background: #F6F7F9;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 28rpx 24rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16rpx;
+}
+
+.detail-title {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: #1F2329;
+}
+
+.detail-sub {
+  font-size: 24rpx;
+  color: #8A9099;
+  margin-top: 4rpx;
+}
+
+.detail-close {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: #EDEEF0;
+  color: #8A9099;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+}
+
+.detail-list {
+  max-height: 46vh;
+}
+
+.detail-item {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 16rpx;
+  margin-bottom: 12rpx;
+}
+
+.detail-img {
+  width: 88rpx;
+  height: 88rpx;
+  border-radius: 12rpx;
+  background: #F2F3F5;
+  flex-shrink: 0;
+}
+
+.detail-info {
+  flex: 1;
+  min-width: 0;
+  padding: 0 16rpx;
+}
+
+.detail-name {
+  font-size: 30rpx;
+  font-weight: 600;
+  color: #1F2329;
+}
+
+.detail-remark {
+  font-size: 22rpx;
+  color: #8A9099;
+  margin-top: 4rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.detail-num {
+  font-size: 30rpx;
+  font-weight: 700;
+  color: #FF7A45;
+}
+
+.detail-ft {
+  padding-top: 16rpx;
+}
+
+.btn--disabled {
+  opacity: 0.6;
+}

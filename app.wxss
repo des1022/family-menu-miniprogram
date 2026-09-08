@@ -1,0 +1,146 @@
+/* ===== 全局设计变量（暖橙 · 家庭风） ===== */
+page {
+  --primary: #FF7A45;
+  --primary-dark: #E85F2B;
+  --primary-light: #FFF3ED;
+  --text: #1F2329;
+  --text-sub: #8A9099;
+  --text-weak: #B4B9C0;
+  --bg: #F6F7F9;
+  --card: #FFFFFF;
+  --border: #EBEDF0;
+  --danger: #F5222D;
+  --success: #3BB16A;
+  --radius: 20rpx;
+
+  background: var(--bg);
+  color: var(--text);
+  font-size: 30rpx;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+view,
+text,
+input,
+textarea,
+button,
+picker {
+  box-sizing: border-box;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+}
+
+/* ===== 通用容器 ===== */
+.page {
+  min-height: 100vh;
+  padding-bottom: calc(240rpx + env(safe-area-inset-bottom));
+}
+
+/* 有 tabBar 的页面底部留白 */
+.page--tab {
+  padding-bottom: calc(260rpx + env(safe-area-inset-bottom));
+}
+
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  margin: 20rpx 24rpx;
+  overflow: hidden;
+}
+
+.muted {
+  color: var(--text-sub);
+}
+
+.weak {
+  color: var(--text-weak);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+}
+
+.row-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* ===== 按钮（最小点击区 44px） ===== */
+.btn {
+  min-height: 88rpx;
+  min-width: 88rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 44rpx;
+  font-size: 32rpx;
+  font-weight: 500;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.btn:active {
+  opacity: 0.75;
+  transform: scale(0.98);
+}
+
+.btn-primary {
+  background: var(--primary);
+  color: #fff;
+}
+
+.btn-ghost {
+  background: var(--card);
+  color: var(--text);
+  border: 2rpx solid var(--border);
+}
+
+.btn-danger {
+  background: #FFF1F0;
+  color: var(--danger);
+  border: 2rpx solid #FFCCC7;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.btn-disabled {
+  background: #FFD9C9;
+  color: #fff;
+  pointer-events: none;
+}
+
+/* ===== 标签 ===== */
+.tag {
+  display: inline-flex;
+  align-items: center;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  font-size: 24rpx;
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.tag-gray {
+  background: #F2F3F5;
+  color: var(--text-sub);
+}
+
+.tag-green {
+  background: #EAF7EF;
+  color: var(--success);
+}
+
+/* ===== 分割线 ===== */
+.divider {
+  height: 2rpx;
+  background: var(--border);
+  margin: 0 24rpx;
+}
+
+/* ===== 底部安全区 ===== */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom);
+}
