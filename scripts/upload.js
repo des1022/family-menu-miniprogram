@@ -13,7 +13,7 @@ const path = require('path')
 const ci = require('miniprogram-ci')
 
 const WORKSPACE = path.resolve(__dirname, '..')
-const QR_OUT = '/Users/chengmeng/WorkBuddy/2026-09-04-10-35-28/family-menu-preview-qr.png'
+const QR_OUT = process.env.QR_OUT || path.join(WORKSPACE, 'preview-qr.png')
 
 const APPID = process.env.MP_APPID
 const KEY_PATH = process.env.MP_KEY_PATH
