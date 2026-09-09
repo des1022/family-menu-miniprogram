@@ -142,3 +142,105 @@
 .btn-flex {
   flex: 1;
 }
+
+
+/* ===== 批量模式 ===== */
+.batch-bar {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 14rpx;
+  padding: 14rpx 20rpx;
+  margin-bottom: 16rpx;
+}
+
+.batch-info {
+  flex: 1;
+  font-size: 28rpx;
+  color: #3A2E24;
+  font-weight: 600;
+}
+
+.batch-btn {
+  font-size: 26rpx;
+  color: #5A6068;
+  padding: 8rpx 24rpx;
+  border-radius: 999rpx;
+  border: 2rpx solid #EDEEF0;
+  margin-left: 12rpx;
+}
+
+.batch-btn--on {
+  color: #fff;
+  background: #FF7A45;
+  border-color: #FF7A45;
+  font-weight: 600;
+}
+
+.manage-row--checked {
+  background: #FFF0E8;
+}
+
+.check-circle {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  border: 3rpx solid #D9DCE0;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 24rpx;
+}
+
+.check-circle--on {
+  background: #FF7A45;
+  border-color: #FF7A45;
+}
+
+.op-btn-ft {
+  flex: 1;
+  text-align: center;
+  font-size: 28rpx;
+  padding: 14rpx 0;
+}
+
+.move-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 120;
+  display: flex;
+  align-items: flex-end;
+}
+
+.move-sheet {
+  width: 100%;
+  background: #F6F7F9;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 28rpx 24rpx 32rpx;
+}
+
+.move-title {
+  font-size: 32rpx;
+  font-weight: 700;
+  color: #1F2329;
+  margin-bottom: 16rpx;
+}
+
+.move-list {
+  max-height: 50vh;
+  margin-bottom: 16rpx;
+}
+
+.move-item {
+  background: #fff;
+  border-radius: 14rpx;
+  padding: 22rpx;
+  margin-bottom: 12rpx;
+  font-size: 30rpx;
+  color: #1F2329;
+  text-align: center;
+}

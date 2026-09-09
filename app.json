@@ -3,6 +3,8 @@
     "pages/index/index",
     "pages/calendar/calendar",
     "pages/mine/mine",
+    "pages/stats/stats",
+    "pages/poster/poster",
     "pages/confirm/confirm",
     "pages/admin/admin",
     "pages/dish-edit/dish-edit",

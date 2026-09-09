@@ -12,7 +12,11 @@ Page({
     groups: [],
     catOptions: [ALL_CAT],
     filterCat: ALL_CAT,
-    loading: false
+    loading: false,
+    selecting: false,
+    selectedMap: {},
+    selectedCount: 0,
+    showMovePicker: false
   },
 
   onShow() {
@@ -43,7 +47,7 @@ Page({
   },
 
   buildGroups() {
-    const { allDishes, filterCat } = this.data
+    const { allDishes, filterCat, selectedMap, selecting } = this.data
     let list = allDishes
     if (filterCat !== ALL_CAT) {
       list = list.filter(d => d.category === filterCat)
@@ -55,7 +59,131 @@ Page({
       map[key].dishes.push(d)
     })
     const groups = Object.keys(map).map(k => map[k])
+    // 批量模式下带上选中态
+    groups.forEach(g => g.dishes.forEach(d => { d.checked = !!(selecting && selectedMap[d._id]) }))
     this.setData({ groups: groups })
+  },
+
+  /* ==================== 批量操作 ==================== */
+
+  enterSelect() {
+    this.setData({ selecting: true, selectedMap: {}, selectedCount: 0 }, () => this.buildGroups())
+  },
+
+  exitSelect() {
+    this.setData({ selecting: false, selectedMap: {}, selectedCount: 0 }, () => this.buildGroups())
+  },
+
+  toggleSelect(id) {
+    const map = Object.assign({}, this.data.selectedMap)
+    if (map[id]) delete map[id]
+    else map[id] = true
+    this.setData({ selectedMap: map, selectedCount: Object.keys(map).length }, () => this.buildGroups())
+  },
+
+  onRowTap(e) {
+    const id = e.currentTarget.dataset.id
+    if (this.data.selecting) this.toggleSelect(id)
+    else this.onEdit(e)
+  },
+
+  onToggleCheck(e) {
+    if (this.data.selecting) this.toggleSelect(e.currentTarget.dataset.id)
+  },
+
+  onLongPressRow(e) {
+    if (!this.data.selecting) {
+      this.setData({ selecting: true }, () => this.toggleSelect(e.currentTarget.dataset.id))
+    }
+  },
+
+  onToggleSelectAll() {
+    const { selectedMap, allDishes } = this.data
+    if (Object.keys(selectedMap).length === allDishes.length) {
+      this.setData({ selectedMap: {}, selectedCount: 0 }, () => this.buildGroups())
+    } else {
+      const map = {}
+      allDishes.forEach(d => { map[d._id] = true })
+      this.setData({ selectedMap: map, selectedCount: allDishes.length }, () => this.buildGroups())
+    }
+  },
+
+  _selectedIds() {
+    return Object.keys(this.data.selectedMap)
+  },
+
+  batchSetStatus(next) {
+    const ids = this._selectedIds()
+    if (!ids.length) return toast('请先勾选菜品')
+    wx.showLoading({ title: '处理中', mask: true })
+    Promise.all(ids.map(id => db.updateDish(id, { status: next })))
+      .then(() => {
+        wx.hideLoading()
+        toast(next === config.DISH_STATUS.ON ? '已批量上架' : '已批量下架')
+        this.exitSelect()
+        this.loadDishes(true)
+      })
+      .catch(err => {
+        wx.hideLoading()
+        console.error('[admin] 批量上下架失败', err)
+        toast('操作失败')
+      })
+  },
+
+  onBatchOn() { this.batchSetStatus(config.DISH_STATUS.ON) },
+  onBatchOff() { this.batchSetStatus(config.DISH_STATUS.OFF) },
+
+  onBatchMove() {
+    if (!this._selectedIds().length) return toast('请先勾选菜品')
+    if (!this.data.catOptions.filter(c => c !== ALL_CAT).length) return toast('没有其它分类可选')
+    this.setData({ showMovePicker: true })
+  },
+
+  onPickMoveTarget(e) {
+    const target = e.currentTarget.dataset.name
+    const ids = this._selectedIds()
+    this.setData({ showMovePicker: false })
+    wx.showLoading({ title: '移动中', mask: true })
+    Promise.all(ids.map(id => db.updateDish(id, { category: target })))
+      .then(() => {
+        wx.hideLoading()
+        toast('已移到「' + target + '」')
+        this.exitSelect()
+        this.loadDishes(true)
+      })
+      .catch(err => {
+        wx.hideLoading()
+        console.error('[admin] 批量改分类失败', err)
+        toast('操作失败')
+      })
+  },
+
+  closeMovePicker() {
+    this.setData({ showMovePicker: false })
+  },
+
+  onBatchDelete() {
+    const ids = this._selectedIds()
+    if (!ids.length) return toast('请先勾选菜品')
+    const ok = confirm('删除 ' + ids.length + ' 道菜？删除后不可恢复（图片一并删除）。', '批量删除', '删除')
+    if (!ok) return
+    wx.showLoading({ title: '删除中', mask: true })
+    const jobs = ids.map(id => {
+      const dish = this.data.allDishes.find(d => d._id === id)
+      return db.removeDish(id).then(() => dish && dish.image ? deleteDishImage(dish.image) : null)
+    })
+    Promise.all(jobs)
+      .then(() => {
+        wx.hideLoading()
+        toast('已删除 ' + ids.length + ' 道')
+        this.exitSelect()
+        this.loadDishes(true)
+      })
+      .catch(err => {
+        wx.hideLoading()
+        console.error('[admin] 批量删除失败', err)
+        toast('删除失败')
+      })
   },
 
   onFilter(e) {

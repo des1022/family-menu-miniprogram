@@ -7,6 +7,11 @@
     <view class="summary-price" wx:if="{{totalPriceText !== '0'}}">¥{{totalPriceText}}</view>
   </view>
 
+  <view class="quick-row" wx:if="{{!empty}}">
+    <view class="quick-btn" bindtap="onTapIngredients">🥬 生成食材清单</view>
+    <view class="quick-btn" bindtap="goPoster">🎨 生成海报</view>
+  </view>
+
   <view class="order-list" wx:if="{{!empty}}">
     <view class="order-card" wx:for="{{list}}" wx:key="_id">
       <image class="order-img" src="{{item.dishImage}}" mode="aspectFill" lazy-load />
@@ -41,6 +46,28 @@
     text="今天还没点单"
     sub="回首页挑几道喜欢的菜吧"
   />
+
+  <!-- 食材清单弹层 -->
+  <view class="detail-mask" wx:if="{{showIngredients}}" bindtap="closeIngredients" catchtouchmove="noop">
+    <view class="detail-sheet" catchtap="noop">
+      <view class="detail-hd">
+        <view>
+          <view class="detail-title">🥬 今日食材清单</view>
+          <view class="detail-sub">数字为该食材涉及的点单份数</view>
+        </view>
+        <view class="detail-close" bindtap="closeIngredients">✕</view>
+      </view>
+      <scroll-view class="ing-list" scroll-y>
+        <view class="ing-item" wx:for="{{ingredientList}}" wx:key="name">
+          <text class="ing-name">{{item.name}}</text>
+          <text class="ing-times">×{{item.times}} 份</text>
+        </view>
+      </scroll-view>
+      <view class="detail-ft safe-bottom">
+        <view class="btn btn-primary btn-block" bindtap="onCopyIngredients">复制清单</view>
+      </view>
+    </view>
+  </view>
 
   <view class="confirm-ft safe-bottom" wx:if="{{!empty}}">
     <view class="btn-row">

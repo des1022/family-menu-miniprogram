@@ -175,3 +175,100 @@
   display: flex;
   gap: 20rpx;
 }
+
+
+/* ===== 快捷按钮 & 食材弹层 ===== */
+.quick-row {
+  display: flex;
+  gap: 14rpx;
+  margin-bottom: 16rpx;
+}
+
+.quick-btn {
+  flex: 1;
+  text-align: center;
+  background: #fff;
+  border-radius: 14rpx;
+  padding: 16rpx 0;
+  font-size: 26rpx;
+  color: #FF7A45;
+  box-shadow: 0 2rpx 10rpx rgba(31, 35, 41, 0.04);
+}
+
+.detail-mask {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 120;
+  display: flex;
+  align-items: flex-end;
+}
+
+.detail-sheet {
+  width: 100%;
+  max-height: 72vh;
+  background: #F6F7F9;
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 28rpx 24rpx 24rpx;
+  display: flex;
+  flex-direction: column;
+}
+
+.detail-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 16rpx;
+}
+
+.detail-title {
+  font-size: 34rpx;
+  font-weight: 700;
+  color: #1F2329;
+}
+
+.detail-sub {
+  font-size: 22rpx;
+  color: #8A9099;
+  margin-top: 4rpx;
+}
+
+.detail-close {
+  width: 56rpx;
+  height: 56rpx;
+  border-radius: 50%;
+  background: #EDEEF0;
+  color: #8A9099;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.detail-ft {
+  padding-top: 16rpx;
+}
+
+.ing-list {
+  max-height: 44vh;
+}
+
+.ing-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  border-radius: 14rpx;
+  padding: 18rpx 20rpx;
+  margin-bottom: 10rpx;
+}
+
+.ing-name {
+  font-size: 30rpx;
+  color: #1F2329;
+}
+
+.ing-times {
+  font-size: 28rpx;
+  font-weight: 700;
+  color: #FF7A45;
+}

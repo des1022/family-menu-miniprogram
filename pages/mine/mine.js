@@ -38,6 +38,10 @@ Page({
     wx.navigateTo({ url: '/pages/category/category' })
   },
 
+  goStats() {
+    wx.navigateTo({ url: '/pages/stats/stats' })
+  },
+
   goAdd() {
     wx.navigateTo({ url: '/pages/dish-edit/dish-edit' })
   }

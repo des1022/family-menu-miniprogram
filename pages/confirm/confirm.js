@@ -1,6 +1,6 @@
 const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
-const { toast, confirm } = require('../../utils/util.js')
+const { toast, confirm, parseIngredients } = require('../../utils/util.js')
 
 /** 今日点单清单：份数 / 备注 / 删除 / 清空 / 确认（云 records 实时同步） */
 Page({
@@ -11,7 +11,8 @@ Page({
     totalPriceText: '0',
     empty: true,
     isToday: true,
-    ingredientCount: 0
+    showIngredients: false,
+    ingredientList: []
   },
 
   onLoad() {},
@@ -36,6 +37,13 @@ Page({
   async load() {
     const date = db.todayStr()
     try {
+      // 食材汇总需要菜品 ingredients，拉一次全量菜建立映射
+      if (!this._dishMap) {
+        const dishes = await db.getAllDishes()
+        const map = {}
+        dishes.forEach(d => { map[d._id] = d })
+        this._dishMap = map
+      }
       const records = await db.getRecordsByDate(date)
       this.apply(records)
       this.attachWatcher(date)
@@ -70,8 +78,46 @@ Page({
       totalNum: totalNum,
       totalDish: list.length,
       totalPriceText: total > 0 ? String(Number(total.toFixed(2))) : '0',
-      isToday: this._date === db.todayStr()
+      isToday: this._date === db.todayStr(),
+      dateText: (this._date || db.todayStr())
     })
+  },
+
+  /** 食材清单：当日已选菜按食材归并，值 = 涉及份数 */
+  onTapIngredients() {
+    const ingredients = {}
+    this.data.list.forEach(r => {
+      const dish = this._dishMap && this._dishMap[r.dishId]
+      if (!dish) return
+      parseIngredients(dish.ingredients).forEach(ig => {
+        ingredients[ig] = (ingredients[ig] || 0) + r.num
+      })
+    })
+    const summaryList = Object.keys(ingredients)
+      .sort((a, b) => ingredients[b] - ingredients[a])
+      .map(name => ({ name: name, times: ingredients[name] }))
+    if (!summaryList.length) {
+      toast('已选的菜还没录食材，去编辑页补一补')
+      return
+    }
+    this.setData({ showIngredients: true, ingredientList: summaryList })
+  },
+
+  closeIngredients() {
+    this.setData({ showIngredients: false })
+  },
+
+  onCopyIngredients() {
+    const lines = this.data.ingredientList.map(i => '· ' + i.name + '   ×' + i.times + ' 份')
+    const text = '📋 今日食材清单（' + this.data.dateText + '）\n' + lines.join('\n')
+    wx.setClipboardData({
+      data: text,
+      success: () => toast('清单已复制，可粘贴给买菜的人')
+    })
+  },
+
+  goPoster() {
+    wx.navigateTo({ url: '/pages/poster/poster?date=' + this._date })
   },
 
   async onInc(e) {

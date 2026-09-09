@@ -1,4 +1,17 @@
 <view class="page">
+  <!-- 批量工具行 -->
+  <view class="batch-bar">
+    <view class="batch-info">
+      <block wx:if="{{selecting}}">已选 {{selectedCount}} 道</block>
+      <block wx:else>管理菜品（{{allDishes.length}}）</block>
+    </view>
+    <view class="batch-btn" wx:if="{{selecting}}" bindtap="onToggleSelectAll">
+      {{selectedCount === allDishes.length && allDishes.length ? '取消全选' : '全选'}}
+    </view>
+    <view class="batch-btn batch-btn--on" wx:if="{{selecting}}" bindtap="exitSelect">完成</view>
+    <view class="batch-btn batch-btn--on" wx:else bindtap="enterSelect">批量管理</view>
+  </view>
+
   <!-- 分类过滤 -->
   <scroll-view class="filter-bar" scroll-x enable-flex show-scrollbar="{{false}}">
     <view class="filter-inner">
@@ -15,7 +28,17 @@
   <!-- 分组列表 -->
   <view class="group" wx:for="{{groups}}" wx:key="name" wx:for-item="group">
     <view class="group-name">{{group.name}}（{{group.dishes.length}}）</view>
-    <view class="manage-row" wx:for="{{group.dishes}}" wx:key="_id">
+    <view
+      class="manage-row {{item.checked ? 'manage-row--checked' : ''}}"
+      wx:for="{{group.dishes}}"
+      wx:key="_id"
+      data-id="{{item._id}}"
+      bindtap="onRowTap"
+      bindlongpress="onLongPressRow"
+    >
+      <view class="check-circle {{item.checked ? 'check-circle--on' : ''}}" wx:if="{{selecting}}" catchtap="onToggleCheck" data-id="{{item._id}}">
+        <text wx:if="{{item.checked}}">✓</text>
+      </view>
       <image class="manage-img" src="{{item.image}}" mode="aspectFill" lazy-load />
       <view class="manage-info">
         <view class="manage-name">{{item.name}}</view>
@@ -43,7 +66,33 @@
 
   <!-- 底部操作 -->
   <view class="admin-ft safe-bottom">
-    <view class="btn btn-ghost btn-flex" bindtap="goCategory">分类管理</view>
-    <view class="btn btn-primary btn-flex" bindtap="goAdd">＋ 添加菜品</view>
+    <block wx:if="{{selecting}}">
+      <view class="op-btn op-btn-ft" bindtap="onBatchOn">上架</view>
+      <view class="op-btn op-btn-ft" bindtap="onBatchOff">下架</view>
+      <view class="op-btn op-btn-ft" bindtap="onBatchMove">改分类</view>
+      <view class="op-btn op-del op-btn-ft" bindtap="onBatchDelete">删除</view>
+    </block>
+    <block wx:else>
+      <view class="btn btn-ghost btn-flex" bindtap="goCategory">分类管理</view>
+      <view class="btn btn-primary btn-flex" bindtap="goAdd">＋ 添加菜品</view>
+    </block>
+  </view>
+
+  <!-- 改分类弹层 -->
+  <view class="move-mask" wx:if="{{showMovePicker}}" bindtap="closeMovePicker" catchtouchmove="noop">
+    <view class="move-sheet" catchtap="noop">
+      <view class="move-title">把已选 {{selectedCount}} 道菜移到哪个分类？</view>
+      <scroll-view class="move-list" scroll-y>
+        <view
+          class="move-item"
+          wx:for="{{catOptions}}"
+          wx:key="*this"
+          wx:if="{{item !== '全部'}}"
+          data-name="{{item}}"
+          bindtap="onPickMoveTarget"
+        >{{item}}</view>
+      </scroll-view>
+      <view class="btn btn-ghost btn-block" bindtap="closeMovePicker">取消</view>
+    </view>
   </view>
 </view>

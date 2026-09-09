@@ -29,6 +29,10 @@
       <text class="cell-title">🗂 分类管理</text>
       <text class="cell-arrow">›</text>
     </view>
+    <view class="cell" bindtap="goStats">
+      <text class="cell-title">📊 饮食统计</text>
+      <text class="cell-arrow">›</text>
+    </view>
   </view>
 
   <!-- 使用说明 -->

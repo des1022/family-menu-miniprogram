@@ -1,0 +1,46 @@
+<view class="page">
+  <!-- 标题 / 文案 -->
+  <view class="card">
+    <view class="form-row">
+      <text class="form-label">海报标题</text>
+    </view>
+    <input class="form-input" value="{{title}}" maxlength="12" bindinput="onTitleInput" placeholder="今天的家庭菜单" placeholder-class="ph" />
+    <view class="form-row" style="margin-top: 16rpx;">
+      <text class="form-label">底部文案</text>
+    </view>
+    <input class="form-input" value="{{footer}}" maxlength="16" bindinput="onFooterInput" placeholder="今晚吃这些，幸福！" placeholder-class="ph" />
+  </view>
+
+  <!-- 模板 -->
+  <view class="tpl-bar">
+    <view
+      class="tpl-chip {{variant === item.key ? 'tpl-chip--on' : ''}}"
+      wx:for="{{variants}}"
+      wx:key="key"
+      data-key="{{item.key}}"
+      bindtap="onSwitchVariant"
+    >{{item.label}}</view>
+  </view>
+
+  <!-- 画布预览 -->
+  <view class="canvas-wrap">
+    <canvas
+      type="2d"
+      id="posterCanvas"
+      class="poster-canvas"
+      style="height: {{dispH}}px;"
+    ></canvas>
+    <view class="gen-mask" wx:if="{{generating}}">
+      <text class="gen-text">生成中…</text>
+    </view>
+  </view>
+
+  <empty wx:if="{{empty}}" text="这一天还没有点单" sub="先去首页点几道菜再来生成海报吧" />
+
+  <view class="btn-row" wx:if="{{!empty}}">
+    <view class="btn btn-primary btn-block {{saving ? 'btn--disabled' : ''}}" bindtap="onSave">
+      {{saving ? '保存中…' : '保存到相册'}}
+    </view>
+  </view>
+  <view class="tip" wx:if="{{!empty}}">保存后可在微信里长按图片发送给家人，或直接转发本小程序</view>
+</view>

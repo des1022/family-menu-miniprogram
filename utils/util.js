@@ -73,6 +73,14 @@ function parseTags(raw) {
     .filter(Boolean)
 }
 
+/** 食材串解析：支持中英文逗号/顿号/分号/空格分隔 */
+function parseIngredients(raw) {
+  return String(raw || '')
+    .split(/[,，、;；\/|\s]+/)
+    .map(s => s.trim())
+    .filter(Boolean)
+}
+
 module.exports = {
   toast,
   showLoading,
@@ -82,5 +90,6 @@ module.exports = {
   formatPrice,
   randomStr,
   pad,
-  parseTags
+  parseTags,
+  parseIngredients
 }
