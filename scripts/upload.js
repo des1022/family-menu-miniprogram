@@ -48,7 +48,7 @@ async function main() {
       desc: '家庭菜单 ' + new Date().toLocaleString('zh-CN'),
       setting: setting,
       qrcodeFormat: 'image',
-      qrcodeOutputPath: QR_OUT,
+      qrcodeOutputDest: QR_OUT,
       robot: 1,
       onProgressUpdate: () => {}
     })
