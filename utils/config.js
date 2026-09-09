@@ -4,7 +4,7 @@
  */
 module.exports = {
   // TODO 替换为你的云开发环境 ID（微信开发者工具 → 云开发 → 环境 → 环境 ID）
-  ENV_ID: 'family-menu-0gxxxxxxxxxx',
+  ENV_ID: 'cloudbase-d6gm6blmkdb5a57ee',
 
   // 云存储中菜品图片存放目录（必须以 / 结尾）
   DISH_IMAGE_DIR: 'dish-images/',
