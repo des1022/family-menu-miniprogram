@@ -41,22 +41,34 @@ function sleep(ms) {
 }
 
 /**
- * 把云开发/网络错误整理成一行人话，直接能显示给用户看。
- * 出问题时报错信息太重要了 —— 不要吞掉它，否则只能干看着「请重试」。
+ * 云开发错误码 → 一句人话。
+ * 出问题时报错必须看得懂：原来的实现直接把一整段英文文档链接糊在弹窗上，
+ * 手机上根本没法读。
+ */
+const ERR_HINTS = {
+  '-502005': '集合还没建 —— 去云开发控制台新建，权限设「所有用户可读写」',
+  '-501001': '没有权限 —— 集合权限要设为「所有用户可读写」',
+  '-502001': '网络超时或不稳定，稍后再试',
+  '-501000': '云环境没找到 —— 检查 utils/config.js 里的 ENV_ID',
+  '-502003': '云开发资源不可用 —— 确认环境状态正常、没被回收',
+  '-502002': '请求参数不对（多半是本机时间不准）',
+  '-502004': '云开发资源超配额，等一会儿或查看资源用量'
+}
+
+/**
+ * 把云开发/网络错误整理成一行人话。
+ * @returns {string} 例如「-502005：集合还没建 —— 去云开发控制台新建，权限设「所有用户可读写」」
  */
 function errText(e) {
   if (!e) return '未知错误'
-  const code = e.errCode || e.code || ''
-  const msg = e.errMsg || e.message || String(e)
-  let hint = ''
-  if (code === -502005 || /not exist|不存在/i.test(msg)) {
-    hint = ' → 集合还没建，去云开发控制台新建，权限设「所有用户可读写」'
-  } else if (code === -501001 || /permission|denied|权限/i.test(msg)) {
-    hint = ' → 集合权限不对，应设为「所有用户可读写」'
-  } else if (code === -502001 || code === -501000 || /timeout|网络|network|fail/i.test(msg)) {
-    hint = ' → 像是网络超时，稍后重试'
-  }
-  return (code ? '[' + code + '] ' : '') + msg + hint
+  const code = String(e.errCode || e.code || '')
+  const raw = String(e.errMsg || e.message || e || '')
+  if (ERR_HINTS[code]) return code + '：' + ERR_HINTS[code]
+  if (/not exist|不存在/i.test(raw)) return '集合还没建 —— 去云开发控制台新建，权限设「所有用户可读写」'
+  if (/permission|denied/i.test(raw)) return '没有权限 —— 集合权限要设为「所有用户可读写」'
+  if (/timeout|network/i.test(raw)) return '网络超时或不稳定，稍后再试'
+  const one = raw.split('\n')[0]
+  return one.length > 80 ? one.slice(0, 80) + '…' : one
 }
 
 /** 时间格式化：9月4日 12:30 */

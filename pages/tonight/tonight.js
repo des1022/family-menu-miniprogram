@@ -110,7 +110,11 @@ Page({
     tastes: TASTES,
     dec: { open: false, mix: 'm1', size: 's2', taste: 't0', picks: [] },
     guide: false,
-    busy: false
+    busy: false,
+
+    // 云环境自检：集合缺失时首页直接给「要建哪几个集合」的引导
+    envId: config.ENV_ID,
+    env: { checked: false, ready: true, missing: [], items: [] }
   },
 
   onLoad() {
@@ -147,10 +151,54 @@ Page({
     this.loadAll().then(() => wx.stopPullDownRefresh())
   },
 
+  /* ==================== 云环境自检 ==================== */
+
+  /** 检查集合是否齐全；不齐就直接把引导卡显示出来，别让用户对着空页面猜 */
+  async checkEnv() {
+    try {
+      const r = await db.checkEnv()
+      this.setData({ env: { checked: true, ready: r.ready, missing: r.missing, items: r.items } })
+      return r
+    } catch (e) {
+      // 自检本身失败（比如完全没网）就不吓唬用户，照常走后面流程
+      console.warn('[tonight] 云环境自检没跑成', e)
+      this.setData({ env: { checked: true, ready: true, missing: [], items: [] } })
+      return { ready: true, missing: [], items: [] }
+    }
+  },
+
+  async onRecheckEnv() {
+    wx.showLoading({ title: '检查中', mask: true })
+    const r = await this.checkEnv()
+    wx.hideLoading()
+    if (r.ready) {
+      toast('环境已就绪')
+      this.loadAll()
+    } else {
+      toast('还差 ' + r.missing.length + ' 个集合')
+    }
+  },
+
+  onCopyCollections() {
+    const names = (this.data.env.items || []).map(x => x.raw).join('\n')
+    wx.setClipboardData({
+      data: names,
+      success: () => toast('5 个集合名已复制')
+    })
+  },
+
   /* ==================== 数据 ==================== */
 
   async loadAll() {
     this.setData({ busy: true })
+
+    // 先确认云环境可用：集合没建的话后面每个查询都会失败，白打一堆请求
+    const env = await this.checkEnv()
+    if (!env.ready) {
+      this.setData({ busy: false, members: [], eatCount: 0, cards: [], recent: [], suggest: null, allDishes: [], allCount: 0 })
+      return
+    }
+
     try {
       await db.ensureMyMember()
     } catch (e) {

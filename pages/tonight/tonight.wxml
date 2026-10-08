@@ -12,6 +12,36 @@
       </view>
     </view>
 
+    <!-- ============ 云环境未初始化：直接告诉用户要做什么 ============ -->
+    <view class="setup" wx:if="{{env.checked && !env.ready}}">
+      <view class="setup-t">云环境还没初始化</view>
+      <view class="setup-s">
+        这个云开发环境里还没有数据表，所以什么都存不进去。建完下面 {{env.missing.length}} 个集合就能用了。
+      </view>
+
+      <view class="setup-list">
+        <view class="setup-i" wx:for="{{env.items}}" wx:key="raw">
+          <text class="setup-mark {{item.ok ? 'setup-mark--ok' : ''}}">{{item.ok ? '✓' : '✕'}}</text>
+          <text class="setup-nm">{{item.raw}}</text>
+          <text class="setup-lb">{{item.name}}</text>
+        </view>
+      </view>
+
+      <view class="setup-steps">
+        <view class="setup-sh">怎么做（约 2 分钟）</view>
+        <view class="setup-step">1. 微信里搜索小程序 <text class="setup-em">云开发 CloudBase</text>，用你自己的微信打开</view>
+        <view class="setup-step">2. 选环境 <text class="setup-em">{{envId}}</text></view>
+        <view class="setup-step">3. 「数据库 → 集合管理 → 新建集合」，把上面 5 个名字逐个建出来</view>
+        <view class="setup-step">4. 每个集合的权限都改成 <text class="setup-em">所有用户可读写</text>（默认是「仅创建者可读写」）</view>
+        <view class="setup-step">5. 回来点「重新检查」</view>
+      </view>
+
+      <view class="btn-row">
+        <view class="btn btn-ghost" bindtap="onCopyCollections">复制集合名</view>
+        <view class="btn btn-primary" bindtap="onRecheckEnv">重新检查</view>
+      </view>
+    </view>
+
     <!-- 今晚在家吃 -->
     <view class="eatro" wx:if="{{members.length}}">
       <text class="eatro-l">今晚在家吃</text>
@@ -22,7 +52,7 @@
     </view>
 
     <!-- ============ 未点：引导 ============ -->
-    <block wx:if="{{!cards.length}}">
+    <block wx:if="{{env.ready && !cards.length}}">
       <view class="hero-q">今晚<text class="hero-q-hl">吃什么？</text></view>
 
       <view class="dash">
@@ -67,7 +97,7 @@
     </block>
 
     <!-- ============ 已点：今晚的桌 ============ -->
-    <block wx:else>
+    <block wx:elif="{{env.ready}}">
       <view class="sec-h">
         <text class="sec-t">今晚的桌 · {{cards.length}} 道</text>
         <text class="sec-m" bindtap="goDishes">再加一道 ›</text>

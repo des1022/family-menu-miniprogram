@@ -500,30 +500,39 @@ function buildIngredientList(records, dishMap) {
  */
 async function pingAllCollections() {
   const targets = [
-    [COLLECTIONS.DISHES, '菜品库 dishes'],
-    [COLLECTIONS.CATEGORIES, '分类 categories'],
-    [COLLECTIONS.RECORDS, '点单记录 records'],
-    [COLLECTIONS.MEMBERS, '家庭成员 members'],
-    [COLLECTIONS.SHOPPING, '采购清单 shopping']
+    [COLLECTIONS.DISHES, '菜品库', 'dishes'],
+    [COLLECTIONS.CATEGORIES, '分类', 'categories'],
+    [COLLECTIONS.RECORDS, '点单记录', 'records'],
+    [COLLECTIONS.MEMBERS, '家庭成员', 'members'],
+    [COLLECTIONS.SHOPPING, '采购清单', 'shopping']
   ]
   const out = []
   for (let i = 0; i < targets.length; i++) {
     const name = targets[i][0]
     const label = targets[i][1]
+    const raw = targets[i][2]
     try {
       const res = await db().collection(name).limit(1).get()
-      out.push({ name: label, ok: true, info: '可读' + ((res.data || []).length ? '（有数据）' : '（空）') })
+      out.push({ name: label, raw: raw, ok: true, info: '可读' + ((res.data || []).length ? '（有数据）' : '（空）') })
     } catch (e) {
-      out.push({ name: label, ok: false, info: errText(e) })
+      out.push({ name: label, raw: raw, ok: false, info: errText(e) })
     }
   }
   return out
+}
+
+/** 云环境是否可用（集合是否齐全） */
+async function checkEnv() {
+  const items = await pingAllCollections()
+  const missing = items.filter(x => !x.ok)
+  return { ready: missing.length === 0, missing: missing, items: items }
 }
 
 module.exports = {
   todayStr,
   recentDates,
   pingAllCollections,
+  checkEnv,
   // 菜品
   getOnDishes,
   getAllDishes,

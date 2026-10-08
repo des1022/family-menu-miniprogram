@@ -271,3 +271,31 @@
   padding: 10rpx 20rpx;
 }
 .dec-actions { margin-top: 22rpx; flex: 0 0 auto; }
+
+/* ==================== 云环境未初始化引导 ==================== */
+.setup {
+  margin: 8rpx 0 28rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-left: 8rpx solid var(--acc);
+  border-radius: var(--r-card);
+  padding: 30rpx 28rpx;
+  box-shadow: var(--sh);
+}
+.setup-t { font-size: 33rpx; font-weight: 700; }
+.setup-s { font-size: 25rpx; color: var(--ink2); line-height: 1.6; margin: 10rpx 0 22rpx; }
+.setup-list {
+  background: var(--surf2);
+  border-radius: 18rpx;
+  padding: 8rpx 18rpx;
+  margin-bottom: 22rpx;
+}
+.setup-i { display: flex; align-items: center; padding: 12rpx 0; }
+.setup-mark { width: 34rpx; flex: 0 0 auto; font-size: 26rpx; font-weight: 700; color: var(--danger); }
+.setup-mark--ok { color: var(--ok); }
+.setup-nm { flex: 1; font-size: 27rpx; font-family: monospace; color: var(--ink); }
+.setup-lb { font-size: 23rpx; color: var(--ink3); }
+.setup-steps { margin-bottom: 24rpx; }
+.setup-sh { font-size: 25rpx; font-weight: 700; color: var(--ink2); margin-bottom: 12rpx; }
+.setup-step { font-size: 24rpx; color: var(--ink2); line-height: 1.75; }
+.setup-em { font-weight: 700; color: var(--pri); }
