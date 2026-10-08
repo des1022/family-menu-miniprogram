@@ -1,68 +1,121 @@
-<view class="page page--tab">
-  <!-- 月份切换 -->
-  <view class="cal-header">
-    <view class="cal-arrow" bindtap="prevMonth">‹</view>
-    <view class="cal-month">
-      <view class="cal-month-text">{{monthText}}</view>
-      <view class="cal-month-sub" wx:if="{{monthTotal > 0}}">本月点了 {{monthTotal}} 份菜</view>
+<view class="page page--tab {{themeCls}}">
+  <view class="page-body">
+
+    <view class="hd">
+      <view>
+        <view class="t-h1">日历</view>
+        <view class="t-sub">这一个月的餐桌</view>
+      </view>
     </view>
-    <view class="cal-arrow" bindtap="nextMonth">›</view>
-  </view>
 
-  <!-- 星期表头 -->
-  <view class="cal-week">
-    <view class="cal-week-item" wx:for="{{['一','二','三','四','五','六','日']}}" wx:key="*this">{{item}}</view>
-  </view>
+    <!-- 月份切换 -->
+    <view class="calh">
+      <view class="calh-a" bindtap="prevMonth">‹</view>
+      <view class="calh-m">{{monthText}}</view>
+      <view class="calh-a" bindtap="nextMonth">›</view>
+    </view>
 
-  <!-- 日期网格 -->
-  <view class="cal-grid">
-    <view class="cal-row" wx:for="{{weeks}}" wx:key="index" wx:for-item="week" wx:for-index="wIdx">
+    <!-- 月概览 -->
+    <view class="calstat" wx:if="{{mealCount}}">
+      <view class="calstat-n">{{mealCount}}</view>
+      <view class="calstat-tx">
+        顿在家吃<text class="calstat-hl" wx:if="{{topName}}"> · 最爱 {{topName}}（{{topNum}} 次）</text>
+      </view>
+    </view>
+
+    <!-- 星期表头 -->
+    <view class="calgrid">
+      <view class="wd" wx:for="{{['一','二','三','四','五','六','日']}}" wx:key="*this">{{item}}</view>
+    </view>
+
+    <!-- 日期网格 -->
+    <view class="calgrid">
       <view
-        class="cal-cell {{cell ? '' : 'cal-cell--blank'}}"
-        wx:for="{{week}}"
-        wx:key="date"
-        wx:for-item="cell"
+        class="cell {{cell ? '' : 'cell--blank'}} {{cell.date === today ? 'cell--today' : ''}}"
+        wx:for="{{cells}}"
+        wx:key="key"
         data-date="{{cell.date}}"
         bindtap="onDayTap"
       >
         <block wx:if="{{cell}}">
-          <view class="cal-day {{cell.date === today ? 'cal-day--today' : ''}}">
-            <text class="cal-day-num {{cell.date === today ? 'cal-day-num--today' : ''}}">{{cell.day}}</text>
+          <view class="cell-d">{{cell.day}}</view>
+          <view class="cell-dots">
+            <view class="dot" wx:for="{{cell.dots}}" wx:for-item="dot" wx:key="*this" style="background:{{dot}}"></view>
           </view>
-          <view class="cal-mark" wx:if="{{cell.mark && cell.mark.totalNum > 0}}">{{cell.mark.totalNum}}份</view>
         </block>
       </view>
     </view>
+
+    <view class="cal-legend">
+      <text class="lg"><text class="lg-dot" style="background:#E7A176"></text>有记录</text>
+      <text class="lg"><text class="lg-dot lg-dot--today"></text>今天</text>
+      <text class="lg-t">点的颜色 = 当天菜的配色</text>
+    </view>
+
+    <!-- 本月回顾 -->
+    <block wx:if="{{mealCount}}">
+      <view class="sec-h"><text class="sec-t">本月回顾</text></view>
+
+      <view class="card card-pad">
+        <view class="rv-t">最常吃的三道</view>
+        <view class="rank" wx:for="{{top3}}" wx:key="name">
+          <view class="rank-hd">
+            <text class="rank-nm">{{item.name}}</text>
+            <text class="rank-num">{{item.count}} 次</text>
+          </view>
+          <view class="rank-bar"><view class="rank-fill" style="width:{{item.pct}}%"></view></view>
+        </view>
+      </view>
+
+      <view class="card card-pad" wx:if="{{cats.length}}">
+        <view class="rv-t">分类占比</view>
+        <view class="cat" wx:for="{{cats}}" wx:key="name">
+          <text class="cat-dot" style="background:{{item.color}}"></text>
+          <text class="cat-nm">{{item.name}}</text>
+          <view class="cat-bar"><view class="cat-fill" style="width:{{item.pct}}%;background:{{item.color}}"></view></view>
+          <text class="cat-pct">{{item.pct}}%</text>
+        </view>
+      </view>
+
+      <view class="card card-pad rv-tip" wx:if="{{tipText}}">
+        <view class="rv-t">小建议</view>
+        <view class="rv-tx">{{tipText}}</view>
+      </view>
+    </block>
+
+    <view class="empty-ph" wx:if="{{!loading && !mealCount}}">
+      <view class="ep-img"></view>
+      <view class="ep-t">这个月还没有记录</view>
+      <view class="ep-s">在「今晚」点几道菜、按一下确认，就会出现在这里</view>
+    </view>
+
   </view>
 
-  <view class="cal-tip">· 点击有标记的日期，查看当天菜单 ·</view>
-</view>
-
-<!-- 当日明细弹层 -->
-<view class="detail-mask" wx:if="{{detail}}" bindtap="closeDetail" catchtouchmove="noop">
-  <view class="detail-sheet" catchtap="noop">
-    <view class="detail-hd">
-      <view>
-        <view class="detail-title">{{detail.dateText}}</view>
-        <view class="detail-sub">共 {{detail.list.length}} 道 · {{detail.totalNum}} 份</view>
-      </view>
-      <view class="detail-close" bindtap="closeDetail">✕</view>
-    </view>
-    <scroll-view class="detail-list" scroll-y>
-      <view class="detail-item" wx:for="{{detail.list}}" wx:key="_id">
-        <image class="detail-img" src="{{item.dishImage}}" mode="aspectFill" lazy-load />
-        <view class="detail-info">
-          <view class="detail-name">{{item.dishName}}</view>
-          <view class="detail-remark" wx:if="{{item.remark}}">备注：{{item.remark}}</view>
+  <!-- 当天的一桌菜 -->
+  <view class="sheet-mask" wx:if="{{detail}}" bindtap="closeDetail" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-grab"></view>
+      <view class="sheet-hd">
+        <view>
+          <view class="sheet-t">{{detail.dateText}}</view>
+          <view class="t-micro">共 {{detail.list.length}} 道</view>
         </view>
-        <text class="detail-num">×{{item.num}}</text>
+        <view class="sheet-x" bindtap="closeDetail">✕</view>
       </view>
-    </scroll-view>
-    <view class="detail-ft safe-bottom">
-      <view
-        class="btn btn-primary btn-block {{reuseLoading ? 'btn--disabled' : ''}}"
-        bindtap="onReuse"
-      >{{reuseLoading ? '复用中…' : '一键复用到今日点单'}}</view>
+      <scroll-view class="dt-list" scroll-y>
+        <view class="dt-i" wx:for="{{detail.list}}" wx:key="id">
+          <image class="dt-thumb dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+          <view class="dt-thumb img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
+          <view class="dt-main">
+            <view class="dt-nm">{{item.name}}</view>
+            <view class="dt-sub" wx:if="{{item.remark}}">备注：{{item.remark}}</view>
+            <view class="dt-sub" wx:if="{{item.byName}}">{{item.byName}} 点的</view>
+          </view>
+        </view>
+      </scroll-view>
+      <view class="btn btn-primary btn-block {{reuseLoading ? 'btn-disabled' : ''}}" bindtap="onReuse">
+        {{reuseLoading ? '加进中…' : '再做一次（加进今晚）'}}
+      </view>
     </view>
   </view>
 </view>

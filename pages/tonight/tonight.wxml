@@ -1,0 +1,169 @@
+<view class="page page--tab {{themeCls}}">
+  <view class="page-body">
+
+    <!-- 页头 -->
+    <view class="hd">
+      <view>
+        <view class="t-h1">今晚</view>
+        <view class="t-sub">{{dateText}}</view>
+      </view>
+      <view class="avars">
+        <view class="avar" wx:for="{{members}}" wx:key="_id" style="background:{{item.color}}" wx:if="{{index < 4}}">{{item.initial}}</view>
+      </view>
+    </view>
+
+    <!-- 今晚在家吃 -->
+    <view class="eatro" wx:if="{{members.length}}">
+      <text class="eatro-l">今晚在家吃</text>
+      <view class="avars">
+        <view class="avar {{item.eatTonight ? '' : 'avar--off'}}" wx:for="{{members}}" wx:key="_id" style="background:{{item.color}}" wx:if="{{index < 5}}">{{item.initial}}</view>
+      </view>
+      <text class="eatro-v">{{eatCount}} 人</text>
+    </view>
+
+    <!-- ============ 未点：引导 ============ -->
+    <block wx:if="{{!cards.length}}">
+      <view class="hero-q">今晚<text class="hero-q-hl">吃什么？</text></view>
+
+      <view class="dash">
+        <image class="dash-ico" src="{{ico.bowl}}"/>
+        <view class="dash-t">今晚还没点菜</view>
+        <view class="dash-s">让家里一起点，或者我帮你选一顿</view>
+      </view>
+
+      <button class="big-btn big-btn--primary" open-type="share">
+        <view class="bb-ic"><image class="bb-img" src="{{ico.share}}"/></view>
+        <view class="bb-tx">
+          <view class="bb-t">让家里点菜</view>
+          <view class="bb-s">分享到家庭群，每人点一道</view>
+        </view>
+      </button>
+
+      <view class="big-btn big-btn--ghost" bindtap="onPickForMe">
+        <view class="bb-ic"><image class="bb-img" src="{{ico.dice}}"/></view>
+        <view class="bb-tx">
+          <view class="bb-t">帮我选一顿</view>
+          <view class="bb-s">{{pickHint}}</view>
+        </view>
+      </view>
+
+      <block wx:if="{{recent.length}}">
+        <view class="sec-h"><text class="sec-t">最近家里常吃</text><text class="sec-m" bindtap="goDishes">看全部 ›</text></view>
+        <scroll-view class="hscroll" scroll-x enable-flex show-scrollbar="{{false}}">
+          <view class="mini" wx:for="{{recent}}" wx:key="_id" data-id="{{item._id}}" bindtap="onQuickAdd" hover-class="mini--hover">
+            <image class="mini-img" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+            <view class="mini-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
+            <view class="mini-nm ellipsis">{{item.name}}</view>
+            <view class="mini-sub ellipsis">{{item.freqText}}</view>
+          </view>
+        </scroll-view>
+      </block>
+
+      <view class="seed-card" wx:if="{{!allCount}}">
+        <view class="seed-t">还没有菜品？</view>
+        <view class="seed-s">一键填入 12 道家常菜，马上就能用</view>
+        <view class="btn btn-primary btn-block" bindtap="onSeed">填入示例菜库</view>
+      </view>
+    </block>
+
+    <!-- ============ 已点：今晚的桌 ============ -->
+    <block wx:else>
+      <view class="sec-h">
+        <text class="sec-t">今晚的桌 · {{cards.length}} 道</text>
+        <text class="sec-m" bindtap="goDishes">再加一道 ›</text>
+      </view>
+
+      <view class="g2">
+        <view class="dish" wx:for="{{cards}}" wx:key="id">
+          <image class="dish-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" data-id="{{item.dishId}}" bindtap="onOpenDish"/>
+          <view class="dish-img img-ph {{item.ph}}" wx:else data-id="{{item.dishId}}" bindtap="onOpenDish">{{item.initial}}</view>
+          <view class="owner" wx:if="{{item.byName}}">
+            <view class="owner-dot" style="background:{{item.byColor}}"></view>
+            <text>{{item.byName}}</text>
+          </view>
+          <view class="dish-body">
+            <view class="dish-nm ellipsis">{{item.name}}</view>
+            <view class="dish-tg">
+              <text class="tag" wx:if="{{item.category}}">{{item.category}}</text>
+              <text class="tag tag--ok" wx:if="{{item.confirmed}}">已确认</text>
+            </view>
+          </view>
+          <view class="dish-x" catchtap="onRemove" data-id="{{item.dishId}}" data-name="{{item.name}}">✕</view>
+        </view>
+      </view>
+
+      <view class="sug" wx:if="{{suggest}}">
+        <view class="sug-tx">{{suggest.text}}<text class="sug-hint">{{suggest.hint}}</text></view>
+        <view class="sug-go" bindtap="onSugTap">去看看</view>
+      </view>
+
+      <view class="row-card" bindtap="onOpenIng">
+        <view class="rc-ic"><image class="rc-img" src="{{ico.basket}}"/></view>
+        <view class="rc-main">
+          <view class="rc-t">今日食材清单</view>
+          <view class="rc-s">{{ingCount ? ingCount + ' 种食材 · 点击查看' : '给菜品补上食材，这里就能自动汇总'}}</view>
+        </view>
+        <text class="rc-arw">›</text>
+      </view>
+
+      <view class="row-card" bindtap="goPoster">
+        <view class="rc-ic"><image class="rc-img" src="{{ico.download}}"/></view>
+        <view class="rc-main">
+          <view class="rc-t">生成今日海报</view>
+          <view class="rc-s">4 套模板，可保存到相册发家庭群</view>
+        </view>
+        <text class="rc-arw">›</text>
+      </view>
+    </block>
+
+  </view>
+
+  <!-- 底部固定操作 -->
+  <view class="fixbar" wx:if="{{cards.length}}">
+    <view class="btn-row">
+      <button class="btn btn-ghost" open-type="share">分享</button>
+      <view class="btn btn-primary {{busy ? 'btn-disabled' : ''}}" bindtap="onConfirmTonight">确认这顿饭</view>
+    </view>
+  </view>
+
+  <!-- 食材清单弹层 -->
+  <view class="sheet-mask" wx:if="{{showIng}}" bindtap="closeIng" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-grab"></view>
+      <view class="sheet-hd">
+        <text class="sheet-t">今日食材清单</text>
+        <view class="sheet-x" bindtap="closeIng">✕</view>
+      </view>
+      <scroll-view class="ing-list" scroll-y>
+        <view class="ing-empty" wx:if="{{!ingList.length}}">菜品还没填食材。到「菜库 → 编辑」里补上，这里就会自动汇总。</view>
+        <view class="ing-i" wx:for="{{ingList}}" wx:key="name">
+          <text class="ing-n">{{item.name}}</text>
+          <text class="ing-d">{{item.dishes}}</text>
+          <text class="ing-t">{{item.times}} 道</text>
+        </view>
+      </scroll-view>
+      <view class="btn btn-primary btn-block" wx:if="{{ingList.length}}" bindtap="onCopyIng">复制清单</view>
+    </view>
+  </view>
+
+  <!-- 首次引导 -->
+  <view class="sheet-mask" wx:if="{{guide}}" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-grab"></view>
+      <view class="sheet-hd"><text class="sheet-t">欢迎使用家庭菜单</text></view>
+      <view class="guide-i">
+        <text class="guide-n">1</text>
+        <text class="guide-t">在「菜库」挑菜加进今晚，全家实时同步</text>
+      </view>
+      <view class="guide-i">
+        <text class="guide-n">2</text>
+        <text class="guide-t">拿不准就让「帮我选一顿」掷一把</text>
+      </view>
+      <view class="guide-i">
+        <text class="guide-n">3</text>
+        <text class="guide-t">点「确认这顿饭」，日历里就留下这一桌了</text>
+      </view>
+      <view class="btn btn-primary btn-block" bindtap="onCloseGuide">开始用</view>
+    </view>
+  </view>
+</view>

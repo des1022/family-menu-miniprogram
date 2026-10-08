@@ -1,146 +1,314 @@
-/* ===== 全局设计变量（暖橙 · 家庭风） ===== */
+/**
+ * 家庭菜单 · 全局设计变量与基础样式
+ *
+ * 浅色 = 方案 A「陶土与木桌」 #D9714E 陶土橙 + #FAF7F3 米白
+ * 深色 = 方案 B 主色 #37776A 作底 + 白色主操作 + #D2703F 柿子橙强调
+ *
+ * 所有颜色都走变量：换主题只改变量定义，不动页面样式。
+ */
 page {
-  --primary: #FF7A45;
-  --primary-dark: #E85F2B;
-  --primary-light: #FFF3ED;
-  --text: #1F2329;
-  --text-sub: #8A9099;
-  --text-weak: #B4B9C0;
-  --bg: #F6F7F9;
-  --card: #FFFFFF;
-  --border: #EBEDF0;
-  --danger: #F5222D;
-  --success: #3BB16A;
-  --radius: 20rpx;
+  /* ---------- 浅色（方案 A） ---------- */
+  --pri: #D9714E;
+  --pri-d: #C4553A;
+  --pri-l: #FBEEE8;
+  --pri-ink: #A8462E;
+
+  --acc: #E9A323;
+  --acc-l: #FCF3DF;
+  --acc-ink: #8E5F0C;
+
+  --ok: #4F9367;
+  --ok-l: #E9F3ED;
+  --ok-ink: #3E7A55;
+
+  --bg: #FAF7F3;
+  --surf: #FFFFFF;
+  --surf2: #F4EFE9;
+  --line: #EFE7DE;
+
+  --ink: #2A2521;
+  --ink2: #8B8178;
+  --ink3: #B7AEA4;
+
+  --btn-bg: linear-gradient(135deg, #DE7A56, #C4553A);
+  --btn-ink: #FFFFFF;
+  --btn-sh: 0 8rpx 20rpx rgba(196, 85, 58, 0.28);
+
+  --sh: 0 4rpx 14rpx rgba(170, 130, 100, 0.08);
+  --sh-lg: 0 16rpx 44rpx rgba(90, 60, 40, 0.16);
+  --owner-bg: rgba(255, 255, 255, 0.94);
+  --owner-ink: #1F2329;
+  --danger: #C94A3F;
+
+  /* 形状 */
+  --r-card: 28rpx;
+  --r-lg: 32rpx;
+  --r-sm: 10rpx;
 
   background: var(--bg);
-  color: var(--text);
+  color: var(--ink);
   font-size: 30rpx;
-  line-height: 1.5;
+  line-height: 1.55;
   -webkit-font-smoothing: antialiased;
 }
 
-view,
-text,
-input,
-textarea,
-button,
-picker {
+/* ---------- 深色（跟随系统） ---------- */
+@media (prefers-color-scheme: dark) {
+  page {
+    --pri: #FFFFFF;
+    --pri-d: #E6F1ED;
+    --pri-l: rgba(255, 255, 255, 0.16);
+    --pri-ink: #FFFFFF;
+
+    --acc: #D2703F;
+    --acc-l: rgba(210, 112, 63, 0.26);
+    --acc-ink: #F8DAC8;
+
+    --ok: #FFFFFF;
+    --ok-l: rgba(255, 255, 255, 0.16);
+    --ok-ink: #2A5F54;
+
+    --bg: #37776A;
+    --surf: #438476;
+    --surf2: #2F6A5C;
+    --line: #51998A;
+
+    --ink: #F0F7F4;
+    --ink2: #C6DCD5;
+    --ink3: #A0C3B9;
+
+    --btn-bg: #FFFFFF;
+    --btn-ink: #2A5F54;
+    --btn-sh: 0 8rpx 20rpx rgba(0, 40, 32, 0.28);
+
+    --sh: 0 3rpx 12rpx rgba(0, 40, 32, 0.22);
+    --sh-lg: 0 16rpx 44rpx rgba(0, 20, 16, 0.34);
+    --owner-bg: #FFFFFF;
+    --owner-ink: #1B2320;
+    --danger: #E08A7E;
+  }
+}
+
+/* ---------- 手动指定主题（家庭 → 设置 三档） ---------- */
+.theme-light {
+  --pri: #D9714E; --pri-d: #C4553A; --pri-l: #FBEEE8; --pri-ink: #A8462E;
+  --acc: #E9A323; --acc-l: #FCF3DF; --acc-ink: #8E5F0C;
+  --ok: #4F9367; --ok-l: #E9F3ED; --ok-ink: #3E7A55;
+  --bg: #FAF7F3; --surf: #FFFFFF; --surf2: #F4EFE9; --line: #EFE7DE;
+  --ink: #2A2521; --ink2: #8B8178; --ink3: #B7AEA4;
+  --btn-bg: linear-gradient(135deg, #DE7A56, #C4553A); --btn-ink: #FFFFFF;
+  --btn-sh: 0 8rpx 20rpx rgba(196, 85, 58, 0.28);
+  --sh: 0 4rpx 14rpx rgba(170, 130, 100, 0.08);
+  --sh-lg: 0 16rpx 44rpx rgba(90, 60, 40, 0.16);
+  --owner-bg: rgba(255, 255, 255, 0.94); --owner-ink: #1F2329;
+  --danger: #C94A3F;
+}
+.theme-dark {
+  --pri: #FFFFFF; --pri-d: #E6F1ED; --pri-l: rgba(255, 255, 255, 0.16); --pri-ink: #FFFFFF;
+  --acc: #D2703F; --acc-l: rgba(210, 112, 63, 0.26); --acc-ink: #F8DAC8;
+  --ok: #FFFFFF; --ok-l: rgba(255, 255, 255, 0.16); --ok-ink: #2A5F54;
+  --bg: #37776A; --surf: #438476; --surf2: #2F6A5C; --line: #51998A;
+  --ink: #F0F7F4; --ink2: #C6DCD5; --ink3: #A0C3B9;
+  --btn-bg: #FFFFFF; --btn-ink: #2A5F54;
+  --btn-sh: 0 8rpx 20rpx rgba(0, 40, 32, 0.28);
+  --sh: 0 3rpx 12rpx rgba(0, 40, 32, 0.22);
+  --sh-lg: 0 16rpx 44rpx rgba(0, 20, 16, 0.34);
+  --owner-bg: #FFFFFF; --owner-ink: #1B2320;
+  --danger: #E08A7E;
+}
+
+view, text, input, textarea, button, picker, scroll-view {
   box-sizing: border-box;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
 }
 
-/* ===== 通用容器 ===== */
+/* ==================== 页面容器 ==================== */
 .page {
   min-height: 100vh;
-  padding-bottom: calc(240rpx + env(safe-area-inset-bottom));
+  background: var(--bg);
+  color: var(--ink);
 }
+.page--tab { padding-bottom: calc(150rpx + env(safe-area-inset-bottom)); }
+.page-body { padding: 0 28rpx; }
+.safe-bottom { padding-bottom: env(safe-area-inset-bottom); }
 
-/* 有 tabBar 的页面底部留白 */
-.page--tab {
-  padding-bottom: calc(260rpx + env(safe-area-inset-bottom));
+/* ==================== 文字 ==================== */
+.t-hero { font-size: 56rpx; font-weight: 800; line-height: 1.24; letter-spacing: -0.02em; }
+.t-h1 { font-size: 40rpx; font-weight: 700; letter-spacing: -0.01em; }
+.t-h2 { font-size: 32rpx; font-weight: 700; }
+.t-body { font-size: 30rpx; }
+.t-sub { font-size: 26rpx; color: var(--ink2); }
+.t-micro { font-size: 22rpx; color: var(--ink3); }
+.muted { color: var(--ink2); }
+.weak { color: var(--ink3); }
+.pri { color: var(--pri-ink); }
+.ellipsis { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+
+/* ==================== 区块标题 ==================== */
+.sec-h {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin: 36rpx 4rpx 18rpx;
 }
+.sec-h .sec-t { font-size: 30rpx; font-weight: 700; }
+.sec-h .sec-m { font-size: 24rpx; color: var(--pri-ink); font-weight: 600; }
 
+/* ==================== 卡片 ==================== */
 .card {
-  background: var(--card);
-  border-radius: var(--radius);
-  margin: 20rpx 24rpx;
+  background: var(--surf);
+  border-radius: var(--r-card);
+  border: 2rpx solid var(--line);
+  box-shadow: var(--sh);
   overflow: hidden;
 }
+.card-pad { padding: 26rpx 28rpx; }
 
-.muted {
-  color: var(--text-sub);
-}
-
-.weak {
-  color: var(--text-weak);
-}
-
-.row {
-  display: flex;
-  align-items: center;
-}
-
-.row-between {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-/* ===== 按钮（最小点击区 44px） ===== */
+/* ==================== 按钮 ==================== */
 .btn {
   min-height: 88rpx;
-  min-width: 88rpx;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 44rpx;
+  border-radius: 999rpx;
   font-size: 32rpx;
-  font-weight: 500;
+  font-weight: 600;
   transition: opacity 0.15s, transform 0.1s;
 }
+.btn:active { opacity: 0.82; transform: scale(0.985); }
+.btn-primary { background: var(--btn-bg); color: var(--btn-ink); box-shadow: var(--btn-sh); }
+.btn-ghost { background: var(--surf); color: var(--ink); border: 2rpx solid var(--line); }
+.btn-plain { background: transparent; color: var(--ink); border: 2rpx solid var(--line); }
+.btn-danger { background: var(--surf); color: var(--danger); border: 2rpx solid var(--danger); }
+.btn-block { width: 100%; }
+.btn-disabled { opacity: 0.45; pointer-events: none; }
+.btn-row { display: flex; gap: 18rpx; }
+.btn-row > .btn { flex: 1; }
 
-.btn:active {
-  opacity: 0.75;
-  transform: scale(0.98);
-}
-
-.btn-primary {
-  background: var(--primary);
-  color: #fff;
-}
-
-.btn-ghost {
-  background: var(--card);
-  color: var(--text);
-  border: 2rpx solid var(--border);
-}
-
-.btn-danger {
-  background: #FFF1F0;
-  color: var(--danger);
-  border: 2rpx solid #FFCCC7;
-}
-
-.btn-block {
-  width: 100%;
-}
-
-.btn-disabled {
-  background: #FFD9C9;
-  color: #fff;
-  pointer-events: none;
-}
-
-/* ===== 标签 ===== */
-.tag {
+/* ==================== 标签 / 胶囊 ==================== */
+.chip {
   display: inline-flex;
   align-items: center;
-  padding: 4rpx 16rpx;
-  border-radius: 8rpx;
-  font-size: 24rpx;
-  background: var(--primary-light);
-  color: var(--primary-dark);
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 12rpx 26rpx;
+  border-radius: 999rpx;
+  font-size: 26rpx;
+  font-weight: 600;
+  background: var(--surf);
+  color: var(--ink2);
+  border: 2rpx solid var(--line);
+}
+.chip--on { background: var(--pri); color: var(--btn-ink); border-color: var(--pri); }
+.chip--acc { background: var(--acc-l); color: var(--acc-ink); border-color: var(--acc); }
+.chip-scroll { display: flex; gap: 14rpx; white-space: nowrap; }
+
+.tag {
+  display: inline-block;
+  padding: 4rpx 14rpx;
+  border-radius: var(--r-sm);
+  font-size: 20rpx;
+  font-weight: 600;
+  background: var(--surf2);
+  color: var(--ink2);
+}
+.tag--pri { background: var(--pri-l); color: var(--pri-ink); }
+.tag--acc { background: var(--acc-l); color: var(--acc-ink); }
+.tag--ok { background: var(--ok-l); color: var(--ok-ink); }
+
+/* ==================== 分割线 ==================== */
+.divider { height: 2rpx; background: var(--line); }
+
+/* ==================== 设置类列表行 ==================== */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  padding: 26rpx 28rpx;
+  background: var(--surf);
+  border-bottom: 2rpx solid var(--line);
+}
+.row:last-child { border-bottom: none; }
+.row .row-ic {
+  width: 62rpx; height: 62rpx; border-radius: 18rpx;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--pri-l);
+}
+.row .row-t { font-size: 30rpx; font-weight: 600; flex: 1; }
+.row .row-v { font-size: 26rpx; color: var(--ink2); }
+.row .row-arw { color: var(--ink3); font-size: 34rpx; line-height: 1; }
+
+/* ==================== 无图占位色块 ==================== */
+.img-ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: 700;
+  background: linear-gradient(140deg, #E7A176, #C0613F);
+}
+.img-ph--2 { background: linear-gradient(140deg, #BFCB93, #6E8B4E); }
+.img-ph--3 { background: linear-gradient(140deg, #E8C077, #B8873C); }
+.img-ph--4 { background: linear-gradient(140deg, #D9A0A0, #A85E5E); }
+.img-ph--5 { background: linear-gradient(140deg, #9DBCC9, #5B7F91); }
+
+/* 深色模式给菜品照片压一点亮度，让它融进暗底 */
+.dish-dim { opacity: 1; }
+.theme-dark .dish-dim { filter: brightness(0.86) saturate(0.94); }
+@media (prefers-color-scheme: dark) {
+  .dish-dim { filter: brightness(0.86) saturate(0.94); }
 }
 
-.tag-gray {
-  background: #F2F3F5;
-  color: var(--text-sub);
+/* ==================== 弹层 ==================== */
+.sheet-mask {
+  position: fixed;
+  left: 0; right: 0; top: 0; bottom: 0;
+  background: rgba(30, 20, 14, 0.45);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+}
+.sheet {
+  width: 100%;
+  background: var(--bg);
+  border-radius: 36rpx 36rpx 0 0;
+  padding: 20rpx 28rpx calc(28rpx + env(safe-area-inset-bottom));
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--sh-lg);
+}
+.sheet-grab {
+  width: 72rpx; height: 8rpx; border-radius: 4rpx;
+  background: var(--ink3); opacity: 0.5;
+  margin: 0 auto 22rpx;
+}
+.sheet-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+  flex: 0 0 auto;
+}
+.sheet-hd .sheet-t { font-size: 34rpx; font-weight: 700; }
+.sheet-x { width: 56rpx; height: 56rpx; display: flex; align-items: center; justify-content: center; color: var(--ink2); font-size: 34rpx; }
+
+/* ==================== 固定底栏 ==================== */
+.fixbar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  padding: 18rpx 28rpx calc(18rpx + env(safe-area-inset-bottom));
+  background: var(--surf2);
+  border-top: 2rpx solid var(--line);
+  z-index: 20;
 }
 
-.tag-green {
-  background: #EAF7EF;
-  color: var(--success);
+/* ==================== 空态 ==================== */
+.empty-ph { padding: 96rpx 40rpx; text-align: center; }
+.empty-ph .ep-img {
+  width: 128rpx; height: 128rpx; border-radius: 50%;
+  background: var(--pri-l);
+  margin: 0 auto 24rpx;
 }
-
-/* ===== 分割线 ===== */
-.divider {
-  height: 2rpx;
-  background: var(--border);
-  margin: 0 24rpx;
-}
-
-/* ===== 底部安全区 ===== */
-.safe-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
-}
+.empty-ph .ep-t { font-size: 30rpx; font-weight: 600; }
+.empty-ph .ep-s { font-size: 26rpx; color: var(--ink2); margin-top: 8rpx; }

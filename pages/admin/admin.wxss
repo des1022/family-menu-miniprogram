@@ -16,16 +16,16 @@
   flex-shrink: 0;
   padding: 10rpx 28rpx;
   border-radius: 999rpx;
-  background: #fff;
-  color: #5A6068;
+  background: var(--surf);
+  color: var(--ink2);
   font-size: 26rpx;
-  border: 2rpx solid #EDEEF0;
+  border: 2rpx solid var(--line);
 }
 
 .filter-chip--on {
-  background: #FF7A45;
-  color: #fff;
-  border-color: #FF7A45;
+  background: var(--pri);
+  color: var(--surf);
+  border-color: var(--pri);
   font-weight: 600;
 }
 
@@ -43,7 +43,7 @@
 .manage-row {
   display: flex;
   align-items: center;
-  background: #fff;
+  background: var(--surf);
   border-radius: 18rpx;
   padding: 18rpx;
   margin-bottom: 14rpx;
@@ -54,7 +54,7 @@
   width: 100rpx;
   height: 100rpx;
   border-radius: 12rpx;
-  background: #F2F3F5;
+  background: var(--surf2);
   flex-shrink: 0;
 }
 
@@ -67,7 +67,7 @@
 .manage-name {
   font-size: 30rpx;
   font-weight: 600;
-  color: #1F2329;
+  color: var(--ink);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -82,8 +82,8 @@
 
 .manage-status {
   font-size: 22rpx;
-  color: #8A9099;
-  background: #F2F3F5;
+  color: var(--ink2);
+  background: var(--surf2);
   border-radius: 8rpx;
   padding: 2rpx 10rpx;
 }
@@ -95,7 +95,7 @@
 
 .manage-price {
   font-size: 24rpx;
-  color: #FF7A45;
+  color: var(--pri);
 }
 
 .manage-ops {
@@ -110,13 +110,13 @@
   text-align: center;
   padding: 6rpx 20rpx;
   border-radius: 999rpx;
-  border: 2rpx solid #EDEEF0;
-  color: #5A6068;
+  border: 2rpx solid var(--line);
+  color: var(--ink2);
   background: #FAFBFC;
 }
 
 .op-edit {
-  color: #FF7A45;
+  color: var(--pri);
   border-color: #FFC9AE;
   background: #FFF0E8;
 }
@@ -132,7 +132,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: #fff;
+  background: var(--surf);
   padding: 16rpx 24rpx;
   display: flex;
   gap: 20rpx;
@@ -148,7 +148,7 @@
 .batch-bar {
   display: flex;
   align-items: center;
-  background: #fff;
+  background: var(--surf);
   border-radius: 14rpx;
   padding: 14rpx 20rpx;
   margin-bottom: 16rpx;
@@ -163,17 +163,17 @@
 
 .batch-btn {
   font-size: 26rpx;
-  color: #5A6068;
+  color: var(--ink2);
   padding: 8rpx 24rpx;
   border-radius: 999rpx;
-  border: 2rpx solid #EDEEF0;
+  border: 2rpx solid var(--line);
   margin-left: 12rpx;
 }
 
 .batch-btn--on {
-  color: #fff;
-  background: #FF7A45;
-  border-color: #FF7A45;
+  color: var(--surf);
+  background: var(--pri);
+  border-color: var(--pri);
   font-weight: 600;
 }
 
@@ -191,13 +191,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #fff;
+  color: var(--surf);
   font-size: 24rpx;
 }
 
 .check-circle--on {
-  background: #FF7A45;
-  border-color: #FF7A45;
+  background: var(--pri);
+  border-color: var(--pri);
 }
 
 .op-btn-ft {
@@ -218,7 +218,7 @@
 
 .move-sheet {
   width: 100%;
-  background: #F6F7F9;
+  background: var(--bg);
   border-radius: 32rpx 32rpx 0 0;
   padding: 28rpx 24rpx 32rpx;
 }
@@ -226,7 +226,7 @@
 .move-title {
   font-size: 32rpx;
   font-weight: 700;
-  color: #1F2329;
+  color: var(--ink);
   margin-bottom: 16rpx;
 }
 
@@ -236,11 +236,11 @@
 }
 
 .move-item {
-  background: #fff;
+  background: var(--surf);
   border-radius: 14rpx;
   padding: 22rpx;
   margin-bottom: 12rpx;
   font-size: 30rpx;
-  color: #1F2329;
+  color: var(--ink);
   text-align: center;
 }

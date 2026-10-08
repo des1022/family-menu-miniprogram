@@ -1,0 +1,144 @@
+.hd {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 24rpx 4rpx 20rpx;
+}
+.layout-btn {
+  padding: 10rpx 24rpx;
+  border-radius: 999rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--ink2);
+}
+
+/* ---------- 搜索 ---------- */
+.searchbar {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 999rpx;
+  padding: 18rpx 26rpx;
+  box-shadow: var(--sh);
+}
+.sb-ico { width: 34rpx; height: 34rpx; opacity: 0.72; }
+.sb-input { flex: 1; font-size: 28rpx; color: var(--ink); }
+.sb-ph { color: var(--ink3); font-size: 28rpx; }
+.sb-x { color: var(--ink3); font-size: 28rpx; padding: 0 6rpx; }
+
+/* ---------- 胶囊 ---------- */
+.chips {
+  display: flex;
+  gap: 14rpx;
+  align-items: center;
+  padding: 26rpx 0 22rpx;
+  white-space: nowrap;
+  overflow-x: auto;
+}
+.chips::-webkit-scrollbar { width: 0; height: 0; }
+.chip--accstar { background: var(--acc-l); color: var(--acc-ink); border-color: var(--acc); }
+.chip--clear { background: transparent; color: var(--ink3); border-style: dashed; }
+
+/* ---------- 网格 ---------- */
+.grid { display: flex; flex-wrap: wrap; margin: 0 -9rpx; }
+.card-dish {
+  position: relative;
+  width: calc(50% - 18rpx);
+  margin: 9rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 26rpx;
+  overflow: hidden;
+  box-shadow: var(--sh);
+}
+.card-dish--hover { opacity: 0.86; }
+.cd-img { width: 100%; height: 220rpx; font-size: 52rpx; }
+.cd-fav {
+  position: absolute; left: 14rpx; top: 14rpx;
+  width: 44rpx; height: 44rpx; border-radius: 50%;
+  background: var(--owner-bg); color: var(--acc);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26rpx;
+}
+.cd-on {
+  position: absolute; right: 14rpx; top: 14rpx;
+  background: var(--pri); color: var(--btn-ink);
+  border-radius: 999rpx; padding: 4rpx 16rpx;
+  font-size: 20rpx; font-weight: 700;
+}
+.cd-body { padding: 16rpx 18rpx 20rpx; }
+.cd-nm { font-size: 27rpx; font-weight: 700; }
+.cd-tg { display: flex; gap: 8rpx; margin-top: 10rpx; flex-wrap: wrap; }
+
+/* ---------- 列表 ---------- */
+.list { padding-bottom: 20rpx; }
+.row-dish {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 24rpx;
+  padding: 18rpx 20rpx;
+  margin-bottom: 16rpx;
+  box-shadow: var(--sh);
+}
+.row-dish--hover { opacity: 0.86; }
+.rd-img { width: 128rpx; height: 128rpx; border-radius: 20rpx; flex: 0 0 auto; font-size: 40rpx; }
+.rd-main { flex: 1; min-width: 0; }
+.rd-nm { display: flex; align-items: center; gap: 10rpx; font-size: 29rpx; font-weight: 700; }
+.rd-star { color: var(--acc); font-size: 24rpx; }
+.rd-tg { display: flex; gap: 8rpx; margin-top: 10rpx; flex-wrap: wrap; }
+.rd-add {
+  width: 64rpx; height: 64rpx; flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34rpx; font-weight: 700;
+}
+.rd-add--on { background: var(--ok); color: var(--btn-ink); }
+.theme-dark .rd-add--on { color: #2A5F54; }
+
+/* ---------- 悬浮添加 ---------- */
+.fab {
+  position: fixed;
+  right: 36rpx;
+  bottom: calc(170rpx + env(safe-area-inset-bottom));
+  width: 108rpx; height: 108rpx;
+  border-radius: 50%;
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 52rpx; font-weight: 300;
+  box-shadow: var(--btn-sh);
+  z-index: 30;
+}
+
+/* ---------- 详情弹层 ---------- */
+.dt-hero { position: relative; margin-bottom: 22rpx; }
+.dt-img { width: 100%; height: 300rpx; border-radius: 26rpx; font-size: 64rpx; }
+.dt-fav {
+  position: absolute; right: 18rpx; top: 18rpx;
+  width: 68rpx; height: 68rpx; border-radius: 50%;
+  background: var(--owner-bg); color: var(--ink3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34rpx;
+}
+.dt-fav--on { color: var(--acc); }
+.dt-nm { font-size: 40rpx; font-weight: 800; letter-spacing: -0.01em; }
+.dt-meta { display: flex; gap: 10rpx; align-items: center; margin-top: 14rpx; flex-wrap: wrap; }
+.dt-sec { margin-top: 24rpx; }
+.dt-h { font-size: 22rpx; font-weight: 700; color: var(--ink2); letter-spacing: 0.08em; margin-bottom: 12rpx; }
+.dt-ing { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.dt-ing-i {
+  font-size: 24rpx; font-weight: 600;
+  background: var(--ok-l); color: var(--ok-ink);
+  border-radius: 999rpx; padding: 8rpx 20rpx;
+}
+.dt-tx { font-size: 27rpx; color: var(--ink2); line-height: 1.6; }
+.dt-actions { margin-top: 34rpx; }

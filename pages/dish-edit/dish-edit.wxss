@@ -9,7 +9,7 @@
 }
 
 .required {
-  color: #F5222D;
+  color: var(--danger);
 }
 
 /* ===== 图片 ===== */
@@ -19,7 +19,7 @@
   height: 340rpx;
   border-radius: 16rpx;
   overflow: hidden;
-  background: #F7F8FA;
+  background: var(--bg);
 }
 
 .dish-img {
@@ -45,7 +45,7 @@
 
 .img-tip {
   font-size: 26rpx;
-  color: #B4B9C0;
+  color: var(--ink3);
   margin-top: 16rpx;
 }
 
@@ -58,7 +58,7 @@
   line-height: 64rpx;
   text-align: center;
   background: rgba(0, 0, 0, 0.5);
-  color: #fff;
+  color: var(--surf);
   font-size: 26rpx;
 }
 
@@ -82,27 +82,27 @@
 .form-label {
   width: 200rpx;
   font-size: 30rpx;
-  color: #1F2329;
+  color: var(--ink);
   flex-shrink: 0;
 }
 
 .form-input {
   flex: 1;
   font-size: 30rpx;
-  color: #1F2329;
+  color: var(--ink);
   text-align: right;
 }
 
 .form-textarea {
   flex: 1;
   font-size: 30rpx;
-  color: #1F2329;
+  color: var(--ink);
   min-height: 120rpx;
   line-height: 1.6;
 }
 
 .ph {
-  color: #B4B9C0;
+  color: var(--ink3);
 }
 
 .picker-view {
@@ -111,7 +111,7 @@
   align-items: center;
   justify-content: flex-end;
   font-size: 30rpx;
-  color: #1F2329;
+  color: var(--ink);
   min-height: 60rpx;
 }
 
@@ -137,7 +137,7 @@
 /* ===== 食材/标签 ===== */
 .form-tip {
   font-size: 22rpx;
-  color: #B4B9C0;
+  color: var(--ink3);
 }
 
 .tag-group {
@@ -146,7 +146,7 @@
 
 .tag-group-name {
   font-size: 24rpx;
-  color: #8A9099;
+  color: var(--ink2);
   margin-bottom: 10rpx;
 }
 
@@ -160,14 +160,14 @@
   padding: 8rpx 24rpx;
   border-radius: 999rpx;
   background: #F5F6F7;
-  color: #5A6068;
+  color: var(--ink2);
   font-size: 26rpx;
   border: 2rpx solid #F5F6F7;
 }
 
 .tag-chip--on {
   background: #FFF0E8;
-  color: #FF7A45;
+  color: var(--pri);
   border-color: #FFC9AE;
   font-weight: 600;
 }

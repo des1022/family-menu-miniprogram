@@ -1,215 +1,124 @@
-.page {
-  padding: 24rpx 24rpx 60rpx;
-}
+.hd { padding: 24rpx 4rpx 8rpx; }
 
-/* 月份切换 */
-.cal-header {
-  display: flex;
-  align-items: center;
-  padding: 8rpx 0 20rpx;
-}
-
-.cal-arrow {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 50%;
-  background: #fff;
-  color: #FF7A45;
-  font-size: 44rpx;
+/* ---------- 月份切换 ---------- */
+.calh {
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2rpx 10rpx rgba(31, 35, 41, 0.06);
+  gap: 40rpx;
+  padding: 18rpx 0 22rpx;
 }
-
-.cal-month {
-  flex: 1;
-  text-align: center;
-}
-
-.cal-month-text {
-  font-size: 38rpx;
-  font-weight: 700;
-  color: #1F2329;
-}
-
-.cal-month-sub {
-  font-size: 24rpx;
-  color: #8A9099;
-  margin-top: 4rpx;
-}
-
-/* 星期表头 */
-.cal-week {
-  display: flex;
-  padding: 8rpx 0;
-}
-
-.cal-week-item {
-  flex: 1;
-  text-align: center;
-  font-size: 24rpx;
-  color: #8A9099;
-}
-
-/* 网格 */
-.cal-row {
-  display: flex;
-}
-
-.cal-cell {
-  flex: 1;
-  height: 104rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  padding-top: 10rpx;
-}
-
-.cal-day {
-  width: 60rpx;
-  height: 60rpx;
+.calh-a {
+  width: 64rpx; height: 64rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 40rpx; color: var(--ink2);
   border-radius: 50%;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+}
+.calh-m { font-size: 34rpx; font-weight: 700; letter-spacing: -0.01em; }
+
+/* ---------- 月概览 ---------- */
+.calstat {
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 20rpx;
+  background: var(--pri-l);
+  border: 2rpx solid var(--pri);
+  border-radius: 24rpx;
+  padding: 22rpx 26rpx;
+  margin-bottom: 26rpx;
 }
+.calstat-n { font-size: 44rpx; font-weight: 800; color: var(--pri-ink); line-height: 1; }
+.calstat-tx { font-size: 25rpx; color: var(--ink); line-height: 1.5; }
+.calstat-hl { font-weight: 700; }
 
-.cal-day--today {
-  background: #FFF0E8;
-}
-
-.cal-day-num {
-  font-size: 30rpx;
-  color: #1F2329;
-}
-
-.cal-day-num--today {
-  color: #FF7A45;
-  font-weight: 700;
-}
-
-.cal-mark {
-  margin-top: 4rpx;
-  font-size: 18rpx;
-  line-height: 1.2;
-  color: #556C45;
-  background: #D5E5C8;
-  border-radius: 999rpx;
-  padding: 2rpx 12rpx;
-}
-
-.cal-tip {
-  margin-top: 20rpx;
+/* ---------- 日期网格 ---------- */
+.calgrid { display: flex; flex-wrap: wrap; }
+.calgrid .wd {
+  width: 14.28%;
   text-align: center;
   font-size: 22rpx;
-  color: #B4B9C0;
-}
-
-/* 当日明细弹层 */
-.detail-mask {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.45);
-  z-index: 100;
-  display: flex;
-  align-items: flex-end;
-}
-
-.detail-sheet {
-  width: 100%;
-  max-height: 75vh;
-  background: #F6F7F9;
-  border-radius: 32rpx 32rpx 0 0;
-  padding: 28rpx 24rpx 24rpx;
-  display: flex;
-  flex-direction: column;
-}
-
-.detail-hd {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 16rpx;
-}
-
-.detail-title {
-  font-size: 36rpx;
-  font-weight: 700;
-  color: #1F2329;
-}
-
-.detail-sub {
-  font-size: 24rpx;
-  color: #8A9099;
-  margin-top: 4rpx;
-}
-
-.detail-close {
-  width: 56rpx;
-  height: 56rpx;
-  border-radius: 50%;
-  background: #EDEEF0;
-  color: #8A9099;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 26rpx;
-}
-
-.detail-list {
-  max-height: 46vh;
-}
-
-.detail-item {
-  display: flex;
-  align-items: center;
-  background: #fff;
-  border-radius: 16rpx;
-  padding: 16rpx;
-  margin-bottom: 12rpx;
-}
-
-.detail-img {
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 12rpx;
-  background: #F2F3F5;
-  flex-shrink: 0;
-}
-
-.detail-info {
-  flex: 1;
-  min-width: 0;
-  padding: 0 16rpx;
-}
-
-.detail-name {
-  font-size: 30rpx;
+  color: var(--ink3);
   font-weight: 600;
-  color: #1F2329;
+  padding-bottom: 10rpx;
 }
+.cell {
+  width: 14.28%;
+  height: 108rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 8rpx;
+  border-radius: 18rpx;
+}
+.cell--blank { visibility: hidden; }
+.cell--today { background: var(--pri); }
+.theme-dark .cell--today { background: #FFFFFF; }
+@media (prefers-color-scheme: dark) {
+  .cell--today { background: #FFFFFF; }
+}
+.cell-d { font-size: 27rpx; font-weight: 600; color: var(--ink); line-height: 1.25; }
+.cell--today .cell-d { color: var(--btn-ink); font-weight: 800; }
+.theme-dark .cell--today .cell-d { color: #2A5F54; }
+@media (prefers-color-scheme: dark) {
+  .cell--today .cell-d { color: #2A5F54; }
+}
+.cell-dots {
+  display: flex;
+  gap: 5rpx;
+  margin-top: 7rpx;
+  height: 12rpx;
+  align-items: center;
+}
+.dot { width: 12rpx; height: 12rpx; border-radius: 50%; }
+.cell--today .dot { outline: 2rpx solid rgba(255, 255, 255, 0.7); }
 
-.detail-remark {
-  font-size: 22rpx;
-  color: #8A9099;
-  margin-top: 4rpx;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.cal-legend {
+  display: flex;
+  align-items: center;
+  gap: 24rpx;
+  justify-content: center;
+  margin-top: 20rpx;
+  flex-wrap: wrap;
 }
+.lg { font-size: 21rpx; color: var(--ink2); display: flex; align-items: center; gap: 8rpx; }
+.lg-dot { width: 14rpx; height: 14rpx; border-radius: 50%; display: inline-block; }
+.lg-dot--today { background: var(--pri); }
+.theme-dark .lg-dot--today { background: #FFFFFF; }
+.lg-t { font-size: 21rpx; color: var(--ink3); }
 
-.detail-num {
-  font-size: 30rpx;
-  font-weight: 700;
-  color: #FF7A45;
-}
+/* ---------- 本月回顾 ---------- */
+.rv-t { font-size: 26rpx; font-weight: 700; margin-bottom: 20rpx; }
+.rv-tx { font-size: 26rpx; color: var(--ink2); line-height: 1.7; }
+.rv-tip { background: var(--acc-l); border-color: var(--acc); }
+.rv-tip .rv-tx { color: var(--acc-ink); font-weight: 600; }
 
-.detail-ft {
-  padding-top: 16rpx;
-}
+.rank { margin-bottom: 22rpx; }
+.rank:last-child { margin-bottom: 0; }
+.rank-hd { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10rpx; }
+.rank-nm { font-size: 27rpx; font-weight: 600; }
+.rank-num { font-size: 23rpx; color: var(--ink2); font-weight: 600; }
+.rank-bar { height: 14rpx; border-radius: 999rpx; background: var(--surf2); overflow: hidden; }
+.rank-fill { height: 100%; border-radius: 999rpx; background: var(--btn-bg); }
 
-.btn--disabled {
-  opacity: 0.6;
+.cat { display: flex; align-items: center; gap: 14rpx; margin-bottom: 18rpx; }
+.cat:last-child { margin-bottom: 0; }
+.cat-dot { width: 18rpx; height: 18rpx; border-radius: 50%; flex: 0 0 auto; }
+.cat-nm { font-size: 25rpx; width: 108rpx; flex: 0 0 auto; }
+.cat-bar { flex: 1; height: 14rpx; border-radius: 999rpx; background: var(--surf2); overflow: hidden; }
+.cat-fill { height: 100%; border-radius: 999rpx; }
+.cat-pct { font-size: 23rpx; color: var(--ink2); width: 74rpx; text-align: right; font-weight: 600; }
+
+/* ---------- 当天详情弹层 ---------- */
+.dt-list { max-height: 52vh; margin-bottom: 22rpx; }
+.dt-i {
+  display: flex; align-items: center; gap: 20rpx;
+  padding: 18rpx 0;
+  border-bottom: 2rpx solid var(--line);
 }
+.dt-i:last-child { border-bottom: none; }
+.dt-thumb { width: 108rpx; height: 108rpx; border-radius: 20rpx; flex: 0 0 auto; font-size: 36rpx; }
+.dt-main { flex: 1; min-width: 0; }
+.dt-nm { font-size: 29rpx; font-weight: 700; }
+.dt-sub { font-size: 23rpx; color: var(--ink2); margin-top: 6rpx; }

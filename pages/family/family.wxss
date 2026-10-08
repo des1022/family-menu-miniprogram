@@ -1,0 +1,85 @@
+.hd { padding: 24rpx 4rpx 20rpx; }
+
+/* ---------- 成员 ---------- */
+.mem {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 26rpx;
+  padding: 22rpx 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: var(--sh);
+}
+.mem-av {
+  width: 78rpx; height: 78rpx; flex: 0 0 auto;
+  border-radius: 50%;
+  color: #fff; font-size: 30rpx; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+}
+.mem-main { flex: 1; min-width: 0; }
+.mem-nm { display: flex; align-items: center; gap: 12rpx; font-size: 30rpx; font-weight: 700; }
+.mem-me {
+  font-size: 19rpx; font-weight: 700;
+  background: var(--pri-l); color: var(--pri-ink);
+  border-radius: 6rpx; padding: 2rpx 10rpx;
+}
+.mem-tg { font-size: 23rpx; color: var(--ink2); margin-top: 6rpx; }
+.mem-tip { font-size: 22rpx; color: var(--ink3); padding: 6rpx 8rpx 0; line-height: 1.6; }
+
+/* ---------- 开关 ---------- */
+.sw {
+  width: 84rpx; height: 48rpx; flex: 0 0 auto;
+  border-radius: 999rpx;
+  background: var(--pri);
+  position: relative;
+  transition: background 0.18s;
+}
+.theme-dark .sw { background: #FFFFFF; }
+.sw--off { background: var(--line); }
+.theme-dark .sw--off { background: rgba(255, 255, 255, 0.26); }
+.sw-knob {
+  position: absolute;
+  width: 38rpx; height: 38rpx;
+  border-radius: 50%;
+  background: #fff;
+  top: 5rpx; right: 5rpx;
+  box-shadow: 0 2rpx 6rpx rgba(0, 0, 0, 0.18);
+  transition: right 0.18s, left 0.18s;
+}
+.theme-dark .sw-knob { background: #2A5F54; }
+.sw--off .sw-knob { right: auto; left: 5rpx; background: #fff; }
+.theme-dark .sw--off .sw-knob { background: #A0C3B9; }
+
+/* @media 跟随系统时的深色适配 */
+@media (prefers-color-scheme: dark) {
+  .sw { background: #FFFFFF; }
+  .sw-knob { background: #2A5F54; }
+  .sw--off { background: rgba(255, 255, 255, 0.26); }
+  .sw--off .sw-knob { background: #A0C3B9; }
+}
+
+/* ---------- 行内图标 ---------- */
+.row-img { width: 38rpx; height: 38rpx; }
+
+/* ---------- 外观 ---------- */
+.chips { display: flex; gap: 14rpx; flex-wrap: wrap; }
+.theme-tip { font-size: 23rpx; color: var(--ink2); margin-top: 18rpx; }
+
+/* ---------- 关于 ---------- */
+.about-tx { font-size: 23rpx; color: var(--ink3); line-height: 1.7; padding: 16rpx 8rpx 0; }
+
+/* ---------- 成员编辑表单 ---------- */
+.fm { margin-bottom: 28rpx; }
+.fm-l { font-size: 24rpx; font-weight: 700; color: var(--ink2); margin-bottom: 14rpx; }
+.fm-input {
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 20rpx;
+  padding: 22rpx 24rpx;
+  font-size: 30rpx;
+}
+.fm-ph { color: var(--ink3); }
+.fm-taste { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.fm-h { font-size: 22rpx; color: var(--ink3); margin-top: 12rpx; line-height: 1.6; }

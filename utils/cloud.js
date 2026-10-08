@@ -34,7 +34,8 @@ function db() {
 const COLLECTIONS = {
   DISHES: 'dishes',
   RECORDS: 'records',
-  CATEGORIES: 'categories'
+  CATEGORIES: 'categories',
+  MEMBERS: 'members'      // 家庭成员：一条记录 = 一位家人（_openid 由云端自动写入）
 }
 
 /**

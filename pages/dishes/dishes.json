@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "菜库",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "@bgTxtStyle",
+  "usingComponents": {}
+}

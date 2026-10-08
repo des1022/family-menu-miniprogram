@@ -1,0 +1,123 @@
+<view class="page page--tab {{themeCls}}">
+  <view class="page-body">
+
+    <view class="hd">
+      <view>
+        <view class="t-h1">家庭</view>
+        <view class="t-sub">{{members.length}} 位成员 · 今晚 {{eatCount}} 人在家吃</view>
+      </view>
+    </view>
+
+    <!-- 成员 -->
+    <view class="sec-h"><text class="sec-t">成员</text><text class="sec-m" bindtap="onOpenEdit" data-id="">＋ 添加</text></view>
+
+    <view class="mem" wx:for="{{members}}" wx:key="_id" data-id="{{item._id}}" bindtap="onOpenEdit">
+      <view class="mem-av" style="background:{{item.color}}">{{item.initial}}</view>
+      <view class="mem-main">
+        <view class="mem-nm">
+          <text>{{item.nickname || '未命名'}}</text>
+          <text class="mem-me" wx:if="{{item.isMe}}">我</text>
+        </view>
+        <view class="mem-tg">{{item.tasteText || '还没有口味备注'}}</view>
+      </view>
+      <view class="sw {{item.eatTonight ? '' : 'sw--off'}}" catchtap="onToggleEat" data-id="{{item._id}}">
+        <view class="sw-knob"></view>
+      </view>
+    </view>
+
+    <view class="mem-tip">开关 = 今晚在不在家吃。做饭的人按这个决定做多少。</view>
+
+    <!-- 管理 -->
+    <view class="sec-h"><text class="sec-t">管理</text></view>
+    <view class="card">
+      <view class="row" bindtap="goManage">
+        <view class="row-ic"><image class="row-img" src="{{ico.bowl}}"/></view>
+        <view class="row-t">菜品管理</view>
+        <text class="row-v">{{dishCount}} 道</text>
+        <text class="row-arw">›</text>
+      </view>
+      <view class="row" bindtap="goCategory">
+        <view class="row-ic"><image class="row-img" src="{{ico.folder}}"/></view>
+        <view class="row-t">分类管理</view>
+        <text class="row-arw">›</text>
+      </view>
+      <view class="row" bindtap="onExport">
+        <view class="row-ic"><image class="row-img" src="{{ico.download}}"/></view>
+        <view class="row-t">数据备份导出</view>
+        <text class="row-arw">›</text>
+      </view>
+    </view>
+
+    <!-- 外观 -->
+    <view class="sec-h"><text class="sec-t">外观</text></view>
+    <view class="card card-pad">
+      <view class="chips">
+        <view
+          class="chip {{themeMode === item.value ? 'chip--on' : ''}}"
+          wx:for="{{themeModes}}"
+          wx:key="value"
+          data-v="{{item.value}}"
+          bindtap="onPickTheme"
+        >{{item.label}}</view>
+      </view>
+      <view class="theme-tip">{{isDark ? '当前是深色（墨绿）' : '当前是浅色（陶土橙）'}}</view>
+    </view>
+
+    <!-- 关于 -->
+    <view class="sec-h"><text class="sec-t">关于</text></view>
+    <view class="card">
+      <view class="row" bindtap="onAbout">
+        <view class="row-ic"><image class="row-img" src="{{ico.gear}}"/></view>
+        <view class="row-t">家庭菜单 · 体验版</view>
+        <text class="row-v">v1.1.0</text>
+      </view>
+    </view>
+    <view class="about-tx">家里人自己用的小工具。数据存在你自己的微信云开发环境里，不上传任何第三方。</view>
+
+  </view>
+
+  <!-- 成员编辑弹层 -->
+  <view class="sheet-mask" wx:if="{{sheet}}" bindtap="closeSheet" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-grab"></view>
+      <view class="sheet-hd">
+        <text class="sheet-t">{{edit.isNew ? '添加成员' : '编辑成员'}}</text>
+        <view class="sheet-x" bindtap="closeSheet">✕</view>
+      </view>
+
+      <view class="fm">
+        <view class="fm-l">昵称</view>
+        <input
+          class="fm-input"
+          value="{{edit.nickname}}"
+          maxlength="10"
+          placeholder="例如：爸爸 / 妈妈 / 小明"
+          placeholder-class="fm-ph"
+          bindinput="onNickInput"
+        />
+      </view>
+
+      <view class="fm">
+        <view class="fm-l">口味 / 忌口</view>
+        <view class="fm-taste">
+          <view
+            class="chip {{tasteMap[item] ? 'chip--on' : ''}}"
+            wx:for="{{tasteOptions}}"
+            wx:key="*this"
+            data-t="{{item}}"
+            bindtap="onToggleTaste"
+          >{{item}}</view>
+        </view>
+        <view class="fm-h">点菜时会用到，比如「不吃香菜」</view>
+      </view>
+
+      <view class="btn-row" style="margin-top:30rpx">
+        <view class="btn btn-danger" wx:if="{{!edit.isNew && !edit.isMe}}" bindtap="onRemoveMember">移除</view>
+        <view class="btn btn-primary" bindtap="onSaveMember">保存</view>
+      </view>
+      <view class="fm-h" wx:if="{{edit.isNew}}" style="margin-top:16rpx">
+        提示：每位家人第一次打开小程序时会自动生成一条成员记录，这里也可以手动加。
+      </view>
+    </view>
+  </view>
+</view>

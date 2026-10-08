@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head><meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>家庭菜单 · 背景色从方案 B 的原值里挑</title><style>
+*{box-sizing:border-box}
+body{margin:0;background:#FBFAF8;color:#26221E;font-size:15px;line-height:1.65;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Helvetica Neue",sans-serif;
+  -webkit-font-smoothing:antialiased}
+.wrap{max-width:1520px;margin:0 auto;padding:0 22px 90px}
+.hero{background:linear-gradient(180deg,#FFFDFB,#FBFAF8);border-bottom:1px solid #EFE9E2;padding:46px 0 34px;margin-bottom:34px}
+.hero .wrap{padding-bottom:0}
+.kicker{display:inline-block;background:#F2E5E1;color:#8E4630;font-size:12.5px;font-weight:600;
+  letter-spacing:.04em;padding:6px 13px;border-radius:999px;margin-bottom:16px}
+.hero h1{margin:0 0 10px;font-size:35px;line-height:1.24;letter-spacing:-.01em}
+.hero p{margin:0;max-width:720px;color:#5F574F}
+h2.sec{font-size:22px;margin:0 0 20px;letter-spacing:-.01em;display:flex;align-items:center;gap:11px}
+h2.sec .n{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:9px;
+  background:#31665A;color:#fff;font-size:13px;font-weight:700;flex:0 0 auto}
+table{width:100%;border-collapse:collapse;font-size:13px;background:#fff;border:1px solid #EFE9E2;border-radius:12px;overflow:hidden;margin-bottom:34px}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid #F2ECE6;vertical-align:top}
+th{background:#F7F2ED;font-weight:600;font-size:12px;color:#5F574F}
+tr:last-child td{border-bottom:none}
+td code{background:#F7F2ED;padding:1px 5px;border-radius:5px;font-size:11.5px;font-family:ui-monospace,Consolas,monospace}
+.tag{display:inline-block;padding:1px 8px;border-radius:999px;font-size:10.5px;font-weight:700;line-height:1.75;white-space:nowrap}
+.tag.b{background:#E9F3ED;color:#3E7A55}
+.tag.d{background:#F1EBE4;color:#7A6446}
+
+.cols{display:flex;gap:16px;flex-wrap:wrap;justify-content:flex-start;align-items:flex-start}
+.col{width:336px;flex:0 0 auto}
+.colhd{margin-bottom:12px;padding-left:2px}
+.colhd .idx{display:inline-block;font-size:11px;font-weight:800;color:#fff;background:#31665A;
+  border-radius:6px;padding:1px 7px;margin-bottom:6px}
+.colhd .nm{font-size:15.5px;font-weight:800;letter-spacing:-.01em}
+.colhd .sb{font-size:11.5px;color:#8A8177;margin-top:2px;line-height:1.5}
+.phone{margin-bottom:10px;width:336px;height:664px;border-radius:36px;border:8px solid #26211E;
+  overflow:hidden;position:relative;display:flex;flex-direction:column;box-shadow:0 14px 40px rgba(80,60,45,.16)}
+.cap{font-size:12px;color:#8A8177;margin-bottom:6px;text-align:center}
+
+/* ===== 主题：底色一律取自 B 原值 ===== */
+.t-b1{ /* B 的底色 #F5F8F6 */
+  --bg:#F5F8F6; --surf:#FFFFFF; --surf2:#EAF1ED; --line:#E1EBE5;
+  --ink:#1F2A26; --ink2:#6E7F78; --ink3:#A3B0A9;
+  --pri:#37776A; --pri-d:#2A5F54; --pri-l:#E6F1ED;
+  --acc:#D2703F; --acc-l:#FBEDE4; --acc-ink:#8E4620;
+  --btn:linear-gradient(135deg,#37776A,#2A5F54); --btntx:#fff;
+  --sh:0 3px 12px rgba(60,90,80,.10); --owner:#FFFFFF;
+}
+.t-b2{ /* B 的主色 #37776A */
+  --bg:#37776A; --surf:#438476; --surf2:#2F6A5C; --line:#51998A;
+  --ink:#F0F7F4; --ink2:#C6DCD5; --ink3:#A0C3B9;
+  --pri:#FFFFFF; --pri-d:#E6F1ED; --pri-l:rgba(255,255,255,.16);
+  --acc:#D2703F; --acc-l:rgba(210,112,63,.24); --acc-ink:#F6D2BC;
+  --btn:linear-gradient(135deg,#FFFFFF,#E6F1ED); --btntx:#2A5F54;
+  --sh:0 3px 12px rgba(0,40,32,.24); --owner:#FFFFFF;
+}
+.t-b3{ /* B 的主色深 #2A5F54 */
+  --bg:#2A5F54; --surf:#336B5F; --surf2:#23504 6; --line:#3F7A6C;
+  --ink:#E8F3EF; --ink2:#B4D2C9; --ink3:#8FB3A8;
+  --pri:#FFFFFF; --pri-d:#E6F1ED; --pri-l:rgba(255,255,255,.16);
+  --acc:#D2703F; --acc-l:rgba(210,112,63,.26); --acc-ink:#F6D2BC;
+  --btn:linear-gradient(135deg,#FFFFFF,#E6F1ED); --btntx:#2A5F54;
+  --sh:0 3px 12px rgba(0,30,24,.26); --owner:#FFFFFF;
+}
+.t-b4{ /* B 的正文色 #1F2A26 */
+  --bg:#1F2A26; --surf:#27332E; --surf2:#2F3D37; --line:#3B4A44;
+  --ink:#E9F1ED; --ink2:#97ABA3; --ink3:#6C7F78;
+  --pri:#37776A; --pri-d:#2A5F54; --pri-l:rgba(55,119,106,.28);
+  --acc:#D2703F; --acc-l:rgba(210,112,63,.20); --acc-ink:#E8AF8C;
+  --btn:linear-gradient(135deg,#37776A,#2A5F54); --btntx:#fff;
+  --sh:0 3px 12px rgba(0,0,0,.30); --owner:#F2F7F5;
+}
+.t-b3{--surf2:#235046}
+
+.phone{background:var(--bg);color:var(--ink)}
+.sb{height:26px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 20px 3px;
+  font-size:11px;font-weight:600;letter-spacing:.02em;flex:0 0 auto}
+.sb .r{display:flex;gap:4px;align-items:center}
+.sb .bat{width:18px;height:9px;border:1.3px solid var(--ink);border-radius:3px;position:relative;opacity:.85}
+.sb .bat::after{content:"";position:absolute;inset:1.4px;right:5px;background:var(--ink);border-radius:1px}
+.pbody{flex:1;overflow:hidden;display:flex;flex-direction:column;position:relative}
+.pscroll{flex:1;overflow-y:auto;overflow-x:hidden;padding:0 13px;scrollbar-width:none}
+.pscroll::-webkit-scrollbar{width:0}
+.tb{height:52px;flex:0 0 auto;background:var(--surf);border-top:1px solid var(--line);display:flex;align-items:center}
+.tb .it{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;font-size:9.5px;color:var(--ink3);font-weight:500}
+.tb .it svg{width:19px;height:19px;stroke:var(--ink3);stroke-width:1.7;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.tb .it.on{color:var(--pri)}
+.tb .it.on svg{stroke:var(--pri)}
+.m-nav{display:flex;align-items:center;justify-content:space-between;padding:2px 15px 11px}
+.m-nav .t{font-size:18px;font-weight:700;letter-spacing:-.01em}
+.m-nav .dt{font-size:11px;color:var(--ink2);font-weight:500;margin-top:1px}
+.avars{display:flex}
+.avar{width:24px;height:24px;border-radius:50%;border:2px solid var(--bg);margin-left:-8px;
+  display:flex;align-items:center;justify-content:center;font-size:9.5px;font-weight:700;color:#fff}
+.avar:first-child{margin-left:0}
+.sech{display:flex;align-items:baseline;justify-content:space-between;margin:4px 2px 8px}
+.sech .t{font-size:13px;font-weight:700}
+.sech .m{font-size:11px;color:var(--pri)}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:9px}
+.dish{background:var(--surf);border-radius:13px;overflow:hidden;border:1px solid var(--line);position:relative;box-shadow:var(--sh)}
+.dish .im{height:84px;position:relative}
+.dish .nm{font-size:12px;font-weight:700;padding:6px 9px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dish .tg{display:flex;gap:4px;padding:5px 9px 8px;flex-wrap:wrap}
+.dish .tgg{font-size:9px;background:var(--surf2);color:var(--ink2);padding:1px 6px;border-radius:5px;font-weight:600}
+.owner{position:absolute;left:6px;top:6px;display:flex;align-items:center;gap:4px;background:var(--owner);
+  border-radius:999px;padding:2px 7px 2px 3px;font-size:9px;font-weight:700;color:#1B2320}
+.owner i{width:14px;height:14px;border-radius:50%;display:block}
+.sug{display:flex;align-items:center;gap:8px;background:var(--acc-l);border:1px solid rgba(210,112,63,.36);
+  border-radius:12px;padding:9px 11px;margin:9px 0}
+.sug .e{font-size:14px}
+.sug .tx{font-size:11px;color:var(--acc-ink);font-weight:600;line-height:1.45}
+.sug .go{margin-left:auto;font-size:10px;font-weight:700;color:#fff;background:var(--acc);border-radius:999px;padding:4px 9px}
+.cartline{display:flex;align-items:center;gap:9px;background:var(--surf);border:1px solid var(--line);
+  border-radius:12px;padding:10px 12px;box-shadow:var(--sh)}
+.cartline .ci{width:32px;height:32px;border-radius:9px;background:var(--pri-l);display:flex;align-items:center;justify-content:center}
+.cartline .ci svg{width:17px;height:17px;stroke:var(--pri);stroke-width:1.8;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.cartline .t{font-size:12px;font-weight:700}
+.cartline .s{font-size:10.5px;color:var(--ink2);margin-top:1px}
+.cartline .arw{margin-left:auto;color:var(--ink3);font-size:15px}
+.fixbar{flex:0 0 auto;padding:9px 13px;background:var(--surf);border-top:1px solid var(--line)}
+.mainbtn{background:var(--btn);color:var(--btntx);border-radius:999px;height:43px;display:flex;align-items:center;
+  justify-content:center;font-size:14.5px;font-weight:700}
+.mainbtn.ghost{background:transparent;color:var(--ink);border:1.5px solid var(--line);box-shadow:none}
+.btnrow{display:flex;gap:8px}
+.btnrow>*{flex:1}
+.ph{position:relative;overflow:hidden}
+.ph::after{content:"";position:absolute;inset:0;background:
+  radial-gradient(60% 55% at 32% 34%, rgba(255,255,255,.30), rgba(255,255,255,0) 70%),
+  radial-gradient(45% 45% at 76% 78%, rgba(0,0,0,.20), rgba(0,0,0,0) 74%)}
+.t-b2 .ph::before,.t-b3 .ph::before,.t-b4 .ph::before{content:"";position:absolute;inset:0;background:rgba(10,14,12,.18)}
+.g1{background:linear-gradient(140deg,#E7A176,#C0613F)}
+.g2{background:linear-gradient(140deg,#BFCB93,#6E8B4E)}
+.g4{background:linear-gradient(140deg,#D9A0A0,#A85E5E)}
+.g5{background:linear-gradient(140deg,#9DBCC9,#5B7F91)}
+.a1{background:#D9714E}.a2{background:#7E9A5C}.a3{background:#C79A3C}
+</style></head>
+<body>
+<div class="hero"><div class="wrap">
+  <div class="kicker">家庭菜单 · 背景色候选 · 全部取自方案 B 原值</div>
+  <h1>背景色不该是我配的黑色 —— <b>从 B 的原值里挑一个</b></h1>
+  <p>之前那个 <code>#141C19</code> 是我自己调的，确实不该出现在里面。方案 B 其实自带 4 个可以当背景的色值：它的<b>底色</b>、<b>主色</b>、<b>主色深</b>、<b>正文色</b>。四个都摆在下面，同一屏，你指一个。</p>
+</div></div>
+
+<div class="wrap">
+  <h2 class="sec"><span class="n">01</span>四个候选</h2>
+  <table>
+    <tr><th style="width:5%"></th><th style="width:14%">底色</th><th style="width:26%">感觉</th><th style="width:14%">卡片</th><th style="width:16%">主文字</th><th>主按钮</th></tr>
+    <tr><td><b>①</b></td><td><code>F5F8F6</code></td><td>雾白 —— 就是 B 原稿的样子，浅色</td><td><code>#FFFFFF</code></td><td><code>#1F2A26</code></td><td>#37776A</td></tr><tr><td><b>②</b></td><td><code>37776A</code></td><td>墨绿 —— 整屏泡在 B 的墨绿里</td><td><code>#438476</code></td><td><code>#F0F7F4</code></td><td>白色按钮</td></tr><tr><td><b>③</b></td><td><code>2A5F54</code></td><td>深墨绿 —— 比主色再沉一档</td><td><code>#336B5F</code></td><td><code>#E8F3EF</code></td><td>白色按钮</td></tr><tr><td><b>④</b></td><td><code>1F2A26</code></td><td>墨绿黑 —— B 里最暗的那个色</td><td><code>#27332E</code></td><td><code>#E9F1ED</code></td><td>#37776A</td></tr>
+  </table>
+
+  <h2 class="sec"><span class="n">02</span>同一屏实测</h2>
+  <div class="cols">
+  <div class="col t-b1">
+    <div class="colhd">
+      <div class="nm">B 的底色 #F5F8F6</div>
+      <div class="sb">雾白 —— 就是 B 原稿的样子，浅色<br/><span class="tag b">底色 B 原值</span> <span class="tag d">卡片/文字 配套推导</span></div>
+    </div>
+    
+<div class="phone">
+  <div class="sb"><span>18:12</span><span class="r">●●● ▮ <span class="bat"></span></span></div>
+  <div class="pbody">
+    <div class="pscroll">
+      <div class="m-nav">
+        <div><div class="t">今晚</div><div class="dt">10月8日 周三 · 3 人</div></div>
+        <div class="avars"><span class="avar a1">爸</span><span class="avar a2">妈</span><span class="avar a3">我</span></div>
+      </div>
+      <div class="sech"><span class="t">今晚的桌 · 4 道</span><span class="m">编辑</span></div>
+      <div class="g2">
+        <div class="dish"><div class="im ph g1"></div><div class="owner"><i class="a2"></i>妈妈点的</div>
+          <div class="nm">番茄炒蛋</div><div class="tg"><span class="tgg">家常</span></div></div>
+        <div class="dish"><div class="im ph g4"></div><div class="owner"><i class="a1"></i>爸爸点的</div>
+          <div class="nm">红烧肉</div><div class="tg"><span class="tgg">慢炖</span></div></div>
+        <div class="dish"><div class="im ph g2"></div><div class="owner"><i class="a3"></i>我点的</div>
+          <div class="nm">蒜蓉小青菜</div><div class="tg"><span class="tgg">清爽</span></div></div>
+        <div class="dish"><div class="im ph g5"></div><div class="owner"><i class="a1"></i>爸爸点的</div>
+          <div class="nm">冬瓜排骨汤</div><div class="tg"><span class="tgg">汤羹</span></div></div>
+      </div>
+      <div class="sug"><span class="e">💡</span>
+        <div class="tx">荤菜有点多，要不要加个凉菜？<br/><span style="opacity:.75;font-weight:500">凉拌黄瓜 · 拌海带丝</span></div>
+        <span class="go">去看看</span></div>
+      <div class="cartline">
+        <div class="ci"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 10.5a1.5 1.5 0 0 1-1.5 1.3H7.7a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></div>
+        <div><div class="t">今日采购清单</div><div class="s">4 项未买 · 妈妈正在买</div></div>
+        <span class="arw">›</span>
+      </div>
+    </div>
+    <div class="fixbar"><div class="btnrow">
+      <div class="mainbtn ghost" style="flex:.42">分享</div>
+      <div class="mainbtn">确认这顿饭</div>
+    </div></div>
+    <div class="tb"><div class="it on"><svg viewBox="0 0 24 24"><path d="M4 11h16a8 8 0 0 1-8 8 8 8 0 0 1-8-8z"/><path d="M9 11V4M15 11V4"/></svg>今晚</div><div class="it"><svg viewBox="0 0 24 24"><path d="M4 5h6a3 3 0 0 1 3 3v11a2.5 2.5 0 0 0-2.5-2.5H4z"/><path d="M20 5h-6a3 3 0 0 0-3 3v11a2.5 2.5 0 0 1 2.5-2.5H20z"/></svg>菜库</div><div class="it"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/></svg>日历</div><div class="it"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6.2a3 3 0 0 1 0 5.6M17.5 19.5c0-2.3-.7-3.8-1.8-4.7"/></svg>家庭</div></div>
+  </div>
+</div>
+    <div class="cap">等于把 B 原样落地，没有深色模式</div>
+  </div>
+  <div class="col t-b2">
+    <div class="colhd">
+      <div class="nm">B 的主色 #37776A</div>
+      <div class="sb">墨绿 —— 整屏泡在 B 的墨绿里<br/><span class="tag b">底色 B 原值</span> <span class="tag d">卡片/文字 配套推导</span></div>
+    </div>
+    
+<div class="phone">
+  <div class="sb"><span>18:12</span><span class="r">●●● ▮ <span class="bat"></span></span></div>
+  <div class="pbody">
+    <div class="pscroll">
+      <div class="m-nav">
+        <div><div class="t">今晚</div><div class="dt">10月8日 周三 · 3 人</div></div>
+        <div class="avars"><span class="avar a1">爸</span><span class="avar a2">妈</span><span class="avar a3">我</span></div>
+      </div>
+      <div class="sech"><span class="t">今晚的桌 · 4 道</span><span class="m">编辑</span></div>
+      <div class="g2">
+        <div class="dish"><div class="im ph g1"></div><div class="owner"><i class="a2"></i>妈妈点的</div>
+          <div class="nm">番茄炒蛋</div><div class="tg"><span class="tgg">家常</span></div></div>
+        <div class="dish"><div class="im ph g4"></div><div class="owner"><i class="a1"></i>爸爸点的</div>
+          <div class="nm">红烧肉</div><div class="tg"><span class="tgg">慢炖</span></div></div>
+        <div class="dish"><div class="im ph g2"></div><div class="owner"><i class="a3"></i>我点的</div>
+          <div class="nm">蒜蓉小青菜</div><div class="tg"><span class="tgg">清爽</span></div></div>
+        <div class="dish"><div class="im ph g5"></div><div class="owner"><i class="a1"></i>爸爸点的</div>
+          <div class="nm">冬瓜排骨汤</div><div class="tg"><span class="tgg">汤羹</span></div></div>
+      </div>
+      <div class="sug"><span class="e">💡</span>
+        <div class="tx">荤菜有点多，要不要加个凉菜？<br/><span style="opacity:.75;font-weight:500">凉拌黄瓜 · 拌海带丝</span></div>
+        <span class="go">去看看</span></div>
+      <div class="cartline">
+        <div class="ci"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 10.5a1.5 1.5 0 0 1-1.5 1.3H7.7a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></div>
+        <div><div class="t">今日采购清单</div><div class="s">4 项未买 · 妈妈正在买</div></div>
+        <span class="arw">›</span>
+      </div>
+    </div>
+    <div class="fixbar"><div class="btnrow">
+      <div class="mainbtn ghost" style="flex:.42">分享</div>
+      <div class="mainbtn">确认这顿饭</div>
+    </div></div>
+    <div class="tb"><div class="it on"><svg viewBox="0 0 24 24"><path d="M4 11h16a8 8 0 0 1-8 8 8 8 0 0 1-8-8z"/><path d="M9 11V4M15 11V4"/></svg>今晚</div><div class="it"><svg viewBox="0 0 24 24"><path d="M4 5h6a3 3 0 0 1 3 3v11a2.5 2.5 0 0 0-2.5-2.5H4z"/><path d="M20 5h-6a3 3 0 0 0-3 3v11a2.5 2.5 0 0 1 2.5-2.5H20z"/></svg>菜库</div><div class="it"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/></svg>日历</div><div class="it"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6.2a3 3 0 0 1 0 5.6M17.5 19.5c0-2.3-.7-3.8-1.8-4.7"/></svg>家庭</div></div>
+  </div>
+</div>
+    <div class="cap">最“青瓷”，但整屏大面积绿，长时间看可能偏重</div>
+  </div>
+  <div class="col t-b3">
+    <div class="colhd">
+      <div class="nm">B 的主色深 #2A5F54</div>
+      <div class="sb">深墨绿 —— 比主色再沉一档<br/><span class="tag b">底色 B 原值</span> <span class="tag d">卡片/文字 配套推导</span></div>
+    </div>
+    
+<div class="phone">
+  <div class="sb"><span>18:12</span><span class="r">●●● ▮ <span class="bat"></span></span></div>
+  <div class="pbody">
+    <div class="pscroll">
+      <div class="m-nav">
+        <div><div class="t">今晚</div><div class="dt">10月8日 周三 · 3 人</div></div>
+        <div class="avars"><span class="avar a1">爸</span><span class="avar a2">妈</span><span class="avar a3">我</span></div>
+      </div>
+      <div class="sech"><span class="t">今晚的桌 · 4 道</span><span class="m">编辑</span></div>
+      <div class="g2">
+        <div class="dish"><div class="im ph g1"></div><div class="owner"><i class="a2"></i>妈妈点的</div>
+          <div class="nm">番茄炒蛋</div><div class="tg"><span class="tgg">家常</span></div></div>
+        <div class="dish"><div class="im ph g4"></div><div class="owner"><i class="a1"></i>爸爸点的</div>
+          <div class="nm">红烧肉</div><div class="tg"><span class="tgg">慢炖</span></div></div>
+        <div class="dish"><div class="im ph g2"></div><div class="owner"><i class="a3"></i>我点的</div>
+          <div class="nm">蒜蓉小青菜</div><div class="tg"><span class="tgg">清爽</span></div></div>
+        <div class="dish"><div class="im ph g5"></div><div class="owner"><i class="a1"></i>爸爸点的</div>
+          <div class="nm">冬瓜排骨汤</div><div class="tg"><span class="tgg">汤羹</span></div></div>
+      </div>
+      <div class="sug"><span class="e">💡</span>
+        <div class="tx">荤菜有点多，要不要加个凉菜？<br/><span style="opacity:.75;font-weight:500">凉拌黄瓜 · 拌海带丝</span></div>
+        <span class="go">去看看</span></div>
+      <div class="cartline">
+        <div class="ci"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 10.5a1.5 1.5 0 0 1-1.5 1.3H7.7a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></div>
+        <div><div class="t">今日采购清单</div><div class="s">4 项未买 · 妈妈正在买</div></div>
+        <span class="arw">›</span>
+      </div>
+    </div>
+    <div class="fixbar"><div class="btnrow">
+      <div class="mainbtn ghost" style="flex:.42">分享</div>
+      <div class="mainbtn">确认这顿饭</div>
+    </div></div>
+    <div class="tb"><div class="it on"><svg viewBox="0 0 24 24"><path d="M4 11h16a8 8 0 0 1-8 8 8 8 0 0 1-8-8z"/><path d="M9 11V4M15 11V4"/></svg>今晚</div><div class="it"><svg viewBox="0 0 24 24"><path d="M4 5h6a3 3 0 0 1 3 3v11a2.5 2.5 0 0 0-2.5-2.5H4z"/><path d="M20 5h-6a3 3 0 0 0-3 3v11a2.5 2.5 0 0 1 2.5-2.5H20z"/></svg>菜库</div><div class="it"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/></svg>日历</div><div class="it"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6.2a3 3 0 0 1 0 5.6M17.5 19.5c0-2.3-.7-3.8-1.8-4.7"/></svg>家庭</div></div>
+  </div>
+</div>
+    <div class="cap">沉稳、有质感，比 #37776A 更适合当大面积底色</div>
+  </div>
+  <div class="col t-b4">
+    <div class="colhd">
+      <div class="nm">B 的正文色 #1F2A26</div>
+      <div class="sb">墨绿黑 —— B 里最暗的那个色<br/><span class="tag b">底色 B 原值</span> <span class="tag d">卡片/文字 配套推导</span></div>
+    </div>
+    
+<div class="phone">
+  <div class="sb"><span>18:12</span><span class="r">●●● ▮ <span class="bat"></span></span></div>
+  <div class="pbody">
+    <div class="pscroll">
+      <div class="m-nav">
+        <div><div class="t">今晚</div><div class="dt">10月8日 周三 · 3 人</div></div>
+        <div class="avars"><span class="avar a1">爸</span><span class="avar a2">妈</span><span class="avar a3">我</span></div>
+      </div>
+      <div class="sech"><span class="t">今晚的桌 · 4 道</span><span class="m">编辑</span></div>
+      <div class="g2">
+        <div class="dish"><div class="im ph g1"></div><div class="owner"><i class="a2"></i>妈妈点的</div>
+          <div class="nm">番茄炒蛋</div><div class="tg"><span class="tgg">家常</span></div></div>
+        <div class="dish"><div class="im ph g4"></div><div class="owner"><i class="a1"></i>爸爸点的</div>
+          <div class="nm">红烧肉</div><div class="tg"><span class="tgg">慢炖</span></div></div>
+        <div class="dish"><div class="im ph g2"></div><div class="owner"><i class="a3"></i>我点的</div>
+          <div class="nm">蒜蓉小青菜</div><div class="tg"><span class="tgg">清爽</span></div></div>
+        <div class="dish"><div class="im ph g5"></div><div class="owner"><i class="a1"></i>爸爸点的</div>
+          <div class="nm">冬瓜排骨汤</div><div class="tg"><span class="tgg">汤羹</span></div></div>
+      </div>
+      <div class="sug"><span class="e">💡</span>
+        <div class="tx">荤菜有点多，要不要加个凉菜？<br/><span style="opacity:.75;font-weight:500">凉拌黄瓜 · 拌海带丝</span></div>
+        <span class="go">去看看</span></div>
+      <div class="cartline">
+        <div class="ci"><svg viewBox="0 0 24 24"><path d="M5 8h14l-1.2 10.5a1.5 1.5 0 0 1-1.5 1.3H7.7a1.5 1.5 0 0 1-1.5-1.3z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></div>
+        <div><div class="t">今日采购清单</div><div class="s">4 项未买 · 妈妈正在买</div></div>
+        <span class="arw">›</span>
+      </div>
+    </div>
+    <div class="fixbar"><div class="btnrow">
+      <div class="mainbtn ghost" style="flex:.42">分享</div>
+      <div class="mainbtn">确认这顿饭</div>
+    </div></div>
+    <div class="tb"><div class="it on"><svg viewBox="0 0 24 24"><path d="M4 11h16a8 8 0 0 1-8 8 8 8 0 0 1-8-8z"/><path d="M9 11V4M15 11V4"/></svg>今晚</div><div class="it"><svg viewBox="0 0 24 24"><path d="M4 5h6a3 3 0 0 1 3 3v11a2.5 2.5 0 0 0-2.5-2.5H4z"/><path d="M20 5h-6a3 3 0 0 0-3 3v11a2.5 2.5 0 0 1 2.5-2.5H20z"/></svg>菜库</div><div class="it"><svg viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2.5"/><path d="M3.5 9.5h17M8 3.5v3M16 3.5v3"/></svg>日历</div><div class="it"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19.5c0-3 2.5-5 5.5-5s5.5 2 5.5 5"/><path d="M16 6.2a3 3 0 0 1 0 5.6M17.5 19.5c0-2.3-.7-3.8-1.8-4.7"/></svg>家庭</div></div>
+  </div>
+</div>
+    <div class="cap">最接近传统“深色模式”，但仍带明显绿味、不黑</div>
+  </div></div>
+
+  <p style="font-size:12.5px;color:#6D655C;margin-top:22px">
+    说明：<b>底色四个都是方案 B 的原值</b>，一个没改。卡片色与深色文字是必须配套推导的（B 里没有这些值），已在每列下方标注。
+    主色 <code>#37776A</code>、强调 <code>#D2703F</code> 依旧照搬 B，未动。
+  </p>
+</div>
+</body></html>

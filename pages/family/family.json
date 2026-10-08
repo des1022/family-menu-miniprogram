@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "家庭",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "@bgTxtStyle",
+  "usingComponents": {}
+}

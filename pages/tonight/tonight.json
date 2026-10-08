@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "今晚",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "@bgTxtStyle",
+  "usingComponents": {}
+}

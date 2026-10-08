@@ -22,8 +22,8 @@ function confirm(content, title = '提示', confirmText = '确定') {
       title,
       content,
       confirmText,
-      confirmColor: '#FF7A45',
-      cancelColor: '#8A9099',
+      confirmColor: '#D9714E',
+      cancelColor: '#8B8178',
       success: res => resolve(!!res.confirm),
       fail: () => resolve(false)
     })

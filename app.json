@@ -1,42 +1,47 @@
 {
   "pages": [
-    "pages/index/index",
+    "pages/tonight/tonight",
+    "pages/dishes/dishes",
     "pages/calendar/calendar",
-    "pages/mine/mine",
-    "pages/stats/stats",
-    "pages/poster/poster",
-    "pages/confirm/confirm",
-    "pages/admin/admin",
+    "pages/family/family",
     "pages/dish-edit/dish-edit",
-    "pages/category/category"
+    "pages/admin/admin",
+    "pages/category/category",
+    "pages/poster/poster"
   ],
   "window": {
-    "backgroundTextStyle": "dark",
-    "navigationBarBackgroundColor": "#FF7A45",
+    "backgroundTextStyle": "@bgTxtStyle",
+    "navigationBarBackgroundColor": "@navBgColor",
     "navigationBarTitleText": "家庭菜单",
-    "navigationBarTextStyle": "white",
-    "backgroundColor": "#F6F7F9"
+    "navigationBarTextStyle": "@navTxtStyle",
+    "backgroundColor": "@bgColor"
   },
   "tabBar": {
-    "color": "#8A9099",
-    "selectedColor": "#FF7A45",
-    "backgroundColor": "#FFFFFF",
-    "borderStyle": "white",
+    "color": "@tabFontColor",
+    "selectedColor": "@tabSelectedColor",
+    "backgroundColor": "@tabBgColor",
+    "borderStyle": "@tabBorderStyle",
     "list": [
       {
-        "pagePath": "pages/index/index",
-        "text": "点菜"
+        "pagePath": "pages/tonight/tonight",
+        "text": "今晚"
+      },
+      {
+        "pagePath": "pages/dishes/dishes",
+        "text": "菜库"
       },
       {
         "pagePath": "pages/calendar/calendar",
         "text": "日历"
       },
       {
-        "pagePath": "pages/mine/mine",
-        "text": "我的"
+        "pagePath": "pages/family/family",
+        "text": "家庭"
       }
     ]
   },
+  "darkmode": true,
+  "themeLocation": "theme.json",
   "style": "v2",
   "sitemapLocation": "sitemap.json",
   "lazyCodeLoading": "requiredComponents"

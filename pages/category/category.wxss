@@ -11,11 +11,11 @@
 .add-input {
   flex: 1;
   height: 88rpx;
-  background: #F7F8FA;
+  background: var(--bg);
   border-radius: 12rpx;
   padding: 0 24rpx;
   font-size: 30rpx;
-  color: #1F2329;
+  color: var(--ink);
 }
 
 .add-btn {
@@ -23,8 +23,8 @@
   height: 88rpx;
   margin-left: 20rpx;
   border-radius: 12rpx;
-  background: #FF7A45;
-  color: #fff;
+  background: var(--pri);
+  color: var(--surf);
   font-size: 30rpx;
   display: flex;
   align-items: center;
@@ -32,17 +32,17 @@
 }
 
 .add-btn:active {
-  background: #E85F2B;
+  background: var(--pri-d);
 }
 
 .ph {
-  color: #B4B9C0;
+  color: var(--ink3);
 }
 
 .section-title {
   padding: 24rpx 32rpx 8rpx;
   font-size: 28rpx;
-  color: #8A9099;
+  color: var(--ink2);
 }
 
 .cat-item {
@@ -65,26 +65,26 @@
 
 .cat-name {
   font-size: 32rpx;
-  color: #1F2329;
+  color: var(--ink);
 }
 
 .cat-count {
   font-size: 24rpx;
-  color: #B4B9C0;
+  color: var(--ink3);
   margin-left: 16rpx;
 }
 
 .cat-del {
   padding: 12rpx 28rpx;
   border-radius: 10rpx;
-  background: #FFF1F0;
-  color: #F5222D;
+  background: var(--surf);
+  color: var(--danger);
   font-size: 28rpx;
 }
 
 .tip {
   margin: 32rpx 32rpx 0;
   font-size: 24rpx;
-  color: #B4B9C0;
+  color: var(--ink3);
   line-height: 1.7;
 }

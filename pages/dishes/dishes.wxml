@@ -1,0 +1,131 @@
+<view class="page page--tab {{themeCls}}">
+  <view class="page-body">
+
+    <!-- 页头 -->
+    <view class="hd">
+      <view>
+        <view class="t-h1">菜库</view>
+        <view class="t-sub">{{allCount}} 道 · 上架 {{showCount}} 道</view>
+      </view>
+      <view class="layout-btn" bindtap="onToggleLayout">{{layout === 0 ? '列表' : '网格'}}</view>
+    </view>
+
+    <!-- 搜索 -->
+    <view class="searchbar">
+      <image class="sb-ico" src="{{ico.search}}"/>
+      <input
+        class="sb-input"
+        value="{{keyword}}"
+        placeholder="搜索菜名 / 食材"
+        placeholder-class="sb-ph"
+        confirm-type="search"
+        bindinput="onSearchInput"
+        bindconfirm="noop"
+      />
+      <view class="sb-x" wx:if="{{keyword}}" bindtap="onClearSearch">✕</view>
+    </view>
+
+    <!-- 筛选胶囊 -->
+    <view class="chips">
+      <view
+        class="chip {{activeKey === item.key ? 'chip--on' : ''}} {{item.acc ? 'chip--accstar' : ''}}"
+        wx:for="{{chips}}"
+        wx:key="key"
+        data-key="{{item.key}}"
+        bindtap="onSwitchFilter"
+      >{{item.label}}</view>
+
+      <picker mode="selector" range="{{catNames}}" bindchange="onPickCat">
+        <view class="chip {{activeKey === activeCat ? 'chip--on' : ''}}">
+          {{activeCat || '分类 ▾'}}
+        </view>
+      </picker>
+
+      <view class="chip chip--clear" wx:if="{{hasFilter}}" bindtap="onClearFilter">清除 ✕</view>
+    </view>
+
+    <!-- 网格视图 -->
+    <view class="grid" wx:if="{{layout === 0}}">
+      <view class="card-dish" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="onOpenDetail" hover-class="card-dish--hover">
+        <image class="cd-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+        <view class="cd-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
+        <view class="cd-fav" wx:if="{{item.favorite === 1}}">★</view>
+        <view class="cd-on" wx:if="{{item.onTonight}}">已点</view>
+        <view class="cd-body">
+          <view class="cd-nm ellipsis">{{item.name}}</view>
+          <view class="cd-tg">
+            <text class="tag" wx:if="{{item.category}}">{{item.category}}</text>
+            <text class="tag tag--pri" wx:if="{{item.tip}}">{{item.tip}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 列表视图 -->
+    <view class="list" wx:if="{{layout === 1}}">
+      <view class="row-dish" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="onOpenDetail" hover-class="row-dish--hover">
+        <image class="rd-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+        <view class="rd-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
+        <view class="rd-main">
+          <view class="rd-nm">
+            <text class="ellipsis">{{item.name}}</text>
+            <text class="rd-star" wx:if="{{item.favorite === 1}}">★</text>
+          </view>
+          <view class="rd-tg">
+            <text class="tag" wx:if="{{item.category}}">{{item.category}}</text>
+            <text class="tag tag--pri" wx:if="{{item.tip}}">{{item.tip}}</text>
+            <text class="tag tag--ok" wx:if="{{item.onTonight}}">已在今晚</text>
+          </view>
+        </view>
+        <view class="rd-add {{item.onTonight ? 'rd-add--on' : ''}}" catchtap="onToggleTonight" data-id="{{item._id}}">
+          {{item.onTonight ? '✓' : '＋'}}
+        </view>
+      </view>
+    </view>
+
+    <!-- 空态 -->
+    <view class="empty-ph" wx:if="{{!loading && !list.length}}">
+      <view class="ep-img"></view>
+      <view class="ep-t">{{keyword ? '没找到这道菜' : (hasFilter ? '这个筛选下没有菜' : '菜库还是空的')}}</view>
+      <view class="ep-s">{{keyword ? '换个关键词试试' : (hasFilter ? '换个筛选看看' : '点右下角添加，或去「今晚」一键填入示例菜库')}}</view>
+    </view>
+
+  </view>
+
+  <!-- 悬浮：添加菜品 -->
+  <view class="fab" bindtap="goAdd">＋</view>
+
+  <!-- 详情弹层 -->
+  <view class="sheet-mask" wx:if="{{detail}}" bindtap="closeDetail" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-grab"></view>
+      <view class="dt-hero">
+        <image class="dt-img dish-dim" wx:if="{{detail.image}}" src="{{detail.image}}" mode="aspectFill"/>
+        <view class="dt-img img-ph {{detail.ph}}" wx:else>{{detail.initial}}</view>
+        <view class="dt-fav {{detail.favorite === 1 ? 'dt-fav--on' : ''}}" catchtap="onToggleFav">{{detail.favorite === 1 ? '★' : '☆'}}</view>
+      </view>
+      <view class="dt-nm">{{detail.name}}</view>
+      <view class="dt-meta">
+        <text class="tag" wx:if="{{detail.category}}">{{detail.category}}</text>
+        <text class="tag tag--pri" wx:for="{{detail.tagList}}" wx:key="*this">{{item}}</text>
+        <text class="t-micro" wx:if="{{detail.lastText}}">{{detail.lastText}}</text>
+      </view>
+      <view class="dt-sec" wx:if="{{detail.ingredients}}">
+        <view class="dt-h">食材</view>
+        <view class="dt-ing">
+          <text class="dt-ing-i" wx:for="{{detail.ingList}}" wx:key="*this">{{item}}</text>
+        </view>
+      </view>
+      <view class="dt-sec" wx:if="{{detail.desc}}">
+        <view class="dt-h">备注</view>
+        <view class="dt-tx">{{detail.desc}}</view>
+      </view>
+      <view class="btn-row dt-actions">
+        <view class="btn btn-ghost" bindtap="onEdit">编辑</view>
+        <view class="btn {{detail.onTonight ? 'btn-plain' : 'btn-primary'}}" bindtap="onToggleTonight" data-id="{{detail._id}}">
+          {{detail.onTonight ? '从今晚撤掉' : '加入今晚'}}
+        </view>
+      </view>
+    </view>
+  </view>
+</view>

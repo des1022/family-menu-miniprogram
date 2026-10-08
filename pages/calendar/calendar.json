@@ -1,4 +1,5 @@
 {
-  "navigationBarTitleText": "菜单日历",
-  "enablePullDownRefresh": true
+  "navigationBarTitleText": "日历",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "@bgTxtStyle"
 }

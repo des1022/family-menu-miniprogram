@@ -1,0 +1,230 @@
+/* ==================== 页头 ==================== */
+.hd {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 24rpx 4rpx 20rpx;
+}
+
+.avars { display: flex; align-items: center; }
+.avar {
+  width: 52rpx; height: 52rpx;
+  border-radius: 50%;
+  border: 4rpx solid var(--bg);
+  margin-left: -16rpx;
+  display: flex; align-items: center; justify-content: center;
+  color: #fff; font-size: 22rpx; font-weight: 700;
+}
+.avar:first-child { margin-left: 0; }
+.avar--off { opacity: 0.32; }
+
+/* ==================== 今晚在家吃 ==================== */
+.eatro {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 24rpx;
+  padding: 22rpx 24rpx;
+  box-shadow: var(--sh);
+}
+.eatro-l { font-size: 26rpx; color: var(--ink2); }
+.eatro-v { margin-left: auto; font-size: 30rpx; font-weight: 700; color: var(--pri-ink); }
+
+/* ==================== 未点态 ==================== */
+.hero-q {
+  font-size: 62rpx;
+  font-weight: 800;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  margin: 40rpx 4rpx 34rpx;
+}
+.hero-q-hl { color: var(--pri-ink); }
+
+.dash {
+  background: var(--surf);
+  border: 2rpx dashed var(--line);
+  border-radius: var(--r-card);
+  padding: 44rpx 28rpx;
+  text-align: center;
+}
+.dash-ico { width: 96rpx; height: 96rpx; opacity: 0.55; }
+.dash-t { font-size: 30rpx; font-weight: 700; margin-top: 12rpx; }
+.dash-s { font-size: 25rpx; color: var(--ink2); margin-top: 8rpx; }
+
+/* 大动作按钮 */
+.big-btn {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  border-radius: var(--r-card);
+  padding: 28rpx 26rpx;
+  margin-top: 22rpx;
+  width: 100%;
+  text-align: left;
+  line-height: 1.4;
+  border: none;
+}
+.big-btn::after { border: none; }
+.big-btn--primary {
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  box-shadow: var(--btn-sh);
+}
+.big-btn--ghost {
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  color: var(--ink);
+  box-shadow: var(--sh);
+}
+.bb-ic {
+  width: 76rpx; height: 76rpx; flex: 0 0 auto;
+  border-radius: 22rpx;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255, 255, 255, 0.22);
+}
+.big-btn--ghost .bb-ic { background: var(--acc-l); }
+.bb-img { width: 40rpx; height: 40rpx; }
+.bb-tx { flex: 1; }
+.bb-t { font-size: 32rpx; font-weight: 700; }
+.bb-s { font-size: 24rpx; opacity: 0.8; margin-top: 4rpx; }
+
+/* 横滑小卡 */
+.hscroll { white-space: nowrap; width: 100%; }
+.mini {
+  display: inline-block;
+  width: 210rpx;
+  margin-right: 18rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 22rpx;
+  overflow: hidden;
+  box-shadow: var(--sh);
+  vertical-align: top;
+}
+.mini--hover { opacity: 0.8; }
+.mini-img { width: 100%; height: 132rpx; font-size: 34rpx; }
+.mini-nm { font-size: 25rpx; font-weight: 700; padding: 14rpx 16rpx 0; }
+.mini-sub { font-size: 20rpx; color: var(--ink2); padding: 4rpx 16rpx 16rpx; }
+
+/* 示例菜库引导卡 */
+.seed-card {
+  margin-top: 34rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-card);
+  padding: 30rpx 28rpx;
+  box-shadow: var(--sh);
+}
+.seed-t { font-size: 30rpx; font-weight: 700; }
+.seed-s { font-size: 25rpx; color: var(--ink2); margin: 8rpx 0 22rpx; }
+
+/* ==================== 已点态 · 菜品卡墙 ==================== */
+.g2 { display: flex; flex-wrap: wrap; margin: 0 -9rpx; }
+.dish {
+  position: relative;
+  width: calc(50% - 18rpx);
+  margin: 9rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 26rpx;
+  overflow: hidden;
+  box-shadow: var(--sh);
+}
+.dish-img { width: 100%; height: 200rpx; font-size: 48rpx; }
+.dish-body { padding: 16rpx 18rpx 20rpx; }
+.dish-nm { font-size: 27rpx; font-weight: 700; }
+.dish-tg { display: flex; gap: 8rpx; margin-top: 10rpx; flex-wrap: wrap; }
+.owner {
+  position: absolute;
+  left: 14rpx; top: 14rpx;
+  display: flex; align-items: center; gap: 8rpx;
+  background: var(--owner-bg);
+  color: var(--owner-ink);
+  border-radius: 999rpx;
+  padding: 4rpx 16rpx 4rpx 6rpx;
+  font-size: 20rpx; font-weight: 700;
+}
+.owner-dot { width: 28rpx; height: 28rpx; border-radius: 50%; }
+.dish-x {
+  position: absolute;
+  right: 10rpx; top: 10rpx;
+  width: 46rpx; height: 46rpx;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.34);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 26rpx;
+}
+
+/* ==================== 搭配建议 ==================== */
+.sug {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: var(--acc-l);
+  border: 2rpx solid var(--acc);
+  border-radius: 24rpx;
+  padding: 20rpx 24rpx;
+  margin-top: 26rpx;
+}
+.sug-tx { flex: 1; font-size: 25rpx; font-weight: 700; color: var(--acc-ink); line-height: 1.5; }
+.sug-hint { display: block; font-size: 22rpx; font-weight: 500; opacity: 0.82; }
+.sug-go {
+  flex: 0 0 auto;
+  background: var(--acc);
+  color: #fff;
+  border-radius: 999rpx;
+  padding: 10rpx 22rpx;
+  font-size: 23rpx;
+  font-weight: 700;
+}
+
+/* ==================== 食材入口卡 ==================== */
+.row-card {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 24rpx;
+  padding: 24rpx 26rpx;
+  margin-top: 22rpx;
+  box-shadow: var(--sh);
+}
+.rc-ic {
+  width: 68rpx; height: 68rpx; flex: 0 0 auto;
+  border-radius: 20rpx;
+  background: var(--pri-l);
+  display: flex; align-items: center; justify-content: center;
+}
+.rc-img { width: 38rpx; height: 38rpx; }
+.rc-main { flex: 1; }
+.rc-t { font-size: 29rpx; font-weight: 700; }
+.rc-s { font-size: 23rpx; color: var(--ink2); margin-top: 4rpx; }
+.rc-arw { color: var(--ink3); font-size: 34rpx; }
+
+/* ==================== 食材清单弹层 ==================== */
+.ing-list { max-height: 50vh; margin-bottom: 20rpx; }
+.ing-i {
+  display: flex; align-items: center; gap: 16rpx;
+  padding: 20rpx 4rpx;
+  border-bottom: 2rpx solid var(--line);
+}
+.ing-n { font-size: 29rpx; font-weight: 600; flex: 0 0 auto; }
+.ing-d { font-size: 22rpx; color: var(--ink2); flex: 1; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.ing-t { font-size: 24rpx; color: var(--ink2); font-weight: 600; }
+.ing-empty { padding: 60rpx 20rpx; text-align: center; font-size: 26rpx; color: var(--ink2); line-height: 1.7; }
+
+/* ==================== 引导 ==================== */
+.guide-i { display: flex; gap: 18rpx; padding: 18rpx 0; align-items: flex-start; }
+.guide-n {
+  width: 44rpx; height: 44rpx; flex: 0 0 auto;
+  border-radius: 14rpx;
+  background: var(--pri-l);
+  color: var(--pri-ink);
+  font-size: 24rpx; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.guide-t { font-size: 27rpx; line-height: 1.6; padding-top: 4rpx; }
