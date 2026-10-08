@@ -1,1 +1,4 @@
 private.key
+mp-upload.txt
+*.key
+private*
