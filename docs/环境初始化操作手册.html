@@ -7,46 +7,28 @@
 <style>
   :root{
     --pri:#D9714E; --pri-d:#C4553A; --pri-l:#FBEEE8;
-    --acc:#E9A323; --acc-l:#FCF3DF;
-    --ok:#4F9367; --ok-l:#E9F3ED;
+    --acc:#E9A323; --acc-l:#FCF3DF; --ok:#4F9367; --ok-l:#E9F3ED;
     --bg:#FAF7F3; --surf:#FFFFFF; --surf2:#F4EFE9; --line:#EFE7DE;
     --ink:#2A2521; --ink2:#8B8178; --ink3:#B7AEA4; --danger:#C94A3F;
     --r:14px;
   }
   *{box-sizing:border-box}
-  body{
-    margin:0; padding:40px 20px 80px;
-    background:var(--bg); color:var(--ink);
-    font:15px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
-    -webkit-font-smoothing:antialiased;
-  }
-  .wrap{max-width:760px;margin:0 auto}
+  body{margin:0;padding:40px 20px 80px;background:var(--bg);color:var(--ink);
+    font:15px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:780px;margin:0 auto}
   h1{font-size:27px;margin:0 0 6px;letter-spacing:-.01em}
-  .sub{color:var(--ink2);font-size:14px;margin-bottom:32px}
+  .sub{color:var(--ink2);font-size:14px;margin-bottom:30px}
   h2{font-size:19px;margin:38px 0 12px;padding-left:12px;border-left:4px solid var(--pri);line-height:1.3}
-  h3{font-size:16px;margin:24px 0 8px}
   p{margin:10px 0}
   .card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;box-shadow:0 2px 8px rgba(170,130,100,.07);margin:14px 0}
-  .card.warn{border-left:5px solid var(--acc)}
   .card.ok{border-left:5px solid var(--ok)}
+  .card.warn{border-left:5px solid var(--acc)}
   .card.no{border-left:5px solid var(--danger)}
-  .steps{counter-reset:s;list-style:none;padding:0;margin:16px 0}
-  .steps>li{counter-increment:s;position:relative;padding:0 0 18px 44px;margin:0}
-  .steps>li::before{
-    content:counter(s);position:absolute;left:0;top:2px;
-    width:28px;height:28px;border-radius:50%;
-    background:var(--pri);color:#fff;font-size:14px;font-weight:700;
-    display:flex;align-items:center;justify-content:center;
-  }
-  .steps>li .t{font-weight:700;font-size:15.5px}
-  .steps>li .d{color:var(--ink2);font-size:14px}
   code{background:var(--surf2);border-radius:5px;padding:1px 6px;font-family:ui-monospace,Consolas,monospace;font-size:13.5px}
-  pre{
-    background:#2A2521;color:#F5EFE8;border-radius:10px;padding:14px 16px;overflow-x:auto;
-    font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.7;margin:12px 0;
-  }
+  pre{background:#2A2521;color:#F5EFE8;border-radius:10px;padding:14px 16px;overflow-x:auto;
+    font-family:ui-monospace,Consolas,monospace;font-size:13px;line-height:1.7;margin:12px 0}
   pre .k{color:#E9A323}
-  .json{background:#22303A;color:#DFF3EC;font-size:14px;font-weight:600;letter-spacing:.02em}
+  .json{background:#22303A;color:#DFF3EC;font-size:14px;font-weight:600}
   table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
   th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
   th{background:var(--surf2);font-size:13px;color:var(--ink2);font-weight:700}
@@ -54,16 +36,17 @@
   .no{color:var(--danger);font-weight:700}
   .tag{display:inline-block;background:var(--pri-l);color:var(--pri-d);border-radius:999px;padding:1px 10px;font-size:12.5px;font-weight:700}
   .note{font-size:13.5px;color:var(--ink2)}
-  .big{font-size:16px;font-weight:700;color:var(--pri-d)}
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:16px 0}
+  ol.steps>li{counter-increment:s;position:relative;padding:0 0 16px 44px}
+  ol.steps>li::before{content:counter(s);position:absolute;left:0;top:2px;width:28px;height:28px;border-radius:50%;
+    background:var(--pri);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  ol.steps .t{font-weight:700}
+  ol.steps .d{color:var(--ink2);font-size:14px}
   hr{border:0;border-top:1px solid var(--line);margin:34px 0}
   @media (prefers-color-scheme: dark){
-    :root{
-      --pri:#FFFFFF;--pri-d:#E6F1ED;--pri-l:rgba(255,255,255,.16);
-      --ok:#FFFFFF;--ok-l:rgba(255,255,255,.16);
-      --bg:#37776A;--surf:#438476;--surf2:#2F6A5C;--line:#51998A;
-      --ink:#F0F7F4;--ink2:#C6DCD5;--ink3:#A0C3B9;--danger:#FFD9D0;
-      --acc:#D2703F;
-    }
+    :root{--pri:#FFFFFF;--pri-d:#E6F1ED;--pri-l:rgba(255,255,255,.16);--ok:#FFFFFF;--ok-l:rgba(255,255,255,.16);
+      --bg:#37776A;--surf:#438476;--surf2:#2F6A5C;--line:#51998A;--ink:#F0F7F4;--ink2:#C6DCD5;--ink3:#A0C3B9;
+      --danger:#FFD9D0;--acc:#D2703F}
     pre{background:#1B2622}
     .json{background:#1B2622;color:#DFF3EC}
   }
@@ -76,84 +59,72 @@
   <div class="sub">家庭菜单小程序 · 环境 <code>cloudbase-d6gm6blmkdb5a57ee</code> · 2026-10-08</div>
 
   <div class="card ok">
-    <p style="margin:0"><span class="tag">已完成</span>　5 个集合已经用服务端接口建好了：<br>
-    <code>dishes</code> <code>categories</code> <code>records</code> <code>members</code> <code>shopping</code><br>
-    <span class="note">（接口复核：5 个集合都在，都是 0 条数据）</span></p>
+    <p style="margin:0"><span class="tag">已完成</span>　环境和权限都已就绪，现在可以直接用了。</p>
+    <table style="margin-bottom:0">
+      <tr><th>集 合</th><th>中文名</th><th>状 态</th></tr>
+      <tr><td><code>dishes</code></td><td>菜品库</td><td class="yes">✓ 已建 · 所有用户可读写</td></tr>
+      <tr><td><code>categories</code></td><td>分类</td><td class="yes">✓ 已建 · 所有用户可读写</td></tr>
+      <tr><td><code>records</code></td><td>点单记录</td><td class="yes">✓ 已建 · 所有用户可读写</td></tr>
+      <tr><td><code>members</code></td><td>家庭成员</td><td class="yes">✓ 已建 · 所有用户可读写</td></tr>
+      <tr><td><code>shopping</code></td><td>采购清单</td><td class="yes">✓ 已建 · 所有用户可读写</td></tr>
+    </table>
+    <p class="note" style="margin:12px 0 0">权限规则实测为：
+      <code>{"read": true, "write": true}</code>（自定义安全规则 = 所有用户可读写）</p>
   </div>
 
-  <div class="card warn">
-    <p style="margin:0"><b>还剩最后一步，且必须人工操作：把集合权限改成「所有用户可读写」。</b><br>
-    微信没有为这一步开放任何接口（见文末的查证），只能在云开发控制台点。</p>
-  </div>
+  <h2>一、这次到底发生了什么</h2>
+  <p>「在旧电脑上从来不用弄」是因为 —— 建表这件事**只在环境第一次开通时做过一次**，之后一直沿用。
+  这次不一样的地方是：<b>云环境里的 5 张表被清空了</b>（环境被回收/重置），
+  所以小程序一打开就报 <code>-502005 Db or Table not exist</code>，什么都存不进去。
+  这跟换电脑没有任何关系。重做一次即可，不会反复。</p>
 
-  <h2>一、怎么设权限（约 2 分钟）</h2>
+  <h2>二、以后环境再被清空，怎么恢复</h2>
+  <p>两步，都写成了脚本：</p>
 
   <ol class="steps">
-    <li><div class="t">在微信公众平台点「管理环境」</div>
-      <div class="d">左侧菜单「开发与服务 → 云服务」→「云开发」页签 → 环境那一行最右边的蓝色「管理环境」。会打开云开发控制台，可能要再授权一次。</div></li>
-
-    <li><div class="t">左侧点「数据库」</div>
-      <div class="d">会看到刚建好的 5 个集合（集合管理）。</div></li>
-
-    <li><div class="t">点开 <code>dishes</code>，找到「权限」</div>
-      <div class="d">一般在集合详情里，或者集合列表右侧的「权限 / 设置」。选 <b>「自定义安全规则」</b>（不是那四个简易权限）。</div></li>
-
-    <li><div class="t">把下面这行原样粘进去，保存</div>
+    <li><div class="t">建集合</div>
       <div class="d">
-        <pre class="json">{"read": true, "write": true}</pre>
-        中文说法就是「所有用户可读写」。
+        <pre><span class="k"># 需要小程序的 AppSecret（微信公众平台 → 开发管理 → 开发设置）</span>
+MP_APPSECRET=xxxx node tools/init-env.mjs</pre>
+        脚本会自己查出缺哪些集合、只建缺的，建完再复核一遍。
+        也可以在 GitHub 仓库 Actions 里手动跑 <code>init-env</code> 流程。
       </div></li>
-
-    <li><div class="t">另外 4 个集合同样操作</div>
-      <div class="d"><code>categories</code>、<code>records</code>、<code>members</code>、<code>shopping</code> —— 一共 5 个都要设。</div></li>
-
-    <li><div class="t">回小程序，点「重新检查」</div>
-      <div class="d">首页那张「云环境还没初始化」的卡片应该消失，然后就能正常用了。</div></li>
+    <li><div class="t">设权限</div>
+      <div class="d">
+        <pre>node tools/cloudbase-perm.mjs</pre>
+        首次会打印一个设备码和授权链接，用微信打开 → 选
+        <b>「使用微信公众平台账号登录」</b>（专为小程序开发者，<b>不需要腾讯云账号、不需要实名</b>）→ 授权。
+        然后脚本会自动把 5 个集合全部设成所有用户可读写，并复核。
+      </div></li>
   </ol>
 
-  <h2>二、为什么必须是这条规则</h2>
-
-  <p>云开发有四种「简易权限」，但它们<b>没有一种</b>能满足本项目的需要 —— 关键原因是：</p>
-
-  <div class="card no">
-    <p style="margin:0"><b>在所有简易权限下，小程序端都不能修改「别人创建的」记录。</b></p>
+  <div class="card warn">
+    <p style="margin:0"><b>⚠️ 权限这一步千万别省。</b><br>
+    如果集合停在默认的「仅创建者可读写」（这次查出来就是 <code>PRIVATE</code>），
+    App 表面上是好的 —— 你自己录的菜自己看得到；但<b>家人打开是空的，采购清单也勾不动，
+    而且完全不会报错</b>。安静地坏掉，是最难发现的问题。</p>
   </div>
 
+  <h2>三、为什么必须是「自定义安全规则」</h2>
+  <p>云开发有四种「简易权限」，但<b>一种都不够用</b> —— 关键原因：</p>
+  <div class="card no">
+    <p style="margin:0"><b>在任何一种简易权限下，小程序端都不能修改「别人创建的」记录。</b></p>
+  </div>
   <p>而家里用这个 App，恰好处处都要改别人的记录：</p>
   <table>
-    <tr><th>场景</th><th>谁创建</th><th>谁修改</th><th>简易权限下行不行</th></tr>
+    <tr><th>场景</th><th>谁创建</th><th>谁修改</th><th>简易权限行不行</th></tr>
     <tr><td>买菜的人勾掉已买</td><td>做饭的人加的采购项</td><td>买菜的人</td><td class="no">不行</td></tr>
     <tr><td>撤掉别人点的一道菜</td><td>点菜的人</td><td>其他人</td><td class="no">不行</td></tr>
-    <tr><td>修改菜品信息 / 标常吃</td><td>录入的人</td><td>其他人</td><td class="no">不行</td></tr>
-    <tr><td>确认这顿饭（会写到当天所有记录）</td><td>各自创建</td><td>确认的人</td><td class="no">不行</td></tr>
+    <tr><td>修改菜品 / 标常吃</td><td>录入的人</td><td>其他人</td><td class="no">不行</td></tr>
+    <tr><td>确认这顿饭（写当天所有记录）</td><td>各自创建</td><td>确认的人</td><td class="no">不行</td></tr>
   </table>
+  <p>所以只能写死成 <code>{"read": true, "write": true}</code>。它是恒真规则，还有额外好处：
+  用自定义规则时系统不会再自动补 <code>_openid</code> 查询条件，
+  也不会因为「查询条件没覆盖规则」而报 <code>-502003 permission denied</code>。</p>
 
-  <p>所以必须用自定义安全规则 <code>{"read": true, "write": true}</code>。它是恒真规则，还有个好处：
-  用自定义规则时，系统不会再自动给查询补 <code>_openid</code> 条件，也不会因为「查询条件没覆盖规则」而报
-  <code>-502003 permission denied</code>。</p>
-
-  <div class="card warn">
-    <p style="margin:0"><b>要特别小心的一点：权限设错不会报错。</b><br>
-    如果留在默认的「仅创建者可读写」，App 表面上是好的 —— 你自己录入、自己看得到；
-    但家人看到的是空的，采购清单也勾不动。<b>不会弹任何错误</b>，只会安静地坏掉。
-    所以这一步一定要确认设对了。</p>
-  </div>
-
-  <h2>三、集合被清空时怎么恢复</h2>
-
-  <p>环境里的集合曾经全部消失过（小程序打开后什么都存不进去，报 <code>-502005 Db or Table not exist</code>）。
-  现在有脚本可以一条命令重建：</p>
-
-  <pre><span class="k"># 本地：需要小程序的 AppSecret（微信公众平台 → 开发管理 → 开发设置）</span>
-MP_APPSECRET=xxxx node tools/init-env.mjs</pre>
-
-  <p>或者在 GitHub 仓库的 Actions 页手动跑 <code>init-env</code> 流程（需要在仓库 Secrets 里配好
-  <code>MP_APPSECRET</code>）。脚本会自己查出哪些集合缺了、只建缺的那些，建完还会复核一遍。</p>
-
-  <h2>四、查证结论：哪些能自动化、哪些不能</h2>
-
+  <h2>四、查证记录：哪些能自动化、哪些不能</h2>
   <table>
-    <tr><th>能力</th><th>能否自动化</th><th>依据</th></tr>
+    <tr><th>能力</th><th>能否自动化</th><th>依据 / 实测</th></tr>
     <tr>
       <td>新建 / 删除 / 查询集合</td>
       <td class="yes">✅ 能</td>
@@ -165,17 +136,28 @@ MP_APPSECRET=xxxx node tools/init-env.mjs</pre>
       <td><code>Database.createCollection()</code> 官方标注「支持端：云函数」</td>
     </tr>
     <tr>
-      <td><b>修改集合权限 / 安全规则</b></td>
-      <td class="no">❌ 不能</td>
-      <td>云开发 HTTP API 的数据库章节只有 13 个接口（databaseadd、databasequery、databasecollectionadd、databasecollectiondelete、databasecollectionget、databasecount、databasedelete、databasemigrateexport、databasemigrateimport、databasemigratequeryinfo、databaseupdate、updateindex …），<b>没有任何权限接口</b>。<br>实测：<code>tcb/dbmodifyacl</code> 等 6 个候选路径全部返回 <code>40066 invalid url</code>；唯一存在的 <code>componenttcb/dbmodifyacl</code> 用小程序令牌调用返回 <code>48001 api unauthorized</code> —— 它只对第三方平台开放。</td>
+      <td><b>修改集合权限</b></td>
+      <td class="yes">✅ 能<br><span class="note">（走 MCP）</span></td>
+      <td>
+        小程序 HTTP API 里没有权限接口（数据库章节共 13 个接口，无权限相关）；
+        <code>tcb/dbmodifyacl</code> 等 6 个候选路径实测全部 <code>40066 invalid url</code>；
+        <code>componenttcb/dbmodifyacl</code> 用小程序令牌返回 <code>48001 api unauthorized</code>（仅第三方平台）。<br>
+        <b>正解</b>：腾讯官方 <code>@cloudbase/cloudbase-mcp</code> 的
+        <code>managePermissions</code>（底层 ModifyDatabaseACL / ModifySafeRule），
+        登录走设备码 + <b>「使用微信公众平台账号登录」</b>，无需腾讯云账号。
+      </td>
+    </tr>
+    <tr>
+      <td>网页版控制台 console.cloud.tencent.com</td>
+      <td class="no">❌ 走不通</td>
+      <td>要求注册/关联腾讯云账号，需独立完成<b>实名认证</b> —— 属于账号级动作，不该代做。</td>
     </tr>
   </table>
 
-  <p class="note">结论：<b>「建集合」可以全自动，「改权限」只能人工在控制台点。</b>这是微信的接口边界，不是工具选择问题。</p>
-
   <hr>
   <p class="note">环境 ID：<code>cloudbase-d6gm6blmkdb5a57ee</code>　AppID：<code>wx83619ff082bae6bf</code>　
-  本机可直连 <code>api.weixin.qq.com</code>（0.27s），不需要代理。</p>
+  本机可直连 <code>api.weixin.qq.com</code>（0.27s），不需要代理。<br>
+  相关脚本：<code>tools/init-env.mjs</code>（建集合）· <code>tools/cloudbase-perm.mjs</code>（设权限）</p>
 
 </div>
 </body>
