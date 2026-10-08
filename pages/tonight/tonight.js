@@ -2,7 +2,7 @@ const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const { SAMPLE_DISHES } = require('../../utils/samples.js')
-const { toast, confirm } = require('../../utils/util.js')
+const { toast, confirm, errText } = require('../../utils/util.js')
 
 const WEEK = ['日', '一', '二', '三', '四', '五', '六']
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
@@ -520,25 +520,62 @@ Page({
   },
 
   onSeed() {
-    confirm('把 12 道家常菜填进菜库？（之后可以随意增删改）', '填入示例菜库', '填入').then(async ok => {
+    confirm('把 ' + SAMPLE_DISHES.length + ' 道家常菜填进菜库？（之后可以随意增删改）', '填入示例菜库', '填入').then(async ok => {
       if (!ok) return
+      this.setData({ busy: true })
+      wx.showLoading({ title: '正在填入', mask: true })
       try {
-        wx.showLoading({ title: '正在填入', mask: true })
+        // 1) 分类：缺哪个补哪个。分类建失败不影响菜品写入（菜品自带 category 字符串）
         const cats = await db.getCategories().catch(() => [])
         const names = cats.map(c => c.name)
-        const need = []
-        ;['热菜', '素菜', '汤羹', '主食'].forEach(n => { if (names.indexOf(n) === -1) need.push(n) })
+        const need = ['热菜', '素菜', '汤羹', '主食'].filter(n => names.indexOf(n) === -1)
         for (let i = 0; i < need.length; i++) {
-          await db.addCategory(need[i], names.length + i)
+          await db.addCategory(need[i], names.length + i).catch(e => {
+            console.warn('[tonight] 分类创建失败，跳过：' + need[i], e)
+          })
         }
-        await db.addDishes(SAMPLE_DISHES)
+
+        // 2) 跳过菜库里已有的同名菜 —— 重复点「填入」不会变成两份
+        const exist = await db.getAllDishes().catch(() => [])
+        const existNames = exist.map(d => d.name)
+        const todo = SAMPLE_DISHES.filter(d => existNames.indexOf(d.name) === -1)
+
+        if (!todo.length) {
+          wx.hideLoading()
+          this.setData({ busy: false })
+          toast('菜库里已经有这些菜了')
+          return
+        }
+
+        // 3) 顺序写入（不是并发），带进度
+        const res = await db.addDishes(todo, (done, total) => {
+          wx.showLoading({ title: '正在填入 ' + done + '/' + total, mask: true })
+        })
         wx.hideLoading()
-        toast('已填入 12 道菜')
+        this.setData({ busy: false })
         this.loadAll()
+
+        if (res.failed.length) {
+          wx.showModal({
+            title: '有 ' + res.failed.length + ' 道没填进去',
+            content: '成功 ' + res.ok + ' 道。失败原因：\n' +
+              res.failed.slice(0, 3).map(f => f.name + '：' + f.err).join('\n'),
+            showCancel: false,
+            confirmText: '知道了'
+          })
+        } else {
+          toast('已填入 ' + res.ok + ' 道菜')
+        }
       } catch (e) {
         wx.hideLoading()
+        this.setData({ busy: false })
         console.error('[tonight] 填入示例菜库失败', e)
-        toast('填入失败，请重试')
+        wx.showModal({
+          title: '填入失败',
+          content: errText(e),
+          showCancel: false,
+          confirmText: '知道了'
+        })
       }
     })
   },

@@ -46,6 +46,12 @@
         <view class="row-t">数据备份导出</view>
         <text class="row-arw">›</text>
       </view>
+      <view class="row" bindtap="onDiag">
+        <view class="row-ic"><image class="row-img" src="{{ico.gear}}"/></view>
+        <view class="row-t">数据连接自检</view>
+        <text class="row-v">出问题时点这</text>
+        <text class="row-arw">›</text>
+      </view>
     </view>
 
     <!-- 外观 -->

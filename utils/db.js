@@ -1,6 +1,6 @@
 const config = require('./config.js')
 const { db, COLLECTIONS, fetchAll } = require('./cloud.js')
-const { pad } = require('./util.js')
+const { pad, sleep, errText } = require('./util.js')
 
 /**
  * 数据访问层：dishes / records / categories / members
@@ -51,13 +51,37 @@ async function getAllDishes() {
 
 function addDish(data) {
   return colDishes().add({
-    data: Object.assign({}, data, { createTime: db().serverDate() })
+    data: Object.assign({ image: '', price: 0 }, data, { createTime: db().serverDate() })
   })
 }
 
-/** 批量新增（示例菜库一键填充用） */
-function addDishes(list) {
-  return Promise.all(list.map(item => addDish(item)))
+/**
+ * 批量新增（示例菜库一键填充用）
+ *
+ * 为什么不用 Promise.all：小程序端对云数据库的**并发写有限制**，
+ * 一次并发打十几条很容易被限流，而 Promise.all 只要一条失败就整批 reject，
+ * 表现就是「一道都没进去」。改成顺序写、每 4 条歇一下，单条失败只记下来不中断。
+ *
+ * @param {Array} list 菜品数组
+ * @param {Function} [onProgress] (done, total) => void
+ * @returns {Promise<{ok:number, failed:Array<{name:string, err:string}>}>}
+ */
+async function addDishes(list, onProgress) {
+  const items = list || []
+  const failed = []
+  let ok = 0
+  for (let i = 0; i < items.length; i++) {
+    try {
+      await addDish(items[i])
+      ok++
+    } catch (e) {
+      console.error('[db] 批量新增失败：' + ((items[i] || {}).name || '?'), e)
+      failed.push({ name: (items[i] || {}).name || '未命名', err: errText(e) })
+    }
+    if (onProgress) onProgress(i + 1, items.length)
+    if ((i + 1) % 4 === 0 && i + 1 < items.length) await sleep(200)
+  }
+  return { ok: ok, failed: failed }
 }
 
 function updateDish(id, data) {
@@ -310,6 +334,11 @@ async function getShopping(date) {
   return fetchAll(() => colShopping().where({ date: date }), q => q.orderBy('createTime', 'asc'))
 }
 
+/** 全部采购项（备份导出用） */
+async function getAllShopping() {
+  return fetchAll(colShopping, q => q.orderBy('createTime', 'desc'))
+}
+
 function addShoppingItem(date, name, qty) {
   const s = require('./shopping.js')
   return colShopping().add({
@@ -463,9 +492,38 @@ function buildIngredientList(records, dishMap) {
   return Object.keys(map).map(k => map[k]).sort((a, b) => b.times - a.times)
 }
 
+/* ==================== 数据连接自检 ==================== */
+
+/**
+ * 逐个集合试读一次，把「哪个集合没建 / 权限不对」直接查出来。
+ * 手机上没有控制台，出问题时只能靠这个定位。
+ */
+async function pingAllCollections() {
+  const targets = [
+    [COLLECTIONS.DISHES, '菜品库 dishes'],
+    [COLLECTIONS.CATEGORIES, '分类 categories'],
+    [COLLECTIONS.RECORDS, '点单记录 records'],
+    [COLLECTIONS.MEMBERS, '家庭成员 members'],
+    [COLLECTIONS.SHOPPING, '采购清单 shopping']
+  ]
+  const out = []
+  for (let i = 0; i < targets.length; i++) {
+    const name = targets[i][0]
+    const label = targets[i][1]
+    try {
+      const res = await db().collection(name).limit(1).get()
+      out.push({ name: label, ok: true, info: '可读' + ((res.data || []).length ? '（有数据）' : '（空）') })
+    } catch (e) {
+      out.push({ name: label, ok: false, info: errText(e) })
+    }
+  }
+  return out
+}
+
 module.exports = {
   todayStr,
   recentDates,
+  pingAllCollections,
   // 菜品
   getOnDishes,
   getAllDishes,
@@ -503,6 +561,7 @@ module.exports = {
   watchRecordsByDate,
   // 采购清单
   getShopping,
+  getAllShopping,
   addShoppingItem,
   updateShoppingDone,
   removeShoppingItem,

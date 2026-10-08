@@ -1,7 +1,7 @@
 const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
-const { toast, confirm } = require('../../utils/util.js')
+const { toast, confirm, errText } = require('../../utils/util.js')
 
 function initialOf(name) {
   const s = String(name || '').trim()
@@ -215,11 +215,12 @@ Page({
   async onExport() {
     try {
       wx.showLoading({ title: '正在打包', mask: true })
-      const [dishes, records, categories, members] = await Promise.all([
-        db.getAllDishes(),
-        db.getAllRecords(),
-        db.getCategories(),
-        db.getMembers()
+      const [dishes, records, categories, members, shopping] = await Promise.all([
+        db.getAllDishes().catch(() => []),
+        db.getAllRecords().catch(() => []),
+        db.getCategories().catch(() => []),
+        db.getMembers().catch(() => []),
+        db.getAllShopping().catch(() => [])
       ])
       const payload = {
         app: 'family-menu',
@@ -228,7 +229,8 @@ Page({
         dishes: dishes,
         records: records,
         categories: categories,
-        members: members
+        members: members,
+        shopping: shopping
       }
       const json = JSON.stringify(payload, null, 2)
       const name = 'fm-' + db.todayStr().replace(/-/g, '') + '.json'
@@ -253,6 +255,31 @@ Page({
       wx.hideLoading()
       console.error('[family] 导出失败', e)
       toast('导出失败，请重试')
+    }
+  },
+
+  /** 数据连接自检：手机上没有控制台，出问题时靠这个定位是哪个集合的事 */
+  async onDiag() {
+    wx.showLoading({ title: '检查中', mask: true })
+    try {
+      const rows = await db.pingAllCollections()
+      wx.hideLoading()
+      const bad = rows.filter(r => !r.ok)
+      wx.showModal({
+        title: bad.length ? '有 ' + bad.length + ' 个集合有问题' : '数据连接正常',
+        content: rows.map(r => (r.ok ? '✅ ' : '❌ ') + r.name + '\n     ' + r.info).join('\n'),
+        showCancel: false,
+        confirmText: '知道了'
+      })
+    } catch (e) {
+      wx.hideLoading()
+      console.error('[family] 自检失败', e)
+      wx.showModal({
+        title: '自检没跑成',
+        content: errText(e),
+        showCancel: false,
+        confirmText: '知道了'
+      })
     }
   },
 

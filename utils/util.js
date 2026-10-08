@@ -35,6 +35,30 @@ function pad(n) {
   return n < 10 ? '0' + n : '' + n
 }
 
+/** 等一会儿（批量写入时用来避开频率限制） */
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+/**
+ * 把云开发/网络错误整理成一行人话，直接能显示给用户看。
+ * 出问题时报错信息太重要了 —— 不要吞掉它，否则只能干看着「请重试」。
+ */
+function errText(e) {
+  if (!e) return '未知错误'
+  const code = e.errCode || e.code || ''
+  const msg = e.errMsg || e.message || String(e)
+  let hint = ''
+  if (code === -502005 || /not exist|不存在/i.test(msg)) {
+    hint = ' → 集合还没建，去云开发控制台新建，权限设「所有用户可读写」'
+  } else if (code === -501001 || /permission|denied|权限/i.test(msg)) {
+    hint = ' → 集合权限不对，应设为「所有用户可读写」'
+  } else if (code === -502001 || code === -501000 || /timeout|网络|network|fail/i.test(msg)) {
+    hint = ' → 像是网络超时，稍后重试'
+  }
+  return (code ? '[' + code + '] ' : '') + msg + hint
+}
+
 /** 时间格式化：9月4日 12:30 */
 function formatTime(date) {
   if (!date) return ''
@@ -90,6 +114,8 @@ module.exports = {
   formatPrice,
   randomStr,
   pad,
+  sleep,
+  errText,
   parseTags,
   parseIngredients
 }
