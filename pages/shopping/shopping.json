@@ -1,0 +1,6 @@
+{
+  "navigationBarTitleText": "采购清单",
+  "enablePullDownRefresh": true,
+  "backgroundTextStyle": "@bgTxtStyle",
+  "usingComponents": {}
+}

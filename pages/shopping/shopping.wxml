@@ -1,0 +1,85 @@
+<view class="page {{themeCls}}">
+  <view class="page-body">
+
+    <view class="hd">
+      <view>
+        <view class="t-h1">采购清单</view>
+        <view class="t-sub">{{dishCount}} 道菜 · {{dateText}}</view>
+      </view>
+      <view class="hd-copy" bindtap="onCopy">复制</view>
+    </view>
+
+    <!-- 进度 -->
+    <view class="prog">
+      <view class="prog-hd">
+        <text>已买 <text class="prog-n">{{doneCount}}</text> / {{buyCount}} 项</text>
+        <text class="prog-who" wx:if="{{lastBy}}">{{lastBy}} 在买</text>
+      </view>
+      <view class="prog-bar"><view class="prog-fill" style="width:{{pct}}%"></view></view>
+    </view>
+
+    <!-- 分组列表 -->
+    <block wx:for="{{groups}}" wx:key="name" wx:for-item="grp">
+      <view class="grp">{{grp.name}}</view>
+      <view
+        class="item {{item.done ? 'item--done' : ''}}"
+        wx:for="{{grp.items}}"
+        wx:key="_id"
+        data-id="{{item._id}}"
+        data-manual="{{item.manual}}"
+        bindtap="onToggle"
+        bindlongpress="onLongPress"
+      >
+        <view class="cb">{{item.done ? '✓' : ''}}</view>
+        <view class="item-nm">{{item.name}}</view>
+        <text class="item-qty" wx:if="{{item.qty}}">{{item.qty}}</text>
+        <text class="item-by" wx:if="{{item.done && item.byName}}">{{item.byName}}</text>
+      </view>
+    </block>
+
+    <!-- 常备调料 -->
+    <view class="staple-hd" wx:if="{{stapleCount}}" bindtap="onToggleStaples">
+      <text>{{showStaples ? '收起常备调料' : '显示常备调料'}}（{{stapleCount}}）</text>
+      <text class="staple-arw">{{showStaples ? '▲' : '▼'}}</text>
+    </view>
+
+    <!-- 空态 -->
+    <view class="empty-ph" wx:if="{{!loading && !buyCount && !stapleCount}}">
+      <view class="ep-img"></view>
+      <view class="ep-t">还没有要买的东西</view>
+      <view class="ep-s">去「今晚」点几道菜，菜的食材会自动汇总到这里；也可以自己加</view>
+    </view>
+
+    <view class="tip">长按某一项可以删掉。买菜时勾掉的项，家人那边会实时看到。</view>
+  </view>
+
+  <!-- 底部操作 -->
+  <view class="fixbar">
+    <view class="btn-row">
+      <view class="btn btn-ghost" bindtap="onOpenAdd">＋ 添加要买的</view>
+      <view class="btn btn-primary {{doneCount ? '' : 'btn-disabled'}}" bindtap="onClearDone">清空已买</view>
+    </view>
+  </view>
+
+  <!-- 添加弹层 -->
+  <view class="sheet-mask" wx:if="{{add.open}}" bindtap="closeAdd" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-grab"></view>
+      <view class="sheet-hd">
+        <text class="sheet-t">添加要买的</text>
+        <view class="sheet-x" bindtap="closeAdd">✕</view>
+      </view>
+      <view class="fm">
+        <view class="fm-l">买什么</view>
+        <input class="fm-input" value="{{add.name}}" maxlength="20" focus="{{add.open}}"
+          placeholder="例如：生抽 / 厨房纸" placeholder-class="fm-ph" bindinput="onAddNameInput" />
+      </view>
+      <view class="fm">
+        <view class="fm-l">数量（可不填）</view>
+        <input class="fm-input" value="{{add.qty}}" maxlength="12"
+          placeholder="例如：2 瓶 / 1 提" placeholder-class="fm-ph" bindinput="onAddQtyInput" />
+      </view>
+      <view class="btn btn-primary btn-block" bindtap="onConfirmAdd">加进清单</view>
+    </view>
+  </view>
+</view>

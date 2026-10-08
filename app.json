@@ -4,6 +4,7 @@
     "pages/dishes/dishes",
     "pages/calendar/calendar",
     "pages/family/family",
+    "pages/shopping/shopping",
     "pages/dish-edit/dish-edit",
     "pages/admin/admin",
     "pages/category/category",

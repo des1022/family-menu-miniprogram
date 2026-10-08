@@ -35,7 +35,8 @@ const COLLECTIONS = {
   DISHES: 'dishes',
   RECORDS: 'records',
   CATEGORIES: 'categories',
-  MEMBERS: 'members'      // 家庭成员：一条记录 = 一位家人（_openid 由云端自动写入）
+  MEMBERS: 'members',      // 家庭成员：一条记录 = 一位家人（_openid 由云端自动写入）
+  SHOPPING: 'shopping'     // 采购清单：一条记录 = 一个要买的东西
 }
 
 /**

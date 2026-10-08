@@ -97,11 +97,11 @@
         <view class="sug-go" bindtap="onSugTap">去看看</view>
       </view>
 
-      <view class="row-card" bindtap="onOpenIng">
+      <view class="row-card" bindtap="onOpenShopping">
         <view class="rc-ic"><image class="rc-img" src="{{ico.basket}}"/></view>
         <view class="rc-main">
-          <view class="rc-t">今日食材清单</view>
-          <view class="rc-s">{{ingCount ? ingCount + ' 种食材 · 点击查看' : '给菜品补上食材，这里就能自动汇总'}}</view>
+          <view class="rc-t">今日采购清单</view>
+          <view class="rc-s">{{ingCount ? ingCount + ' 种食材 · 可勾选、可加项' : '给菜品补上食材，这里就能自动汇总'}}</view>
         </view>
         <text class="rc-arw">›</text>
       </view>
@@ -126,23 +126,74 @@
     </view>
   </view>
 
-  <!-- 食材清单弹层 -->
-  <view class="sheet-mask" wx:if="{{showIng}}" bindtap="closeIng" catchtouchmove="noop">
+  <!-- 帮我选一顿（决策器） -->
+  <view class="sheet-mask" wx:if="{{dec.open}}" bindtap="closeDec" catchtouchmove="noop">
     <view class="sheet" catchtap="noop">
       <view class="sheet-grab"></view>
       <view class="sheet-hd">
-        <text class="sheet-t">今日食材清单</text>
-        <view class="sheet-x" bindtap="closeIng">✕</view>
+        <text class="sheet-t">帮你选一顿</text>
+        <view class="sheet-x" bindtap="closeDec">✕</view>
       </view>
-      <scroll-view class="ing-list" scroll-y>
-        <view class="ing-empty" wx:if="{{!ingList.length}}">菜品还没填食材。到「菜库 → 编辑」里补上，这里就会自动汇总。</view>
-        <view class="ing-i" wx:for="{{ingList}}" wx:key="name">
-          <text class="ing-n">{{item.name}}</text>
-          <text class="ing-d">{{item.dishes}}</text>
-          <text class="ing-t">{{item.times}} 道</text>
+      <view class="dec-sub">从你家菜库里挑的，久没做过的优先</view>
+
+      <view class="dec-row">
+        <view class="dec-l">搭配</view>
+        <view class="dec-chips">
+          <view
+            class="chip {{dec.mix === item.key ? 'chip--on' : ''}}"
+            wx:for="{{mixes}}"
+            wx:key="key"
+            data-field="mix"
+            data-value="{{item.key}}"
+            bindtap="onPickDecOpt"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <view class="dec-row">
+        <view class="dec-l">人数</view>
+        <view class="dec-chips">
+          <view
+            class="chip {{dec.size === item.key ? 'chip--on' : ''}}"
+            wx:for="{{sizes}}"
+            wx:key="key"
+            data-field="size"
+            data-value="{{item.key}}"
+            bindtap="onPickDecOpt"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <view class="dec-row">
+        <view class="dec-l">口味</view>
+        <view class="dec-chips">
+          <view
+            class="chip {{dec.taste === item.key ? 'chip--on' : ''}}"
+            wx:for="{{tastes}}"
+            wx:key="key"
+            data-field="taste"
+            data-value="{{item.key}}"
+            bindtap="onPickDecOpt"
+          >{{item.label}}</view>
+        </view>
+      </view>
+
+      <scroll-view class="dec-list" scroll-y>
+        <view class="dec-pick" wx:for="{{dec.picks}}" wx:key="_id">
+          <image class="dp-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+          <view class="dp-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
+          <view class="dp-main">
+            <view class="dp-nm">{{item.name}}</view>
+            <view class="dp-mt">{{item.roleLabel}}{{item.category ? ' · ' + item.category : ''}} · {{item.lastText}}</view>
+          </view>
+          <view class="dp-swap" data-idx="{{index}}" catchtap="onSwapOne">换一个</view>
         </view>
       </scroll-view>
-      <view class="btn btn-primary btn-block" wx:if="{{ingList.length}}" bindtap="onCopyIng">复制清单</view>
+
+      <view class="btn-row dec-actions">
+        <view class="btn btn-ghost" bindtap="rollAll">全部重摇</view>
+        <view class="btn btn-primary {{busy ? 'btn-disabled' : ''}}" bindtap="onConfirmDec">就这些，定了</view>
+      </view>
     </view>
   </view>
 

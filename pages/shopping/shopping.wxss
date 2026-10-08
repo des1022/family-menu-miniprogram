@@ -1,0 +1,118 @@
+.hd {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 24rpx 4rpx 20rpx;
+}
+.hd-copy {
+  padding: 10rpx 24rpx;
+  border-radius: 999rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  font-size: 24rpx;
+  font-weight: 600;
+  color: var(--ink2);
+}
+
+/* ---------- 进度 ---------- */
+.prog { margin-bottom: 24rpx; }
+.prog-hd {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  font-size: 25rpx;
+  color: var(--ink2);
+  font-weight: 600;
+  margin-bottom: 12rpx;
+}
+.prog-n { font-size: 32rpx; font-weight: 800; color: var(--pri-ink); }
+.prog-who { font-size: 23rpx; color: var(--acc-ink); }
+.prog-bar {
+  height: 14rpx;
+  border-radius: 999rpx;
+  background: var(--surf2);
+  overflow: hidden;
+}
+.prog-fill {
+  height: 100%;
+  border-radius: 999rpx;
+  background: var(--btn-bg);
+  transition: width 0.25s;
+}
+
+/* ---------- 分组 ---------- */
+.grp {
+  font-size: 23rpx;
+  font-weight: 700;
+  color: var(--ink2);
+  letter-spacing: 0.06em;
+  margin: 26rpx 4rpx 14rpx;
+}
+.item {
+  display: flex;
+  align-items: center;
+  gap: 20rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 22rpx;
+  padding: 24rpx 26rpx;
+  margin-bottom: 14rpx;
+  box-shadow: var(--sh);
+}
+.item--done { background: var(--surf2); border-color: transparent; box-shadow: none; }
+.cb {
+  width: 40rpx; height: 40rpx; flex: 0 0 auto;
+  border-radius: 12rpx;
+  border: 3rpx solid var(--line);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 24rpx;
+  font-weight: 800;
+  color: var(--ok-ink);
+}
+.item--done .cb { background: var(--ok); border-color: var(--ok); }
+.theme-dark .item--done .cb { color: #2A5F54; }
+@media (prefers-color-scheme: dark) {
+  .item--done .cb { color: #2A5F54; }
+}
+.item-nm { flex: 1; font-size: 30rpx; font-weight: 600; }
+.item--done .item-nm {
+  color: var(--ink3);
+  text-decoration: line-through;
+}
+.item-qty { font-size: 25rpx; color: var(--ink2); font-weight: 600; }
+.item--done .item-qty { color: var(--ink3); }
+.item-by { font-size: 22rpx; color: var(--ink3); }
+
+/* ---------- 常备 ---------- */
+.staple-hd {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+  margin: 30rpx 0 8rpx;
+  font-size: 24rpx;
+  color: var(--ink2);
+  font-weight: 600;
+}
+.staple-arw { font-size: 20rpx; color: var(--ink3); }
+
+/* ---------- 提示 ---------- */
+.tip {
+  font-size: 22rpx;
+  color: var(--ink3);
+  line-height: 1.7;
+  padding: 30rpx 4rpx 10rpx;
+}
+
+/* ---------- 添加弹层表单 ---------- */
+.fm { margin-bottom: 28rpx; }
+.fm-l { font-size: 24rpx; font-weight: 700; color: var(--ink2); margin-bottom: 14rpx; }
+.fm-input {
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 20rpx;
+  padding: 22rpx 24rpx;
+  font-size: 30rpx;
+  color: var(--ink);
+}
+.fm-ph { color: var(--ink3); }

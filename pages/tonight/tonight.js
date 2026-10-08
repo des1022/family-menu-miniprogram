@@ -43,6 +43,49 @@ function shuffle(arr) {
   return a
 }
 
+/* ---------------- 决策器：搭配 / 人数 / 口味 ---------------- */
+
+const MIXES = [
+  { key: 'm1', label: '2荤1素1汤', main: 2, veg: 1, soup: 1 },
+  { key: 'm2', label: '2荤2素', main: 2, veg: 2, soup: 0 },
+  { key: 'm3', label: '1荤1素1汤', main: 1, veg: 1, soup: 1 },
+  { key: 'm4', label: '随便配', main: 0, veg: 0, soup: 0 }
+]
+
+const SIZES = [
+  { key: 's1', label: '1-2 人', total: 3 },
+  { key: 's2', label: '3-4 人', total: 4 },
+  { key: 's3', label: '5 人以上', total: 5 }
+]
+
+const TASTES = [
+  { key: 't0', label: '随便', keys: [] },
+  { key: 't1', label: '清淡', keys: ['清爽', '清淡', '凉拌', '清蒸', '不辣', '汤'] },
+  { key: 't2', label: '下饭', keys: ['下饭', '家常', '红烧', '慢炖', '肉'] },
+  { key: 't3', label: '重口', keys: ['辣', '川湘', '中辣', '特辣', '干锅'] }
+]
+
+/** 这道菜算荤、素还是汤 */
+function roleOf(dish) {
+  const s = (dish.category || '') + ' ' + (dish.tags || '') + ' ' + (dish.name || '')
+  if (/汤|羹/.test(s)) return 'soup'
+  if (/素|青菜|蔬|凉拌|豆腐/.test(s)) return 'veg'
+  return 'main'
+}
+
+const ROLE_LABEL = { main: '硬菜', veg: '素菜', soup: '汤' }
+const ROLE_ORDER = ['main', 'veg', 'soup']
+
+/** 距离上次做这道菜多少天 */
+function daysAgoText(dateStr) {
+  const t = new Date(String(dateStr).replace(/-/g, '/') + ' 00:00:00').getTime()
+  const now = new Date(new Date().toDateString()).getTime()
+  const days = Math.round((now - t) / 86400000)
+  if (days <= 0) return '今天做过'
+  if (days === 1) return '昨天做过'
+  return days + ' 天没做了'
+}
+
 Page({
   data: {
     themeCls: '',
@@ -62,7 +105,10 @@ Page({
     ingList: [],
 
     pickHint: '2 荤 1 素 1 汤 · 3 秒定',
-    showIng: false,
+    mixes: MIXES,
+    sizes: SIZES,
+    tastes: TASTES,
+    dec: { open: false, mix: 'm1', size: 's2', taste: 't0', picks: [] },
     guide: false,
     busy: false
   },
@@ -286,77 +332,170 @@ Page({
     wx.switchTab({ url: '/pages/dishes/dishes' })
   },
 
-  /** 帮我选一顿：从自家菜库里洗牌凑一桌（越久没做的越优先） */
-  async onPickForMe() {
-    if (this.data.busy) return
+  /* ==================== 帮我选一顿（决策器） ==================== */
+
+  onPickForMe() {
     const dishes = this.data.allDishes || []
     if (dishes.length < 3) {
       if (!this.data.allCount) {
-        const seed = await confirm('菜库还是空的，先填入 12 道家常菜？', '提示', '填入')
-        if (seed) this.onSeed()
+        confirm('菜库还是空的，先填入 12 道家常菜？', '提示', '填入').then(ok => {
+          if (ok) this.onSeed()
+        })
       } else {
         toast('上架的菜还太少，先去菜库加几道')
       }
       return
     }
+    this.setData({ 'dec.open': true }, () => this.rollAll())
+  },
+
+  closeDec() {
+    this.setData({ 'dec.open': false })
+  },
+
+  onPickDecOpt(e) {
+    const field = e.currentTarget.dataset.field
+    const value = e.currentTarget.dataset.value
+    const next = {}
+    next['dec.' + field] = value
+    this.setData(next, () => this.rollAll())
+  },
+
+  /** 按当前参数重新凑一桌 */
+  rollAll() {
+    const mix = MIXES.filter(m => m.key === this.data.dec.mix)[0] || MIXES[0]
+    const size = SIZES.filter(s => s.key === this.data.dec.size)[0] || SIZES[1]
+    const taste = TASTES.filter(t => t.key === this.data.dec.taste)[0] || TASTES[0]
+    const total = size.total
+
+    let plan
+    if (mix.main + mix.veg + mix.soup > 0) {
+      plan = [
+        { role: 'main', n: mix.main },
+        { role: 'veg', n: mix.veg },
+        { role: 'soup', n: mix.soup }
+      ]
+    } else {
+      plan = [
+        { role: 'main', n: Math.max(1, Math.round(total * 0.5)) },
+        { role: 'veg', n: Math.max(1, Math.round(total * 0.34)) },
+        { role: 'soup', n: total >= 4 ? 1 : 0 }
+      ]
+    }
+
+    const used = {}
+    const picks = []
+    plan.forEach(part => {
+      for (let i = 0; i < part.n; i++) {
+        const d = this.pickCandidate(part.role, taste, used)
+        if (d) {
+          used[d._id] = true
+          picks.push(this.decoratePick(d))
+        }
+      }
+    })
+    while (picks.length < total) {
+      const d = this.pickCandidate('', taste, used)
+      if (!d) break
+      used[d._id] = true
+      picks.push(this.decoratePick(d))
+    }
+
+    this.setData({ 'dec.picks': picks })
+  },
+
+  /** 从候选池挑一道：先按口味收窄，再让久没做过的排前面，最后在靠前的里随机 */
+  pickCandidate(role, taste, used) {
+    const dishes = this.data.allDishes || []
+    const last = this._lastMap || {}
+    let pool = dishes.filter(d => !used[d._id] && (!role || roleOf(d) === role))
+    if (!pool.length && role) pool = dishes.filter(d => !used[d._id])
+    if (!pool.length) return null
+
+    if (taste.keys.length) {
+      const hit = pool.filter(d => {
+        const s = (d.name || '') + ' ' + (d.tags || '') + ' ' + (d.desc || '') + ' ' + (d.category || '')
+        return taste.keys.some(k => s.indexOf(k) > -1)
+      })
+      if (hit.length) pool = hit
+    }
+
+    const sorted = pool.slice().sort((a, b) => {
+      const la = last[a._id] || ''
+      const lb = last[b._id] || ''
+      if (la === lb) return 0
+      return la < lb ? -1 : 1
+    })
+    const cand = sorted.slice(0, Math.max(4, Math.ceil(sorted.length / 2)))
+    return shuffle(cand)[0]
+  },
+
+  decoratePick(d) {
+    const last = (this._lastMap || {})[d._id]
+    return {
+      _id: d._id,
+      name: d.name,
+      image: d.image || '',
+      category: d.category || '',
+      roleLabel: ROLE_LABEL[roleOf(d)],
+      initial: initialOf(d.name),
+      ph: phOf(d._id),
+      lastText: last ? daysAgoText(last) : '还没做过'
+    }
+  },
+
+  /** 单条「换一个」：只在同类里换，不动其它 */
+  onSwapOne(e) {
+    const idx = Number(e.currentTarget.dataset.idx)
+    const picks = this.data.dec.picks.slice()
+    const cur = picks[idx]
+    if (!cur) return
+
+    const used = {}
+    picks.forEach(p => { used[p._id] = true })
+    delete used[cur._id]
+
+    const raw = (this.data.allDishes || []).filter(d => d._id === cur._id)[0]
+    const role = raw ? roleOf(raw) : ''
+    const taste = TASTES.filter(t => t.key === this.data.dec.taste)[0] || TASTES[0]
+    const d = this.pickCandidate(role, taste, used)
+    if (!d) {
+      toast('这一类没有别的可换了')
+      return
+    }
+    picks[idx] = this.decoratePick(d)
+    this.setData({ 'dec.picks': picks })
+  },
+
+  /** 就这些，定了 */
+  async onConfirmDec() {
+    const picks = this.data.dec.picks || []
+    if (!picks.length || this.data.busy) return
 
     if (this.data.cards.length) {
-      const ok = await confirm('今晚已经点了 ' + this.data.cards.length + ' 道，要用新的一桌替换吗？', '重新选', '替换')
+      const ok = await confirm('今晚已经点了 ' + this.data.cards.length + ' 道，要用新的一桌替换吗？', '替换', '替换')
       if (!ok) return
     }
 
-    const last = this._lastMap || {}
-    const veg = []
-    const soup = []
-    const main = []
-    dishes.forEach(d => {
-      const c = d.category || ''
-      if (/素|青菜|蔬|凉拌/.test(c)) veg.push(d)
-      else if (/汤|羹/.test(c)) soup.push(d)
-      else main.push(d)
-    })
-
-    const pickFrom = (pool, n) => {
-      const sorted = pool.slice().sort((a, b) => {
-        const la = last[a._id] || ''
-        const lb = last[b._id] || ''
-        if (la === lb) return 0
-        return la < lb ? -1 : 1
-      })
-      const cand = sorted.slice(0, Math.max(n * 3, n))
-      return shuffle(cand).slice(0, n)
-    }
-
-    let picked = []
-    picked = picked.concat(pickFrom(main, 2))
-    picked = picked.concat(pickFrom(veg, 1))
-    picked = picked.concat(pickFrom(soup, 1))
-
-    // 某一类不够就从剩下的里补，凑到 4 道（或菜库上限）
-    const target = Math.min(4, dishes.length)
-    if (picked.length < target) {
-      const used = {}
-      picked.forEach(d => { used[d._id] = true })
-      const rest = shuffle(dishes.filter(d => !used[d._id]))
-      while (picked.length < target && rest.length) picked.push(rest.shift())
-    }
-    picked = picked.slice(0, target)
+    const byId = {}
+    ;(this.data.allDishes || []).forEach(d => { byId[d._id] = d })
 
     try {
       this.setData({ busy: true })
       await db.clearDrafts(this.data.today)
-      for (let i = 0; i < picked.length; i++) {
-        await db.addToTonight(picked[i], this.data.today)
+      for (let i = 0; i < picks.length; i++) {
+        const d = byId[picks[i]._id]
+        if (d) await db.addToTonight(d, this.data.today)
       }
       const records = await db.getRecordsByDate(this.data.today)
       this.applyRecords(records)
-      this.setData({ busy: false })
+      this.setData({ busy: false, 'dec.open': false })
       wx.vibrateShort({ type: 'medium', fail: () => {} })
-      toast('定了 ' + picked.length + ' 道 · 不满意再点一次')
-    } catch (e) {
-      console.error('[tonight] 选一顿失败', e)
+      toast('定了 ' + picks.length + ' 道')
+    } catch (err) {
+      console.error('[tonight] 定了失败', err)
       this.setData({ busy: false })
-      toast('选菜失败，请重试')
+      toast('操作失败，请重试')
     }
   },
 
@@ -404,26 +543,12 @@ Page({
     })
   },
 
-  onOpenIng() {
-    this.setData({ showIng: true })
+  onOpenShopping() {
+    wx.navigateTo({ url: '/pages/shopping/shopping?date=' + this.data.today })
   },
 
   goPoster() {
     wx.navigateTo({ url: '/pages/poster/poster?date=' + this.data.today })
-  },
-
-  closeIng() {
-    this.setData({ showIng: false })
-  },
-
-  onCopyIng() {
-    const list = this.data.ingList || []
-    if (!list.length) return
-    const text = list.map(i => i.name + ' ×' + i.times).join('\n')
-    wx.setClipboardData({
-      data: '今日食材清单\n' + text,
-      success: () => toast('已复制，可以粘给买菜的人')
-    })
   },
 
   onCloseGuide() {

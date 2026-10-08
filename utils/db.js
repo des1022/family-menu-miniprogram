@@ -301,6 +301,116 @@ function watchRecordsByDate(date, onChange) {
   }
 }
 
+/* ==================== 采购清单 ==================== */
+
+const colShopping = () => db().collection(COLLECTIONS.SHOPPING)
+
+/** 某日全部采购项 */
+async function getShopping(date) {
+  return fetchAll(() => colShopping().where({ date: date }), q => q.orderBy('createTime', 'asc'))
+}
+
+function addShoppingItem(date, name, qty) {
+  const s = require('./shopping.js')
+  return colShopping().add({
+    data: {
+      date: date,
+      name: name,
+      qty: qty || '',
+      group: s.groupOf(name),
+      staple: s.isStaple(name) ? 1 : 0,
+      done: 0,
+      manual: 1,
+      hidden: 0,
+      byName: '',
+      createTime: db().serverDate(),
+      updateTime: db().serverDate()
+    }
+  })
+}
+
+function updateShoppingDone(id, done, byName) {
+  return colShopping().doc(id).update({
+    data: { done: done ? 1 : 0, byName: byName || '', updateTime: db().serverDate() }
+  })
+}
+
+function removeShoppingItem(id) {
+  return colShopping().doc(id).remove()
+}
+
+/** 派生项不真删，只隐藏 —— 否则下次同步又会被从菜里推出来 */
+function hideShoppingItem(id) {
+  return colShopping().doc(id).update({ data: { hidden: 1, updateTime: db().serverDate() } })
+}
+
+/** 清空已买（含隐藏项一起清） */
+async function clearShoppingDone(date) {
+  const list = await getShopping(date)
+  const targets = list.filter(i => Number(i.done) === 1 || Number(i.hidden) === 1)
+  await Promise.all(targets.map(i => colShopping().doc(i._id).remove()))
+  return targets.length
+}
+
+/**
+ * 把「今晚的菜」对应的食材同步进采购清单：
+ *  - 清单里没有的派生项 → 新建
+ *  - 已不在今晚菜单里、且还没买、且非手动的派生项 → 删掉（不再需要买）
+ * 手动加的项一律不动。
+ */
+async function syncShoppingFromDishes(date, derivedNames) {
+  const s = require('./shopping.js')
+  const stored = await getShopping(date)
+  const byKey = {}
+  stored.forEach(i => { byKey[i.name] = i })
+
+  const created = []
+  for (let i = 0; i < derivedNames.length; i++) {
+    const name = derivedNames[i]
+    if (byKey[name]) continue
+    const res = await colShopping().add({
+      data: {
+        date: date,
+        name: name,
+        qty: '',
+        group: s.groupOf(name),
+        staple: s.isStaple(name) ? 1 : 0,
+        done: 0,
+        manual: 0,
+        hidden: 0,
+        byName: '',
+        createTime: db().serverDate(),
+        updateTime: db().serverDate()
+      }
+    })
+    created.push(res._id)
+  }
+
+  const nameSet = {}
+  derivedNames.forEach(n => { nameSet[n] = true })
+  const stale = stored.filter(i =>
+    Number(i.manual) !== 1 && Number(i.done) !== 1 && !nameSet[i.name]
+  )
+  await Promise.all(stale.map(i => colShopping().doc(i._id).remove()))
+
+  return { created: created.length, removed: stale.length }
+}
+
+/** 采购清单实时监听（多人在超市同时勾） */
+function watchShopping(date, onChange) {
+  try {
+    return colShopping()
+      .where({ date: date })
+      .watch({
+        onChange: snapshot => onChange(snapshot.docs || []),
+        onError: err => console.error('[db] 采购清单监听异常', err)
+      })
+  } catch (e) {
+    console.warn('[db] watch 降级为手动刷新', e)
+    return null
+  }
+}
+
 /* ==================== 派生数据 ==================== */
 
 /** 各菜累计点单次数（菜库「常吃」排序用） */
@@ -391,6 +501,15 @@ module.exports = {
   countConfirmed,
   getAllRecords,
   watchRecordsByDate,
+  // 采购清单
+  getShopping,
+  addShoppingItem,
+  updateShoppingDone,
+  removeShoppingItem,
+  hideShoppingItem,
+  clearShoppingDone,
+  syncShoppingFromDishes,
+  watchShopping,
   // 派生
   getDishFreq,
   getRecentDishIds,
