@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>怎么让家人用上「家庭菜单」</title>
+<style>
+  :root{
+    --pri:#D9714E;--pri-d:#C4553A;--pri-l:#FBEEE8;--pri-ink:#A8462E;
+    --acc:#E9A323;--acc-l:#FCF3DF;--acc-ink:#8E5F0C;
+    --ok:#4F9367;--ok-l:#E9F3ED;--ok-ink:#3E7A55;
+    --bg:#FAF7F3;--surf:#FFFFFF;--surf2:#F4EFE9;--line:#EFE7DE;
+    --ink:#2A2521;--ink2:#8B8178;--ink3:#B7AEA4;--danger:#C94A3F;
+    --r:14px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:40px 20px 80px;background:var(--bg);color:var(--ink);
+    font:15px/1.75 -apple-system,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:760px;margin:0 auto}
+  h1{font-size:27px;margin:0 0 6px;letter-spacing:-.01em}
+  .sub{color:var(--ink2);font-size:14px;margin-bottom:30px}
+  h2{font-size:19px;margin:36px 0 12px;padding-left:12px;border-left:4px solid var(--pri);line-height:1.3}
+  p{margin:10px 0}
+  .card{background:var(--surf);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px;
+    box-shadow:0 2px 8px rgba(170,130,100,.07);margin:14px 0}
+  .card.no{border-left:5px solid var(--danger)}
+  .card.ok{border-left:5px solid var(--ok)}
+  .card.warn{border-left:5px solid var(--acc)}
+  code{background:var(--surf2);border-radius:5px;padding:1px 6px;font-family:ui-monospace,Consolas,monospace;font-size:13.5px}
+  table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px}
+  th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{background:var(--surf2);font-size:13px;color:var(--ink2);font-weight:700}
+  .yes{color:var(--ok);font-weight:700}
+  .no{color:var(--danger);font-weight:700}
+  .note{font-size:13.5px;color:var(--ink2)}
+  ol.steps{counter-reset:s;list-style:none;padding:0;margin:16px 0}
+  ol.steps>li{counter-increment:s;position:relative;padding:0 0 18px 44px}
+  ol.steps>li::before{content:counter(s);position:absolute;left:0;top:2px;width:28px;height:28px;border-radius:50%;
+    background:var(--pri);color:#fff;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  ol.steps .t{font-weight:700;font-size:15.5px}
+  ol.steps .d{color:var(--ink2);font-size:14px}
+  .em{font-weight:700;color:var(--pri-d)}
+  hr{border:0;border-top:1px solid var(--line);margin:32px 0}
+  @media (prefers-color-scheme: dark){
+    :root{--pri:#FFFFFF;--pri-d:#E6F1ED;--pri-l:rgba(255,255,255,.16);--ok:#FFFFFF;--ok-l:rgba(255,255,255,.16);
+      --bg:#37776A;--surf:#438476;--surf2:#2F6A5C;--line:#51998A;--ink:#F0F7F4;--ink2:#C6DCD5;--ink3:#A0C3B9;
+      --danger:#FFD9D0;--acc:#D2703F;--acc-l:rgba(210,112,63,.26);--acc-ink:#F8DAC8}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <h1>怎么让家人用上「家庭菜单」</h1>
+  <div class="sub">家庭菜单小程序 · 2026-10-08</div>
+
+  <h2>先搞清楚：为什么家人扫码说「暂无体验权限」</h2>
+  <div class="card no">
+    <p style="margin:0"><b>因为那个二维码是「预览二维码」，它不是给家人用的。</b></p>
+  </div>
+  <table>
+    <tr><th>二维码 / 版本</th><th>谁能打开</th><th>用途</th></tr>
+    <tr>
+      <td><b>预览二维码</b><br><span class="note">（我之前给你的那些）</span></td>
+      <td class="no">只有「项目成员」<br><span class="note">（开发者/运营者）</span></td>
+      <td>开发自己调试用。家人扫码必然报「暂无体验权限」，<b>加体验成员也没用</b>。</td>
+    </tr>
+    <tr>
+      <td><b>体验版二维码</b><br><span class="note">（家人用这个）</span></td>
+      <td class="yes">「体验成员」名单里的微信号</td>
+      <td>给家里人日常使用。<b>不需要审核</b>、不花钱。</td>
+    </tr>
+  </table>
+  <p class="note">所以你那张截图里加的 <b>「项目成员」</b> 是开发协作名单，跟家人能不能用是两回事。
+  家人要加在另一个标签页：<b>「体验成员」</b>。</p>
+
+  <h2>三步搞定</h2>
+  <ol class="steps">
+    <li>
+      <div class="t">添加家人为「体验成员」</div>
+      <div class="d">
+        微信公众平台 → <span class="em">成员管理 → 体验成员</span>（注意：不是「项目成员」那个标签页）
+        → 点「添加」→ 填家人的<b>微信号</b>（就是他们微信「我 → 微信号」里那串，不是昵称）。
+        <br>人数上限十几到几十个（个人主体约 15 人），一家人肯定够。
+      </div>
+    </li>
+    <li>
+      <div class="t">把刚上传的版本设为「体验版」</div>
+      <div class="d">
+        微信公众平台 → <span class="em">管理 → 版本管理</span> → 在「<b>开发版本</b>」里找到最新那一个
+        （<b>2026-10-08 上传</b>的那条）→ 点 <span class="em">「选为体验版本」</span> → 确认。
+        <br><span class="note">一个小程序同时只能有一个体验版；以后再上传新版本，重复这一步替换即可。</span>
+      </div>
+    </li>
+    <li>
+      <div class="t">把体验版二维码发给家人</div>
+      <div class="d">
+        同一页面的「<b>体验版本</b>」区域有 <span class="em">二维码</span>（可下载/放大）
+        → 发到家庭群，让家人用自己的微信扫。
+        <br><span class="note">体验版二维码约 <b>7 天</b>有效，过期了在这页重新生成一张就行，家人不用重新加。</span>
+      </div>
+    </li>
+  </ol>
+
+  <div class="card ok">
+    <p style="margin:0">💡 <b>家人扫开后就是完整可用的</b>：和他们扫预览码看到的是同一个东西 ——
+    因为体验版、预览版连的是<b>同一个云环境</b>，之前建的数据表、设好的共享权限、填进去的菜，全都通用。</p>
+  </div>
+
+  <h2>以后每次我改完代码，你需要做的</h2>
+  <div class="card warn">
+    <p style="margin:0">只有一步：去 <b>版本管理</b> 把最新上传的开发版本 <b>「选为体验版本」</b>。
+    家人那边什么都不用做，下次打开就是新版。</p>
+    <p class="note" style="margin:10px 0 0">（上传这步我来做；体验版二维码也不用重新发给家人。）</p>
+  </div>
+
+  <hr>
+  <p class="note">
+    小程序 AppID：<code>wx83619ff082bae6bf</code>　云环境：<code>cloudbase-d6gm6blmkdb5a57ee</code><br>
+    构建全部走 GitHub Actions（仓库 <code>family-menu-miniprogram</code> → workflow <code>deploy-miniprogram</code>）。
+  </p>
+
+</div>
+</body>
+</html>
