@@ -99,27 +99,40 @@
   <view class="sheet-mask" wx:if="{{detail}}" bindtap="closeDetail" catchtouchmove="noop">
     <view class="sheet" catchtap="noop">
       <view class="sheet-grab"></view>
-      <view class="dt-hero">
-        <image class="dt-img dish-dim" wx:if="{{detail.image}}" src="{{detail.image}}" mode="aspectFill"/>
-        <view class="dt-img img-ph {{detail.ph}}" wx:else>{{detail.initial}}</view>
-        <view class="dt-fav {{detail.favorite === 1 ? 'dt-fav--on' : ''}}" catchtap="onToggleFav">{{detail.favorite === 1 ? '★' : '☆'}}</view>
-      </view>
-      <view class="dt-nm">{{detail.name}}</view>
-      <view class="dt-meta">
-        <text class="tag" wx:if="{{detail.category}}">{{detail.category}}</text>
-        <text class="tag tag--pri" wx:for="{{detail.tagList}}" wx:key="*this">{{item}}</text>
-        <text class="t-micro" wx:if="{{detail.lastText}}">{{detail.lastText}}</text>
-      </view>
-      <view class="dt-sec" wx:if="{{detail.ingredients}}">
-        <view class="dt-h">食材</view>
-        <view class="dt-ing">
-          <text class="dt-ing-i" wx:for="{{detail.ingList}}" wx:key="*this">{{item}}</text>
+
+      <scroll-view class="dt-scroll" scroll-y>
+        <view class="dt-hero">
+          <image class="dt-img dish-dim" wx:if="{{detail.image}}" src="{{detail.image}}" mode="aspectFill"/>
+          <view class="dt-img img-ph {{detail.ph}}" wx:else>{{detail.initial}}</view>
+          <view class="dt-fav {{detail.favorite === 1 ? 'dt-fav--on' : ''}}" catchtap="onToggleFav">{{detail.favorite === 1 ? '★' : '☆'}}</view>
         </view>
-      </view>
-      <view class="dt-sec" wx:if="{{detail.desc}}">
-        <view class="dt-h">备注</view>
-        <view class="dt-tx">{{detail.desc}}</view>
-      </view>
+        <view class="dt-nm">{{detail.name}}</view>
+        <view class="dt-meta">
+          <text class="tag" wx:if="{{detail.category}}">{{detail.category}}</text>
+          <text class="tag tag--pri" wx:for="{{detail.tagList}}" wx:key="*this">{{item}}</text>
+          <text class="t-micro" wx:if="{{detail.lastText}}">{{detail.lastText}}</text>
+        </view>
+        <view class="dt-sec" wx:if="{{detail.ingredients}}">
+          <view class="dt-h">食材</view>
+          <view class="dt-ing">
+            <text class="dt-ing-i" wx:for="{{detail.ingList}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+        <view class="dt-sec" wx:if="{{detail.desc}}">
+          <view class="dt-h">备注</view>
+          <view class="dt-tx">{{detail.desc}}</view>
+        </view>
+        <view class="dt-sec" wx:if="{{detail.stepList.length}}">
+          <view class="dt-h">做法 <text class="dt-h-n">{{detail.stepList.length}} 步</text></view>
+          <view class="dt-steps">
+            <view class="dt-step" wx:for="{{detail.stepList}}" wx:key="index">
+              <text class="dt-step-n">{{index + 1}}</text>
+              <text class="dt-step-t">{{item}}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
       <view class="btn-row dt-actions">
         <view class="btn btn-ghost" bindtap="onEdit">编辑</view>
         <view class="btn {{detail.onTonight ? 'btn-plain' : 'btn-primary'}}" bindtap="onToggleTonight" data-id="{{detail._id}}">

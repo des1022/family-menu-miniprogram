@@ -16,6 +16,7 @@ Page({
       price: '',
       desc: '',
       ingredients: '',
+      steps: '',
       status: config.DISH_STATUS.ON
     },
     selectedTags: [],
@@ -70,6 +71,7 @@ Page({
           price: dish.price ? String(dish.price) : '',
           desc: dish.desc || '',
           ingredients: dish.ingredients || '',
+          steps: dish.steps || '',
           status: typeof dish.status === 'number' ? dish.status : config.DISH_STATUS.ON
         },
         oldImage: dish.image || '',
@@ -161,6 +163,7 @@ Page({
       price,
       desc: (form.desc || '').trim(),
       ingredients: (form.ingredients || '').trim(),
+      steps: (form.steps || '').trim(),
       tags: this.data.selectedTags.join(';'),
       status: form.status
     }

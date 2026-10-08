@@ -299,3 +299,63 @@
 .setup-sh { font-size: 25rpx; font-weight: 700; color: var(--ink2); margin-bottom: 12rpx; }
 .setup-step { font-size: 24rpx; color: var(--ink2); line-height: 1.75; }
 .setup-em { font-weight: 700; color: var(--pri); }
+
+/* ==================== 做法 ==================== */
+.tag--how {
+  background: var(--acc-l);
+  color: var(--acc-ink);
+}
+.hw-scroll {
+  flex: 1;
+  min-height: 0;
+  max-height: 56vh;
+}
+.hw-tags { display: flex; gap: 12rpx; margin-bottom: 22rpx; }
+.hw-sec { margin-bottom: 24rpx; }
+.hw-h {
+  font-size: 22rpx;
+  font-weight: 700;
+  color: var(--ink2);
+  letter-spacing: 0.08em;
+  margin-bottom: 12rpx;
+}
+.hw-ing { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.hw-ing-i {
+  font-size: 24rpx;
+  font-weight: 600;
+  background: var(--ok-l);
+  color: var(--ok-ink);
+  border-radius: 999rpx;
+  padding: 8rpx 20rpx;
+}
+.hw-steps {
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 22rpx;
+  padding: 6rpx 24rpx;
+}
+.hw-step {
+  display: flex;
+  gap: 18rpx;
+  padding: 20rpx 0;
+  border-bottom: 2rpx solid var(--line);
+}
+.hw-step:last-child { border-bottom: none; }
+.hw-step-n {
+  flex: 0 0 auto;
+  width: 42rpx;
+  height: 42rpx;
+  border-radius: 50%;
+  background: var(--pri-l);
+  color: var(--pri-ink);
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 42rpx;
+  text-align: center;
+}
+.hw-step-t {
+  flex: 1;
+  font-size: 29rpx;
+  line-height: 1.65;
+  color: var(--ink);
+}

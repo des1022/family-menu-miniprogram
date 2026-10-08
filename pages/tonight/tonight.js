@@ -2,7 +2,7 @@ const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const { SAMPLE_DISHES } = require('../../utils/samples.js')
-const { toast, confirm, errText } = require('../../utils/util.js')
+const { toast, confirm, errText, parseSteps, parseIngredients } = require('../../utils/util.js')
 
 const WEEK = ['日', '一', '二', '三', '四', '五', '六']
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
@@ -109,6 +109,7 @@ Page({
     sizes: SIZES,
     tastes: TASTES,
     dec: { open: false, mix: 'm1', size: 's2', taste: 't0', picks: [] },
+    how: null,
     guide: false,
     busy: false,
 
@@ -265,7 +266,8 @@ Page({
         byName: r.byName || '',
         byColor: r.byColor || '#D9714E',
         initial: initialOf(r.dishName || (dish ? dish.name : '')),
-        ph: phOf(r.dishId)
+        ph: phOf(r.dishId),
+        hasSteps: !!(dish && parseSteps(dish.steps).length)
       }
     })
     this.setData({ cards: cards, today: today })
@@ -374,6 +376,43 @@ Page({
     // 菜库是 tabBar 页面，只能 switchTab（不能带参数），用本地缓存把要看的菜传过去
     wx.setStorageSync('fm_focus_dish', e.currentTarget.dataset.id)
     wx.switchTab({ url: '/pages/dishes/dishes' })
+  },
+
+  /* ==================== 做法（就地查看，做饭的人不用跳走） ==================== */
+
+  onOpenHow(e) {
+    const dishId = e.currentTarget.dataset.id
+    const dish = this._dishMap ? this._dishMap[dishId] : null
+    if (!dish) return
+    const stepList = parseSteps(dish.steps)
+    if (!stepList.length) return
+    this.setData({
+      how: {
+        dishId: dishId,
+        name: dish.name,
+        category: dish.category || '',
+        ingList: parseIngredients(dish.ingredients),
+        stepList: stepList
+      }
+    })
+  },
+
+  closeHow() {
+    this.setData({ how: null })
+  },
+
+  /** 把做法复制成一段文字，方便发到家庭群 / 发给做饭的人 */
+  onCopyHow() {
+    const h = this.data.how
+    if (!h) return
+    const lines = [h.name]
+    if (h.ingList && h.ingList.length) lines.push('食材：' + h.ingList.join('、'))
+    lines.push('')
+    h.stepList.forEach((s, i) => lines.push((i + 1) + '. ' + s))
+    wx.setClipboardData({
+      data: lines.join('\n'),
+      success: () => toast('做法已复制')
+    })
   },
 
   onSugTap() {

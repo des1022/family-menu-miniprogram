@@ -116,6 +116,7 @@
             <view class="dish-tg">
               <text class="tag" wx:if="{{item.category}}">{{item.category}}</text>
               <text class="tag tag--ok" wx:if="{{item.confirmed}}">已确认</text>
+              <text class="tag tag--how" wx:if="{{item.hasSteps}}" catchtap="onOpenHow" data-id="{{item.dishId}}">做法</text>
             </view>
           </view>
           <view class="dish-x" catchtap="onRemove" data-id="{{item.dishId}}" data-name="{{item.name}}">✕</view>
@@ -153,6 +154,46 @@
     <view class="btn-row">
       <button class="btn btn-ghost" open-type="share">分享</button>
       <view class="btn btn-primary {{busy ? 'btn-disabled' : ''}}" bindtap="onConfirmTonight">确认这顿饭</view>
+    </view>
+  </view>
+
+  <!-- 做法弹层 -->
+  <view class="sheet-mask" wx:if="{{how}}" bindtap="closeHow" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-grab"></view>
+      <view class="sheet-hd">
+        <text class="sheet-t">{{how.name}}</text>
+        <view class="sheet-x" bindtap="closeHow">✕</view>
+      </view>
+
+      <scroll-view class="hw-scroll" scroll-y>
+        <view class="hw-tags">
+          <text class="tag" wx:if="{{how.category}}">{{how.category}}</text>
+          <text class="tag">{{how.stepList.length}} 步</text>
+        </view>
+
+        <view class="hw-sec" wx:if="{{how.ingList.length}}">
+          <view class="hw-h">食材</view>
+          <view class="hw-ing">
+            <text class="hw-ing-i" wx:for="{{how.ingList}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+
+        <view class="hw-sec">
+          <view class="hw-h">做法</view>
+          <view class="hw-steps">
+            <view class="hw-step" wx:for="{{how.stepList}}" wx:key="index">
+              <text class="hw-step-n">{{index + 1}}</text>
+              <text class="hw-step-t">{{item}}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="btn-row" style="margin-top:26rpx">
+        <view class="btn btn-ghost" bindtap="onCopyHow">复制做法</view>
+        <view class="btn btn-primary" bindtap="closeHow">开始做</view>
+      </view>
     </view>
   </view>
 

@@ -142,3 +142,45 @@
 }
 .dt-tx { font-size: 27rpx; color: var(--ink2); line-height: 1.6; }
 .dt-actions { margin-top: 34rpx; }
+
+/* ---------- 详情弹层：内容可滚动 + 做法步骤 ---------- */
+.dt-scroll {
+  flex: 1;
+  min-height: 0;
+}
+.dt-h-n {
+  font-weight: 600;
+  color: var(--ink3);
+  margin-left: 8rpx;
+  letter-spacing: 0;
+}
+.dt-steps {
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 22rpx;
+  padding: 6rpx 24rpx;
+}
+.dt-step {
+  display: flex;
+  gap: 18rpx;
+  padding: 18rpx 0;
+  border-bottom: 2rpx solid var(--line);
+}
+.dt-step:last-child { border-bottom: none; }
+.dt-step-n {
+  flex: 0 0 auto;
+  width: 40rpx; height: 40rpx;
+  border-radius: 50%;
+  background: var(--pri-l);
+  color: var(--pri-ink);
+  font-size: 23rpx;
+  font-weight: 700;
+  line-height: 40rpx;
+  text-align: center;
+}
+.dt-step-t {
+  flex: 1;
+  font-size: 28rpx;
+  line-height: 1.62;
+  color: var(--ink);
+}

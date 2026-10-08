@@ -171,3 +171,14 @@
   border-color: #FFC9AE;
   font-weight: 600;
 }
+
+/* ---------- 做法步骤 ---------- */
+.form-textarea--steps {
+  min-height: 260rpx;
+  line-height: 1.8;
+}
+.form-h {
+  font-size: 23rpx;
+  color: var(--ink3);
+  margin-top: 12rpx;
+}

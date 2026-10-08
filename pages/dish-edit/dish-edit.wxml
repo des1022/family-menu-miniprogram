@@ -102,6 +102,25 @@
     />
   </view>
 
+  <!-- 做法步骤 -->
+  <view class="card">
+    <view class="form-row">
+      <text class="form-label">做法步骤</text>
+      <text class="form-tip">选填，每行一步</text>
+    </view>
+    <textarea
+      class="form-textarea form-textarea--steps"
+      value="{{form.steps}}"
+      maxlength="600"
+      placeholder="一行写一步，例如：&#10;1 番茄去皮切块，鸡蛋打散&#10;2 热锅多油炒蛋，凝固就盛出&#10;3 炒番茄出汁，倒回鸡蛋翻匀"
+      placeholder-class="ph"
+      auto-height
+      bindinput="onInput"
+      data-field="steps"
+    />
+    <view class="form-h">做饭的人点开菜品就能照着做</view>
+  </view>
+
   <!-- 标签 -->
   <view class="card">
     <view class="form-row">

@@ -117,6 +117,22 @@ function parseIngredients(raw) {
     .filter(Boolean)
 }
 
+/**
+ * 做法步骤解析：每行一步。
+ *
+ * 用户可能自己写「1. 番茄切块」这种编号 —— 这里会把行首编号去掉，
+ * 由界面统一重新编号，避免显示成「1 1. 番茄切块」。
+ * 只在编号后面跟着编号分隔符或空白时才去掉，所以「300克面粉」不会被误伤。
+ */
+function parseSteps(raw) {
+  return String(raw || '')
+    .split(/\r?\n/)
+    .map(s => s.trim())
+    .filter(Boolean)
+    .map(s => s.replace(/^\d+\s*[.、．)）:：]\s*/, '').replace(/^\d+\s+/, '').trim())
+    .filter(Boolean)
+}
+
 module.exports = {
   toast,
   showLoading,
@@ -129,5 +145,6 @@ module.exports = {
   sleep,
   errText,
   parseTags,
-  parseIngredients
+  parseIngredients,
+  parseSteps
 }
