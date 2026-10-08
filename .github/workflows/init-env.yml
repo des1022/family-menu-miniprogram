@@ -1,0 +1,29 @@
+name: init-env
+
+# 建云环境里缺的集合（小程序端建不了表，只能走服务端接口）。
+# 需要一个仓库 Secret：MP_APPSECRET（微信公众平台 → 开发管理 → 开发设置）。
+#
+# 什么时候用：换了新环境、或者发现集合被清掉了、小程序里提示「云环境还没初始化」时。
+# 注意：这个流程**不能**改集合权限 —— 微信没开放权限接口，只能在控制台点。
+
+on:
+  workflow_dispatch:
+
+jobs:
+  init:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Create missing collections
+        env:
+          MP_APPID: ${{ secrets.MP_APPID }}
+          MP_APPSECRET: ${{ secrets.MP_APPSECRET }}
+        run: |
+          if [ -z "$MP_APPSECRET" ]; then
+            echo "::warning title=缺少 MP_APPSECRET::仓库里没有配置 MP_APPSECRET，无法自动建集合。请在 Settings → Secrets and variables → Actions 里新增它（值取自微信公众平台 → 开发管理 → 开发设置）。"
+            exit 0
+          fi
+          node tools/init-env.mjs
