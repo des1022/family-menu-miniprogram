@@ -1,0 +1,128 @@
+/**
+ * 自包含样式：自定义组件默认样式隔离（app.wxss 的 class 不生效），
+ * 所以这里把弹层与按钮都写全，只依赖继承下来的 CSS 变量（--bg/--surf/--ink…）。
+ */
+
+.who-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(30, 20, 14, 0.45);
+  z-index: 120;
+  display: flex;
+  align-items: flex-end;
+}
+
+.who-sheet {
+  width: 100%;
+  background: var(--bg);
+  color: var(--ink);
+  border-radius: 36rpx 36rpx 0 0;
+  padding: 20rpx 28rpx calc(28rpx + env(safe-area-inset-bottom));
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--sh-lg);
+}
+
+.who-grab {
+  width: 72rpx;
+  height: 8rpx;
+  border-radius: 4rpx;
+  background: var(--ink3);
+  opacity: 0.5;
+  margin: 0 auto 18rpx;
+  flex: 0 0 auto;
+}
+
+.who-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14rpx;
+  flex: 0 0 auto;
+}
+
+.who-t {
+  font-size: 34rpx;
+  font-weight: 700;
+}
+
+.who-x {
+  width: 56rpx;
+  height: 56rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ink2);
+  font-size: 34rpx;
+}
+
+.who-tip {
+  font-size: 24rpx;
+  color: var(--ink2);
+  line-height: 1.6;
+  margin-bottom: 20rpx;
+  flex: 0 0 auto;
+}
+
+.who-list {
+  flex: 1;
+  min-height: 0;
+  max-height: 52vh;
+}
+
+.who-i {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-card);
+  padding: 22rpx 24rpx;
+  margin-bottom: 16rpx;
+  box-shadow: var(--sh);
+}
+
+.who-av {
+  width: 72rpx;
+  height: 72rpx;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  color: #FFFFFF;
+  font-size: 30rpx;
+  font-weight: 700;
+  line-height: 72rpx;
+  text-align: center;
+}
+
+.who-nm {
+  flex: 1;
+  min-width: 0;
+  font-size: 30rpx;
+  font-weight: 700;
+}
+
+.who-go {
+  flex: 0 0 auto;
+  font-size: 24rpx;
+  font-weight: 700;
+  /* --pri-ink 在浅色是深陶土、深色是纯白，两种主题下压在白卡/墨绿卡上都清楚 */
+  color: var(--pri-ink);
+}
+
+.who-new {
+  flex: 0 0 auto;
+  margin-top: 22rpx;
+  height: 92rpx;
+  line-height: 92rpx;
+  text-align: center;
+  border-radius: 999rpx;
+  font-size: 30rpx;
+  font-weight: 700;
+  color: var(--btn-ink);
+  background: var(--btn-bg);
+  box-shadow: var(--btn-sh);
+}

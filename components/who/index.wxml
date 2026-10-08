@@ -1,0 +1,28 @@
+<view class="who-mask" wx:if="{{show}}" bindtap="onClose" catchtouchmove="noop">
+  <view class="who-sheet" catchtap="noop">
+    <view class="who-grab"></view>
+
+    <view class="who-hd">
+      <text class="who-t">你是家里的哪位？</text>
+      <view class="who-x" bindtap="onClose">✕</view>
+    </view>
+
+    <view class="who-tip">这台设备上还没认过你。选一下自己 —— 以后就不会再问，也不会多出成员。</view>
+
+    <scroll-view class="who-list" scroll-y>
+      <view
+        class="who-i"
+        wx:for="{{members}}"
+        wx:key="_id"
+        data-id="{{item._id}}"
+        bindtap="onPick"
+      >
+        <view class="who-av" style="background:{{item.color}}">{{item.initial}}</view>
+        <view class="who-nm">{{item.nickname || '未命名'}}</view>
+        <text class="who-go">这是我 ›</text>
+      </view>
+    </scroll-view>
+
+    <view class="who-new" bindtap="onCreate">都不是，我是新成员</view>
+  </view>
+</view>

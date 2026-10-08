@@ -16,6 +16,7 @@ module.exports = {
   // 本地缓存键（只存本机相关的东西：我是谁、主题偏好、引导是否看过）
   KEYS: {
     MEMBER_ID: 'fm_member_id',    // 本机对应的家庭成员文档 _id
+    MY_OPENID: 'fm_my_openid',    // 我的 openid（从自己建的成员文档上读回来，用于换客户端后找回身份）
     THEME: 'fm_theme_mode',       // 0 跟随系统 / 1 浅色 / 2 深色
     GUIDE_SHOWN: 'fm_guide_shown',
     NICKNAME: 'fm_nickname'       // 兼容旧版本，读一次后迁移到成员表

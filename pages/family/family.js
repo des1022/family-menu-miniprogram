@@ -20,6 +20,11 @@ Page({
     eatCount: 0,
     dishCount: 0,
 
+    // 身份认领（本机认不出「我是谁」时用）
+    myId: '',
+    whoShow: false,
+    whoList: [],
+
     themeModes: theme.MODES,
     themeMode: 0,
     isDark: false,
@@ -60,12 +65,18 @@ Page({
 
   async loadAll() {
     try {
-      await db.ensureMyMember().catch(e => console.warn('[family] 成员初始化失败', e))
+      // 认领「我是谁」：认不出来会返回 null（换客户端 / 清过缓存），下面弹「你是哪位」
+      let me = null
+      try {
+        me = await db.ensureMyMember()
+      } catch (e) {
+        console.warn('[family] 成员初始化失败', e)
+      }
       const [members, dishes] = await Promise.all([
         db.getMembers().catch(() => []),
         db.getAllDishes().catch(() => [])
       ])
-      const me = await db.getMyMember().catch(() => null)
+      if (!me) me = await db.getMyMember().catch(() => null)
       const myId = me ? me._id : ''
 
       const rawTastes = {}
@@ -82,12 +93,63 @@ Page({
           eatTonight: Number(m.eatTonight) !== config.EAT_TONIGHT.NO,
           isMe: m._id === myId
         })),
+        myId: myId,
+        // 认不出我是谁、但家里已经有人了 → 问一句，绝不自动新建
+        whoShow: !myId && members.length > 0 && !this._whoDismissed,
+        whoList: members.map(m => ({
+          _id: m._id,
+          color: m.color || config.MEMBER_COLORS[0],
+          initial: initialOf(m.nickname),
+          nickname: m.nickname || ''
+        })),
         eatCount: db.countEatTonight(members),
         dishCount: dishes.length
       })
     } catch (e) {
       console.error('[family] 加载失败', e)
       toast('加载失败，下拉重试')
+    }
+  },
+
+  /* ==================== 认领「我是谁」 ==================== */
+
+  async onWhoPick(e) {
+    const id = e.detail && e.detail.id
+    if (!id) return
+    try {
+      await db.claimMember(id)
+      this.setData({ whoShow: false })
+      toast('好，记住你了')
+      this.loadAll()
+    } catch (err) {
+      console.error('[family] 认领成员失败', err)
+      toast('没选上，再试一次')
+    }
+  },
+
+  async onWhoCreate() {
+    try {
+      await db.createSelfMember(this.data.whoList.length)
+      this.setData({ whoShow: false })
+      toast('已加入，点自己那条改个名字吧')
+      this.loadAll()
+    } catch (err) {
+      console.error('[family] 新建成员失败', err)
+      toast('没建成，再试一次')
+    }
+  },
+
+  onWhoClose() {
+    // 本次会话内不再自动弹（点提示条还能重新打开）
+    this._whoDismissed = true
+    this.setData({ whoShow: false })
+  },
+
+  /** 认不出身份时，成员区顶部给一行提示，点了重新弹选择 */
+  onOpenWho() {
+    if (!this.data.myId && this.data.whoList.length) {
+      this._whoDismissed = false
+      this.setData({ whoShow: true })
     }
   },
 

@@ -2,5 +2,7 @@
   "navigationBarTitleText": "今晚",
   "enablePullDownRefresh": true,
   "backgroundTextStyle": "@bgTxtStyle",
-  "usingComponents": {}
+  "usingComponents": {
+    "who": "/components/who/index"
+  }
 }

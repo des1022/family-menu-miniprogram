@@ -143,7 +143,34 @@ async function moveDishesCategory(from, to) {
 
 let _me = null
 
-/** 读取本地记住的成员文档（管理员/成员表都可能被清理，取不到就返回 null） */
+/** 云开发「文档不存在」类错误（区别于网络/权限这种临时故障） */
+function isNotFound(e) {
+  if (!e) return false
+  const code = e.errCode || e.code || ''
+  const msg = String(e.errMsg || e.message || '')
+  return code === -502004 || /not exist|does not exist|不存在/i.test(msg)
+}
+
+/** 把「我是谁」记到本地（_id + openid 都记） */
+function remember(m) {
+  _me = m || null
+  if (_me) {
+    wx.setStorageSync(config.KEYS.MEMBER_ID, _me._id)
+    if (_me._openid) wx.setStorageSync(config.KEYS.MY_OPENID, _me._openid)
+  } else {
+    wx.removeStorageSync(config.KEYS.MEMBER_ID)
+  }
+  return _me
+}
+
+/**
+ * 读取本地记住的成员文档。
+ *
+ * ⚠️ 这里踩过一次坑：原来只要读失败就清掉本地 _id，于是网络/权限抖一下都会
+ * 让「我是谁」丢失，下一次 ensureMyMember 就新建一条成员 —— 表现就是
+ * 「换个客户端打开 / 重新打开一次，家庭里就多出一个成员」。
+ * 现在只有「这条记录真的没了」才清本地记忆，临时故障一律保留。
+ */
 async function getMyMember() {
   if (_me) return _me
   const id = wx.getStorageSync(config.KEYS.MEMBER_ID)
@@ -151,53 +178,125 @@ async function getMyMember() {
   try {
     const res = await colMembers().doc(id).get()
     _me = res.data || null
+    if (_me && _me._openid) wx.setStorageSync(config.KEYS.MY_OPENID, _me._openid)
   } catch (e) {
-    console.warn('[db] 本地成员已失效，稍后重建', e)
     _me = null
-    wx.removeStorageSync(config.KEYS.MEMBER_ID)
+    if (isNotFound(e)) {
+      console.warn('[db] 本地成员记录已不存在，清掉本地记忆')
+      wx.removeStorageSync(config.KEYS.MEMBER_ID)
+    } else {
+      console.warn('[db] 读取本地成员失败（保留本地记忆，下次再试）', e)
+    }
   }
   return _me
 }
 
 /**
- * 首次进入时认领一个成员身份：新建成员文档并把 _id 存本地。
- * 昵称优先取旧版本遗留的本地昵称，没有就留空（家庭页会提示补全）。
+ * 按 openid 找「我自己」那条。
+ * 客户端拿不到自己的 openid，但可以从自己新建的文档上把 _openid 读回来，
+ * 所以「同一台微信在不同客户端打开」时能靠它把身份找回来。
+ * 只认 ensureMyMember/createSelfMember 建的（self === 1），
+ * 手动给家人加的成员（self 为 0 或缺省）绝不认 —— 否则会认错人。
  */
-async function ensureMyMember() {
-  const exist = await getMyMember()
-  if (exist) return exist
+async function findSelfByOpenid(openid, exceptId) {
+  if (!openid) return null
+  try {
+    const res = await colMembers().where({ _openid: openid }).limit(20).get()
+    const list = (res.data || [])
+      .filter(m => m._id !== exceptId && Number(m.self) === 1)
+      .sort((a, b) => (a.createTime && a.createTime.$date ? a.createTime.$date : 0) -
+                      (b.createTime && b.createTime.$date ? b.createTime.$date : 0))
+    return list[0] || null
+  } catch (e) {
+    console.warn('[db] 按 openid 找成员失败', e)
+    return null
+  }
+}
 
-  const members = await getMembers()
+/** 新建「我」这条成员（self = 1，便于同一个人换客户端时找回） */
+async function createSelfMember(count) {
   const legacyNick = wx.getStorageSync(config.KEYS.NICKNAME) || ''
-  const color = config.MEMBER_COLORS[members.length % config.MEMBER_COLORS.length]
-
+  const color = config.MEMBER_COLORS[(count || 0) % config.MEMBER_COLORS.length]
   const res = await colMembers().add({
     data: {
       nickname: legacyNick,
       color: color,
       eatTonight: config.EAT_TONIGHT.YES,
       tastes: '',
+      self: 1,
       createTime: db().serverDate(),
       updateTime: db().serverDate()
     }
   })
-  wx.setStorageSync(config.KEYS.MEMBER_ID, res._id)
-  _me = { _id: res._id, nickname: legacyNick, color: color, eatTonight: config.EAT_TONIGHT.YES, tastes: '' }
-  return _me
+
+  // 读回来拿 _openid（客户端没有直接获取 openid 的 API，只能从自己建的文档上取）
+  let doc = { _id: res._id, nickname: legacyNick, color: color, eatTonight: config.EAT_TONIGHT.YES, tastes: '', self: 1 }
+  try {
+    const back = await colMembers().doc(res._id).get()
+    if (back && back.data) doc = back.data
+  } catch (e) {
+    console.warn('[db] 读回新成员失败', e)
+  }
+
+  // 同一个人其实早就认领过（例如这台设备的本地记忆丢了）→ 用老的那条，把刚建的删掉
+  const dup = await findSelfByOpenid(doc._openid, doc._id)
+  if (dup) {
+    try {
+      await colMembers().doc(doc._id).remove()
+      console.warn('[db] 已合并到已有成员，未产生重复')
+    } catch (e) {
+      console.warn('[db] 清理多余成员失败', e)
+    }
+    return remember(dup)
+  }
+  return remember(doc)
+}
+
+/** 认领一条已有成员（页面「你是哪位」选中后调用） */
+async function claimMember(id) {
+  const res = await colMembers().doc(id).get()
+  return remember(res.data)
+}
+
+/**
+ * 认领「我是谁」。返回 null = 认不出来，页面要问一句「你是家里的哪位？」
+ *
+ * 为什么不再默默新建：本地记忆是按设备存的，换一个客户端（手机 ↔ 电脑）
+ * 或清一次缓存就没了；如果这时直接新建，家里就会不断多出「未命名」成员
+ * —— 这正是 2026-10-08 真机反馈的那个 bug。现在规矩是：
+ *   1) 本地有记录且还读得到 → 直接用
+ *   2) 本地缓存过 openid → 按 openid 找回来（自动，不打扰）
+ *   3) 家里一个人都还没有 → 第一个使用者自动建
+ *   4) 其余情况 → 返回 null，让用户自己指认
+ */
+async function ensureMyMember() {
+  const exist = await getMyMember()
+  if (exist) return exist
+
+  const members = await getMembers()
+
+  const cachedOpenid = wx.getStorageSync(config.KEYS.MY_OPENID) || ''
+  const byOpenid = await findSelfByOpenid(cachedOpenid)
+  if (byOpenid) return remember(byOpenid)
+
+  if (!members.length) return createSelfMember(0)
+
+  return null
 }
 
 async function getMembers() {
   return fetchAll(colMembers, q => q.orderBy('createTime', 'asc'))
 }
 
-/** 手动新增成员（自己那条是 ensureMyMember 自动建的） */
+/** 手动新增成员（给家人加的那条，self = 0：绝不被当成「我」） */
 function addMember(data) {
   return colMembers().add({
     data: Object.assign({
       nickname: '',
       color: '#D9714E',
       tastes: '',
-      eatTonight: 1
+      eatTonight: 1,
+      self: 0
     }, data, {
       createTime: db().serverDate(),
       updateTime: db().serverDate()
@@ -213,9 +312,16 @@ async function updateMember(id, data) {
   return res
 }
 
-function removeMember(id) {
+async function removeMember(id) {
+  const isMe = !!(wx.getStorageSync(config.KEYS.MEMBER_ID) === id)
   if (_me && _me._id === id) _me = null
-  return colMembers().doc(id).remove()
+  const res = await colMembers().doc(id).remove()
+  // 移除的是自己 → 连本地记忆一起清掉（含 openid，避免又被自动认回一条已删除的记录）
+  if (isMe) {
+    wx.removeStorageSync(config.KEYS.MEMBER_ID)
+    wx.removeStorageSync(config.KEYS.MY_OPENID)
+  }
+  return res
 }
 
 /** 今晚在家吃的人数 */
@@ -551,6 +657,9 @@ module.exports = {
   // 成员
   getMyMember,
   ensureMyMember,
+  createSelfMember,
+  claimMember,
+  findSelfByOpenid,
   getMembers,
   addMember,
   updateMember,

@@ -83,3 +83,14 @@
 .fm-ph { color: var(--ink3); }
 .fm-taste { display: flex; flex-wrap: wrap; gap: 12rpx; }
 .fm-h { font-size: 22rpx; color: var(--ink3); margin-top: 12rpx; line-height: 1.6; }
+
+/* ---------- 身份未认领时的提示条 ---------- */
+.who-hint {
+  margin: 0 0 18rpx;
+  padding: 20rpx 24rpx;
+  border-radius: var(--r-card);
+  background: var(--acc-l);
+  color: var(--acc-ink);
+  font-size: 25rpx;
+  font-weight: 600;
+}

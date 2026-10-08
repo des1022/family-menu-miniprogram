@@ -11,6 +11,10 @@
     <!-- 成员 -->
     <view class="sec-h"><text class="sec-t">成员</text><text class="sec-m" bindtap="onOpenEdit" data-id="">＋ 添加</text></view>
 
+    <view class="who-hint" wx:if="{{!myId && members.length}}" bindtap="onOpenWho">
+      这台设备上还没认出你是哪位 · 点一下指认
+    </view>
+
     <view class="mem" wx:for="{{members}}" wx:key="_id" data-id="{{item._id}}" bindtap="onOpenEdit">
       <view class="mem-av" style="background:{{item.color}}">{{item.initial}}</view>
       <view class="mem-main">
@@ -122,8 +126,17 @@
         <view class="btn btn-primary" bindtap="onSaveMember">保存</view>
       </view>
       <view class="fm-h" wx:if="{{edit.isNew}}" style="margin-top:16rpx">
-        提示：每位家人第一次打开小程序时会自动生成一条成员记录，这里也可以手动加。
+        提示：家人第一次打开小程序时会问你「你是哪位」，不用在这里提前加；这里适合给还没用过的人先建一条。
       </view>
     </view>
   </view>
+
+  <!-- 本机认不出「我是谁」：让用户指认，而不是默默新建一条重复成员 -->
+  <who
+    show="{{whoShow}}"
+    members="{{whoList}}"
+    bindpick="onWhoPick"
+    bindcreate="onWhoCreate"
+    bindclose="onWhoClose"
+  />
 </view>

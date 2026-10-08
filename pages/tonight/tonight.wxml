@@ -288,4 +288,13 @@
       <view class="btn btn-primary btn-block" bindtap="onCloseGuide">开始用</view>
     </view>
   </view>
+
+  <!-- 本机认不出「我是谁」：让用户指认，而不是默默新建一条重复成员 -->
+  <who
+    show="{{whoShow}}"
+    members="{{whoList}}"
+    bindpick="onWhoPick"
+    bindcreate="onWhoCreate"
+    bindclose="onWhoClose"
+  />
 </view>
