@@ -33,6 +33,7 @@
       <view
         class="cell {{cell ? '' : 'cell--blank'}} {{cell.date === today ? 'cell--today' : ''}}"
         wx:for="{{cells}}"
+        wx:for-item="cell"
         wx:key="key"
         data-date="{{cell.date}}"
         bindtap="onDayTap"

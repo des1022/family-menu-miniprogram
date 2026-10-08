@@ -156,6 +156,32 @@ for p in js_files:
         if not target.with_suffix(".js").exists():
             err(f"require 找不到模块 {p.relative_to(ROOT)} -> {m.group(1)}")
 
+# ---------- 9. wx:for 循环变量名（2026-10-08 日历日期不显示的真凶）----------
+# 真实踩过的坑：calendar.wxml 写成 wx:for="{{cells}}" 却用 {{cell.day}} —— 循环变量默认叫 item，
+# 于是 cell 恒为 undefined，整格内容都不渲染（真机上表现为「日历里没有日期数字」）。
+# 这类错误静态检查能抓：若某个 wx:for 没声明 wx:for-item，而正文用到的根标识符
+# 在页面 JS 里根本找不到（连注释、字符串里都没有），那基本就是循环变量名写错了。
+GLOBALS = {'item', 'index', 'true', 'false', 'null', 'undefined', 'wx', 'getApp',
+           'Math', 'Date', 'Number', 'String', 'Boolean', 'JSON'}
+FOR_RE = re.compile(r'wx:for="\{\{[^}]+\}\}"([^>]*)>')
+ROOT_RE = re.compile(r'\{\{\s*([a-z][A-Za-z0-9_]*)')
+FOR_ITEM_RE = re.compile(r'wx:for-item="([^"]+)"')
+for p in files("*.wxml"):
+    text = p.read_text(encoding="utf-8")
+    js = p.with_suffix(".js")
+    known = GLOBALS | set(FOR_ITEM_RE.findall(text))
+    if js.exists():
+        known |= set(re.findall(r"[A-Za-z_$][A-Za-z0-9_$]*",
+                                js.read_text(encoding="utf-8", errors="replace")))
+    for m in FOR_RE.finditer(text):
+        if "wx:for-item" in m.group(0):
+            continue
+        body = text[m.end():m.end() + 600]
+        unknown = sorted(set(ROOT_RE.findall(body)) - known)
+        if unknown:
+            err(f"wx:for 循环变量名可疑 {p.relative_to(ROOT)}: 正文用到 {unknown}，"
+                f"但页面 JS 里找不到这些名字（是不是该加 wx:for-item=\"...\"？）")
+
 # ---------- 汇总 ----------
 print("=" * 60)
 print(f"扫描：{len(js_files)} 个 JS / {len(json_files)} 个 JSON / "

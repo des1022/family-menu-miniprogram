@@ -20,12 +20,6 @@ Page({
   },
 
   onLoad() {
-    // 未通过管理密码验证时不允许进入
-    if (!getApp().globalData.adminPwd) {
-      toast('请先通过管理密码验证')
-      setTimeout(() => wx.navigateBack(), 600)
-      return
-    }
     this.load()
   },
 
