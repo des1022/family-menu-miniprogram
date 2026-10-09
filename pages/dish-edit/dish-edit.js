@@ -181,6 +181,8 @@ Page({
       ingredients: r.ingredients || '',
       steps: r.steps || ''
     })
+    // 菜谱自带配图（随包内置的本地图）——只在用户还没传图时填，不覆盖他自己选的
+    if (r.image && !this.data.form.image) form.image = r.image
     const patch = {
       form: form,
       selectedTags: selectedTags,
