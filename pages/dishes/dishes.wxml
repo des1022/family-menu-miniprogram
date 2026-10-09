@@ -44,13 +44,26 @@
       <view class="chip chip--clear" wx:if="{{hasFilter}}" bindtap="onClearFilter">清除 ✕</view>
     </view>
 
+    <!-- 操作提示：把「怎么点菜」直接写在页面上，别让人猜 -->
+    <view class="pick-hint" wx:if="{{list.length}}">
+      点卡片右下角的 <text class="pick-hint-em">＋</text> 就加进今晚 · 点卡片本身看做法
+    </view>
+
     <!-- 网格视图 -->
     <view class="grid" wx:if="{{layout === 0}}">
       <view class="card-dish" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="onOpenDetail" hover-class="card-dish--hover">
-        <image class="cd-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
-        <view class="cd-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
-        <view class="cd-fav" wx:if="{{item.favorite === 1}}">★</view>
-        <view class="cd-on" wx:if="{{item.onTonight}}">已点</view>
+        <view class="cd-media">
+          <image class="cd-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+          <view class="cd-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
+          <view class="cd-fav" wx:if="{{item.favorite === 1}}">★</view>
+          <view class="cd-on" wx:if="{{item.onTonight}}">已在今晚</view>
+          <!-- 直接点菜：网格卡上最显眼的一个动作，不用再进弹层找 -->
+          <view
+            class="cd-add {{item.onTonight ? 'cd-add--on' : ''}}"
+            catchtap="onToggleTonight"
+            data-id="{{item._id}}"
+          >{{item.onTonight ? '✓' : '＋'}}</view>
+        </view>
         <view class="cd-body">
           <view class="cd-nm ellipsis">{{item.name}}</view>
           <view class="cd-tg">

@@ -56,7 +56,34 @@
   box-shadow: var(--sh);
 }
 .card-dish--hover { opacity: 0.86; }
+.cd-media { position: relative; }
 .cd-img { width: 100%; height: 220rpx; font-size: 52rpx; }
+/* 直接点菜按钮（网格卡右下角）——最常用的动作放在最显眼的位置 */
+.cd-add {
+  position: absolute; right: 14rpx; bottom: 14rpx;
+  width: 68rpx; height: 68rpx; border-radius: 50%;
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 36rpx; font-weight: 700; line-height: 1;
+  box-shadow: var(--btn-sh);
+}
+.cd-add--on { background: var(--ok); }
+.theme-dark .cd-add--on { color: #2A5F54; }
+
+/* 页面上的操作提示 */
+.pick-hint {
+  font-size: 23rpx;
+  color: var(--ink2);
+  margin: -6rpx 0 14rpx 4rpx;
+}
+.pick-hint-em {
+  display: inline-block;
+  min-width: 30rpx;
+  text-align: center;
+  font-weight: 700;
+  color: var(--pri-ink);
+}
 .cd-fav {
   position: absolute; left: 14rpx; top: 14rpx;
   width: 44rpx; height: 44rpx; border-radius: 50%;
