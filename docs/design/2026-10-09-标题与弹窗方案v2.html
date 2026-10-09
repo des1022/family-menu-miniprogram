@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>页头标题 &amp; 确认弹窗 · 方案 v2</title>
+<style>
+:root{
+  --pri:#D9714E; --pri-d:#C4553A; --pri-l:#FBEEE8; --pri-ink:#A8462E;
+  --acc:#E9A323; --acc-l:#FCF3DF; --acc-ink:#8E5F0C;
+  --ok:#4F9367; --ok-l:#E9F3ED; --ok-ink:#3E7A55;
+  --bg:#FAF7F3; --surf:#FFFFFF; --surf2:#F4EFE9; --line:#EFE7DE;
+  --ink:#2A2521; --ink2:#8B8178; --ink3:#B7AEA4;
+  --danger:#C94A3F;
+  --btn-bg:linear-gradient(135deg,#DE7A56,#C4553A);
+  --sh:0 2px 7px rgba(170,130,100,.08);
+  --sh-lg:0 16px 44px rgba(90,60,40,.16);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:#E6E0D8;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  color:var(--ink); padding:40px 32px 72px;
+  -webkit-font-smoothing:antialiased;
+}
+.wrap{width:834px;margin:0 auto}
+.board-title{font-size:15px;color:#8A8078;letter-spacing:.06em;margin-bottom:18px}
+h1{font-size:26px;font-weight:800;letter-spacing:-.01em;margin-bottom:8px}
+.lede{font-size:14px;color:#7A716A;line-height:1.75;margin-bottom:14px;max-width:780px}
+.lede b{color:#2A2521}
+.rule{height:1px;background:rgba(120,105,90,.18);margin:34px 0 26px}
+h2{font-size:19px;font-weight:800;margin-bottom:6px}
+h2 .n{display:inline-flex;width:24px;height:24px;border-radius:8px;background:#2A2521;color:#fff;font-size:13px;align-items:center;justify-content:center;margin-right:9px;vertical-align:2px}
+.sub{font-size:13px;color:#7A716A;line-height:1.7;margin-bottom:20px;max-width:790px}
+.sub code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:5px;font-size:12px}
+
+/* ---------------- 手机切片 ---------------- */
+.grid2{display:grid;grid-template-columns:375px 375px;gap:22px 24px}
+.phone{width:375px;background:var(--bg);border-radius:14px;overflow:hidden;box-shadow:var(--sh-lg);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.statusbar{height:24px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;font-weight:600;color:#2A2521}
+.statusbar .ic{display:flex;gap:4px;align-items:center}
+.statusbar .bar{width:14px;height:7px;border:1px solid currentColor;border-radius:2px}
+.navbar{height:44px;position:relative;display:flex;align-items:center;justify-content:center}
+.navbar .nav-t{font-size:15px;font-weight:600}
+.capsule{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:78px;height:28px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.7);border-radius:14px;display:flex;align-items:center;justify-content:space-around;font-size:11px;color:#333;letter-spacing:2px}
+.pagebody{padding:0 14px}
+
+.hd{display:flex;align-items:flex-start;justify-content:space-between;padding:12px 2px 10px}
+.t-h1{font-size:20px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
+.t-sub{font-size:13px;color:var(--ink2);margin-top:5px}
+.avars{display:flex;align-items:center;flex-shrink:0;margin-top:3px}
+.avar{width:26px;height:26px;border-radius:50%;border:2px solid var(--bg);margin-left:-8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:11px;font-weight:700}
+.avar:first-child{margin-left:0}
+
+.cand{}
+.cand-meta{margin:11px 2px 0;font-size:12.5px;color:#6F665E;line-height:1.6;display:flex;gap:8px;align-items:flex-start}
+.cand-no{flex:0 0 auto;width:22px;height:22px;border-radius:7px;background:#fff;color:#2A2521;font-weight:800;font-size:11.5px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(120,100,80,.16)}
+.pill{flex:0 0 auto;font-size:11px;padding:2px 8px;border-radius:999px;font-weight:700}
+.p-warm{background:#E7EEF6;color:#41618C}
+.p-daily{background:var(--ok-l);color:var(--ok-ink)}
+.p-fun{background:var(--acc-l);color:var(--acc-ink)}
+.p-min{background:#EFE7DE;color:#7A716A}
+.cand-note{font-size:12.5px;color:#7A716A;line-height:1.6}
+.rec{display:inline-block;background:#2A2521;color:#fff;font-size:10.5px;font-weight:700;padding:2px 7px;border-radius:6px;margin-left:6px;vertical-align:1px}
+
+/* 版式 B：眉标 + 句子 */
+.eyebrow{font-size:11px;font-weight:700;color:var(--ink3);letter-spacing:.24em;margin-bottom:5px}
+
+/* ---------------- 弹窗 ---------------- */
+.cell{}
+.cell-hd{display:flex;align-items:baseline;gap:9px;margin-bottom:11px}
+.cell-name{font-size:15px;font-weight:800}
+.cell-tag{font-size:11.5px;color:#7A716A}
+.stack{display:flex;flex-direction:column;gap:18px}
+
+.scr{width:375px;height:386px;background:var(--bg);border-radius:14px;overflow:hidden;position:relative;box-shadow:var(--sh-lg);font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif}
+.scr .bg-page{position:absolute;inset:0;padding:0 14px}
+.mini-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 14px;margin-bottom:10px;box-shadow:var(--sh)}
+.mini-row{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin-bottom:10px;box-shadow:var(--sh)}
+.mini-thumb{width:42px;height:42px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:800}
+.mini-nm{font-size:15px;font-weight:700}
+.mini-mt{font-size:12px;color:var(--ink2);margin-top:3px}
+.mask{position:absolute;inset:0;background:rgba(26,17,11,.54);display:flex}
+.mask.center{align-items:center;justify-content:center;padding:0 22px}
+.mask.bottom{align-items:flex-end}
+.mask.blur{backdrop-filter:blur(2px);-webkit-backdrop-filter:blur(2px)}
+
+/* 微信原生 showModal 原样复刻（用来说明「现在的样子」） */
+.native-modal{width:288px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 12px 32px rgba(0,0,0,.2)}
+.nm-body{padding:24px 22px 20px;text-align:center}
+.nm-t{font-size:17px;font-weight:600;color:#000;line-height:1.4}
+.nm-s{font-size:14px;color:#888;line-height:1.6;margin-top:10px}
+.nm-acts{display:flex;border-top:1px solid #E5E5E5}
+.nm-btn{flex:1;min-height:52px;display:flex;align-items:center;justify-content:center;font-size:17px;color:#576B95}
+.nm-btn+.nm-btn{border-left:1px solid #E5E5E5;color:#D9714E}
+
+/* 复用小程序按钮 */
+.btn{min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:16px;font-weight:600}
+.btn-primary{background:var(--btn-bg);color:#fff;box-shadow:0 4px 10px rgba(196,85,58,.28)}
+.btn-danger{background:var(--danger);color:#fff;box-shadow:0 4px 10px rgba(201,74,63,.28)}
+.btn-ghost{background:var(--surf);color:var(--ink);border:1px solid var(--line)}
+.btn-soft{background:var(--surf2);color:var(--ink)}
+.btn-plain{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn-block{width:100%}
+.btnrow{display:flex;gap:9px}
+.btnrow>.btn{flex:1}
+
+/* 方案 A 徽章卡 */
+.dlg{width:100%;background:var(--surf);border-radius:22px;box-shadow:0 16px 44px rgba(90,60,40,.22);padding:26px 22px 18px;text-align:center}
+.badge{width:64px;height:64px;border-radius:50%;margin:0 auto 15px;display:flex;align-items:center;justify-content:center}
+.badge.warm{background:var(--pri-l);color:var(--pri)}
+.badge.bad{background:#FBEAE8;color:var(--danger)}
+.badge svg{width:32px;height:32px}
+.dlg-t{font-size:17px;font-weight:800;line-height:1.4}
+.dlg-s{font-size:13.5px;color:var(--ink2);line-height:1.7;margin-top:8px}
+.dlg-acts{margin-top:20px}
+
+/* 方案 B 底部动作表 */
+.actionsheet{width:100%;background:var(--surf);border-radius:20px 20px 0 0;padding:12px 14px 16px}
+.grab{width:36px;height:4px;border-radius:2px;background:var(--ink3);opacity:.5;margin:0 auto 14px}
+.as-t{font-size:16px;font-weight:800;padding:0 4px}
+.as-s{font-size:13px;color:var(--ink2);line-height:1.65;margin-top:6px;padding:0 4px 14px;border-bottom:1px solid var(--line)}
+.as-opt{display:flex;align-items:center;gap:12px;min-height:52px;padding:0 4px;border-bottom:1px solid var(--line)}
+.as-opt .ic{width:34px;height:34px;border-radius:11px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.as-opt .ic.warm{background:var(--pri-l);color:var(--pri)}
+.as-opt .ic.bad{background:#FBEAE8;color:var(--danger)}
+.as-opt .ic svg{width:19px;height:19px}
+.as-opt .tx{flex:1}
+.as-opt .tx b{font-size:15px;font-weight:700;display:block}
+.as-opt .tx span{font-size:12px;color:var(--ink2)}
+.as-opt .arrow{color:var(--ink3);font-size:19px;line-height:1}
+.as-opt .arrow.bad{color:var(--danger);font-weight:800}
+.as-cancel{margin-top:11px}
+
+/* 方案 C 极简白卡 */
+.dlg-min{width:100%;background:var(--surf);border-radius:16px;box-shadow:0 16px 44px rgba(90,60,40,.2);overflow:hidden}
+.dm-body{padding:22px 20px 18px}
+.dm-t{font-size:16px;font-weight:800}
+.dm-s{font-size:13.5px;color:var(--ink2);line-height:1.7;margin-top:8px}
+.dm-inner{margin-top:14px;background:var(--surf2);border-radius:10px;padding:10px 12px;font-size:12.5px;color:#6F665E;line-height:1.6}
+.dm-acts{display:flex;justify-content:flex-end;gap:6px;padding:12px 12px 14px;border-top:1px solid var(--line)}
+.tbtn{min-height:40px;padding:0 16px;border-radius:10px;display:flex;align-items:center;font-size:15px;font-weight:700;color:var(--ink2)}
+.tbtn.pri{color:var(--pri-d)}
+.tbtn.bad{color:var(--danger)}
+
+/* 方案 D 暖橙卡 */
+.dlg-warm{width:100%;background:var(--pri-l);border-radius:26px;box-shadow:0 16px 44px rgba(90,60,40,.2);padding:28px 22px 20px;text-align:center}
+.dw-badge{width:70px;height:70px;border-radius:50%;background:#fff;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;color:var(--pri);box-shadow:0 4px 12px rgba(196,85,58,.16)}
+.dw-badge svg{width:34px;height:34px}
+.dlg-warm.bad{background:#FBEAE8}
+.dlg-warm.bad .dw-badge{color:var(--danger)}
+.dw-t{font-size:18px;font-weight:800;color:var(--pri-ink);line-height:1.4}
+.dlg-warm.bad .dw-t{color:#8F3229}
+.dw-s{font-size:13.5px;color:var(--pri-ink);opacity:.72;line-height:1.7;margin-top:8px}
+.dlg-warm.bad .dw-s{color:#8F3229;opacity:.75}
+.dw-acts{margin-top:22px;display:flex;flex-direction:column;gap:9px}
+
+.foot{margin-top:40px;background:#fff;border-radius:16px;padding:22px 24px;box-shadow:var(--sh)}
+.foot h3{font-size:15px;font-weight:800;margin-bottom:10px}
+.foot ul{margin:0 0 0 18px;font-size:13.5px;color:#5C544D;line-height:1.9}
+.foot code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:5px;font-size:12px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="board-title">家庭菜单 · 设计稿 · 2026-10-09</div>
+  <h1>页头标题 &amp; 确认弹窗 · 方案 v2</h1>
+  <p class="lede">
+    上一批 6 个标题偏「功能说明」（今晚吃什么 / 今晚的菜你来点），这次换成<b>关于美食本身的一句话</b>。<br>
+    弹窗那批被说「没有 UI 设计」，这次重画：图标、层级、留白、圆角、按钮状态全部按小程序真实的
+    <code>app.wxss</code> 设计变量来，看得出是同一个产品。
+  </p>
+
+  <!-- ==================== ① 标题 ==================== -->
+  <div class="rule"></div>
+  <h2><span class="n">1</span>页头标题 · 10 个候选</h2>
+  <p class="sub">
+    每张切片都是按真实页头 1:1 还原的：导航栏仍显示「今晚」（微信小程序的导航栏文字不跟着页面标题走，保持原样最稳），
+    只有下面那一行大字换掉。副标题保留日期信息。<b>先挑语气，再挑句子。</b>
+  </p>
+
+  <div class="grid2">
+
+    <!-- 1 -->
+    <div class="cand">
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span class="ic">▪▪▪ ⌁ <span class="bar"></span></span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pagebody"><div class="hd">
+          <div><div class="t-h1">人间烟火，最抚人心</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div class="avars"><div class="avar" style="background:#D9714E">程</div><div class="avar" style="background:#E9A323">妈</div><div class="avar" style="background:#4F9367">爸</div></div>
+        </div></div>
+      </div>
+      <div class="cand-meta"><span class="cand-no">1</span><span class="pill p-warm">温润</span><span class="cand-note">最有分量的一句，安静、有画面。8 字对仗，读起来顺口。</span></div>
+    </div>
+
+    <!-- 2 -->
+    <div class="cand">
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span class="ic">▪▪▪ ⌁ <span class="bar"></span></span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pagebody"><div class="hd">
+          <div><div class="t-h1">一饭一蔬，皆是生活</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div class="avars"><div class="avar" style="background:#D9714E">程</div><div class="avar" style="background:#E9A323">妈</div><div class="avar" style="background:#4F9367">爸</div></div>
+        </div></div>
+      </div>
+      <div class="cand-meta"><span class="cand-no">2</span><span class="pill p-warm">温润</span><span class="cand-note">落在「菜」上，和菜库、采购的语境最贴。</span></div>
+    </div>
+
+    <!-- 3 -->
+    <div class="cand">
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span class="ic">▪▪▪ ⌁ <span class="bar"></span></span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pagebody"><div class="hd">
+          <div><div class="t-h1">三餐烟火，四季温柔</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div class="avars"><div class="avar" style="background:#D9714E">程</div><div class="avar" style="background:#E9A323">妈</div><div class="avar" style="background:#4F9367">爸</div></div>
+        </div></div>
+      </div>
+      <div class="cand-meta"><span class="cand-no">3</span><span class="pill p-warm">温润</span><span class="cand-note">时间跨度大（一天/一年），气质最柔。缺点是略「文案感」。</span></div>
+    </div>
+
+    <!-- 4 -->
+    <div class="cand">
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span class="ic">▪▪▪ ⌁ <span class="bar"></span></span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pagebody"><div class="hd">
+          <div><div class="t-h1">好好吃饭，慢慢生活</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div class="avars"><div class="avar" style="background:#D9714E">程</div><div class="avar" style="background:#E9A323">妈</div><div class="avar" style="background:#4F9367">爸</div></div>
+        </div></div>
+      </div>
+      <div class="cand-meta"><span class="cand-no">4</span><span class="pill p-daily">日常</span><span class="cand-note">像一句自我叮嘱，不端着。全家都能懂。<span class="rec">我最推荐</span></span></div>
+    </div>
+
+    <!-- 5 -->
+    <div class="cand">
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span class="ic">▪▪▪ ⌁ <span class="bar"></span></span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pagebody"><div class="hd">
+          <div><div class="t-h1">饭要热，人要齐</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div class="avars"><div class="avar" style="background:#D9714E">程</div><div class="avar" style="background:#E9A323">妈</div><div class="avar" style="background:#4F9367">爸</div></div>
+        </div></div>
+      </div>
+      <div class="cand-meta"><span class="cand-no">5</span><span class="pill p-daily">日常</span><span class="cand-note">最短最狠，6 个字，字形干净，字号可以再放大一号。</span></div>
+    </div>
+
+    <!-- 6 -->
+    <div class="cand">
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span class="ic">▪▪▪ ⌁ <span class="bar"></span></span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pagebody"><div class="hd">
+          <div><div class="t-h1">一日三餐，皆是牵挂</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div class="avars"><div class="avar" style="background:#D9714E">程</div><div class="avar" style="background:#E9A323">妈</div><div class="avar" style="background:#4F9367">爸</div></div>
+        </div></div>
+      </div>
+      <div class="cand-meta"><span class="cand-no">6</span><span class="pill p-daily">日常</span><span class="cand-note">把「谁给谁做饭」这层意思说出来了，家人视角。</span></div>
+    </div>
+
+    <!-- 7 -->
+    <div class="cand">
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span class="ic">▪▪▪ ⌁ <span class="bar"></span></span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pagebody"><div class="hd">
+          <div><div class="t-h1">今天也要好好吃饭</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div class="avars"><div class="avar" style="background:#D9714E">程</div><div class="avar" style="background:#E9A323">妈</div><div class="avar" style="background:#4F9367">爸</div></div>
+        </div></div>
+      </div>
+      <div class="cand-meta"><span class="cand-no">7</span><span class="pill p-fun">俏皮</span><span class="cand-note">轻快、像在跟你打招呼。情绪最积极。</span></div>
+    </div>
+
+    <!-- 8 -->
+    <div class="cand">
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span class="ic">▪▪▪ ⌁ <span class="bar"></span></span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pagebody"><div class="hd">
+          <div><div class="t-h1">好好吃饭，才是正经事</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div class="avars"><div class="avar" style="background:#D9714E">程</div><div class="avar" style="background:#E9A323">妈</div><div class="avar" style="background:#4F9367">爸</div></div>
+        </div></div>
+      </div>
+      <div class="cand-meta"><span class="cand-no">8</span><span class="pill p-fun">俏皮</span><span class="cand-note">9 字，有点小幽默，反衬「别凑合」。</span></div>
+    </div>
+
+    <!-- 9 -->
+    <div class="cand">
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span class="ic">▪▪▪ ⌁ <span class="bar"></span></span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pagebody"><div class="hd">
+          <div><div class="t-h1">今晚，值得一顿好的</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div class="avars"><div class="avar" style="background:#D9714E">程</div><div class="avar" style="background:#E9A323">妈</div><div class="avar" style="background:#4F9367">爸</div></div>
+        </div></div>
+      </div>
+      <div class="cand-meta"><span class="cand-no">9</span><span class="pill p-fun">俏皮</span><span class="cand-note">唯一还带「今晚」的，和 Tab 名呼应，不会失去场景。</span></div>
+    </div>
+
+    <!-- 10 -->
+    <div class="cand">
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span class="ic">▪▪▪ ⌁ <span class="bar"></span></span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pagebody"><div class="hd">
+          <div><div class="t-h1">家里有饭，心里不慌</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div class="avars"><div class="avar" style="background:#D9714E">程</div><div class="avar" style="background:#E9A323">妈</div><div class="avar" style="background:#4F9367">爸</div></div>
+        </div></div>
+      </div>
+      <div class="cand-meta"><span class="cand-no">10</span><span class="pill p-fun">俏皮</span><span class="cand-note">最「人味」的一句，安定感强，适合家里有老人小孩。</span></div>
+    </div>
+
+  </div>
+
+  <!-- 版式 B -->
+  <p class="sub" style="margin-top:30px">
+    <b>顺带一个版式问题：</b>句子替掉「今晚」之后，页面就没有自己的名字了。如果担心这点，可以像下面这样加一个小眉标 ——
+    眉标写「今晚」，大字放句子。两个方案（直接替换 / 加眉标）都可以，看你喜欢哪个。
+  </p>
+  <div class="grid2" style="grid-template-columns:375px">
+    <div class="cand">
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span class="ic">▪▪▪ ⌁ <span class="bar"></span></span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pagebody"><div class="hd">
+          <div>
+            <div class="eyebrow">今晚</div>
+            <div class="t-h1">好好吃饭，慢慢生活</div>
+            <div class="t-sub">今天 · 周五 10月9日</div>
+          </div>
+          <div class="avars"><div class="avar" style="background:#D9714E">程</div><div class="avar" style="background:#E9A323">妈</div><div class="avar" style="background:#4F9367">爸</div></div>
+        </div></div>
+      </div>
+      <div class="cand-meta"><span class="cand-no">B</span><span class="pill p-min">版式</span><span class="cand-note">小眉标「今晚」+ 大字句子。信息不乱，场景也还在。</span></div>
+    </div>
+  </div>
+
+  <!-- ==================== ② 弹窗 ==================== -->
+  <div class="rule"></div>
+  <h2><span class="n">2</span>确认弹窗 · 4 个方案</h2>
+  <p class="sub">
+    现在弹的是微信自带的 <code>wx.showModal</code> —— 灰底、系统字体、圆角很小，长什么样完全由微信决定，代码里改不了。
+    要好看只能换<b>自绘弹窗</b>。下面 4 个方案都把「普通确认」和「破坏性确认（删东西）」两种场景画出来，
+    因为按钮颜色一定得分开：橙=正常操作，砖红=会丢东西。<br>
+    <b>遮罩也做了处理：</b>加了 2px 模糊，弹窗压在一层毛玻璃上，比纯黑遮罩干净。
+  </p>
+
+  <div class="grid2" style="grid-template-columns:375px;margin-bottom:26px">
+    <div class="cell">
+      <div class="cell-hd"><span class="cell-name" style="color:#8A8078">现状 · 微信原生 showModal</span><span class="cell-tag">这就是现在弹出来的东西</span></div>
+      <div class="scr">
+        <div class="bg-page">
+          <div class="hd"><div><div class="t-h1">今晚</div><div class="t-sub">今天 · 周五 10月9日</div></div></div>
+          <div class="mini-card"><div class="mini-nm">今晚 3 道菜</div><div class="mini-mt">蛋炒饭 · 紫菜蛋花汤 · 青椒肉丝</div></div>
+          <div class="mini-row"><div class="mini-thumb" style="background:#C9A05A">蛋</div><div><div class="mini-nm">蛋炒饭</div><div class="mini-mt">主食 · 做过 6 次</div></div></div>
+        </div>
+        <div class="mask center">
+          <div class="native-modal">
+            <div class="nm-body">
+              <div class="nm-t">提示</div>
+              <div class="nm-s">把 12 道家常菜填进菜库？（之后可以随意增删改）</div>
+            </div>
+            <div class="nm-acts"><div class="nm-btn">取消</div><div class="nm-btn">填入</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+
+    <!-- ================= 方案 A ================= -->
+    <div class="cell">
+      <div class="cell-hd"><span class="cell-name">方案 A · 徽章卡</span><span class="cell-tag">居中 / 有图标 / 按钮横排<span class="rec">最稳</span></span></div>
+      <div class="stack">
+
+        <div class="scr">
+          <div class="bg-page">
+            <div class="hd"><div><div class="t-h1">今晚</div><div class="t-sub">今天 · 周五 10月9日</div></div></div>
+            <div class="mini-card"><div class="mini-nm">今晚 3 道菜</div><div class="mini-mt">蛋炒饭 · 紫菜蛋花汤 · 青椒肉丝</div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#C9A05A">蛋</div><div><div class="mini-nm">蛋炒饭</div><div class="mini-mt">主食 · 做过 6 次</div></div></div>
+          </div>
+          <div class="mask center blur">
+            <div class="dlg">
+              <div class="badge warm">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 11.2h17.6a8.8 8.8 0 0 1-8.8 8.8 8.8 8.8 0 0 1-8.8-8.8z"/><path d="M2 11.2h20"/><path d="M9.4 7.6c0-1.3 1.2-1.6 1.2-2.8M13.4 7.6c0-1.3 1.2-1.6 1.2-2.8"/></svg>
+              </div>
+              <div class="dlg-t">填入 12 道家常菜？</div>
+              <div class="dlg-s">这些菜会写进你家菜库，之后可以随意改名、删改。已经有的同名菜会自动跳过。</div>
+              <div class="btnrow dlg-acts"><div class="btn btn-soft">再想想</div><div class="btn btn-primary">填入</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scr">
+          <div class="bg-page">
+            <div class="hd"><div><div class="t-h1">今晚</div><div class="t-sub">今天 · 周五 10月9日</div></div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#C9A05A">蛋</div><div><div class="mini-nm">蛋炒饭</div><div class="mini-mt">主食 · 做过 6 次</div></div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#8FA8B8">紫</div><div><div class="mini-nm">紫菜蛋花汤</div><div class="mini-mt">汤羹 · 做过 3 次</div></div></div>
+          </div>
+          <div class="mask center blur">
+            <div class="dlg">
+              <div class="badge bad">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9.6 7V5.3A1.3 1.3 0 0 1 10.9 4h2.2a1.3 1.3 0 0 1 1.3 1.3V7"/><path d="M6.6 7l.9 11.1a2 2 0 0 0 2 1.9h5a2 2 0 0 0 2-1.9L17.4 7"/><path d="M10.3 11v5M13.7 11v5"/></svg>
+              </div>
+              <div class="dlg-t" style="color:#8F3229">从今晚撤掉「蛋炒饭」？</div>
+              <div class="dlg-s">只从今晚这一桌拿掉，菜库里的记录还在，随时能再加回来。</div>
+              <div class="btnrow dlg-acts"><div class="btn btn-soft">算了</div><div class="btn btn-danger">撤掉</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= 方案 B ================= -->
+    <div class="cell">
+      <div class="cell-hd"><span class="cell-name">方案 B · 底部动作表</span><span class="cell-tag">从底部升起 / 像 iOS 选择器</span></div>
+      <div class="stack">
+
+        <div class="scr">
+          <div class="bg-page">
+            <div class="hd"><div><div class="t-h1">今晚</div><div class="t-sub">今天 · 周五 10月9日</div></div></div>
+            <div class="mini-card"><div class="mini-nm">今晚 3 道菜</div><div class="mini-mt">蛋炒饭 · 紫菜蛋花汤 · 青椒肉丝</div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#C9A05A">蛋</div><div><div class="mini-nm">蛋炒饭</div><div class="mini-mt">主食 · 做过 6 次</div></div></div>
+          </div>
+          <div class="mask bottom blur">
+            <div class="actionsheet">
+              <div class="grab"></div>
+              <div class="as-t">填入 12 道家常菜？</div>
+              <div class="as-s">写进你家菜库，之后随意改。同名菜自动跳过。</div>
+              <div class="as-opt">
+                <div class="ic warm">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                </div>
+                <div class="tx"><b>填入这 12 道菜</b><span>菜库里会多出 12 条记录</span></div>
+                <div class="arrow">›</div>
+              </div>
+              <div class="btn btn-plain btn-block as-cancel">先不填</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scr">
+          <div class="bg-page">
+            <div class="hd"><div><div class="t-h1">今晚</div><div class="t-sub">今天 · 周五 10月9日</div></div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#C9A05A">蛋</div><div><div class="mini-nm">蛋炒饭</div><div class="mini-mt">主食 · 做过 6 次</div></div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#8FA8B8">紫</div><div><div class="mini-nm">紫菜蛋花汤</div><div class="mini-mt">汤羹 · 做过 3 次</div></div></div>
+          </div>
+          <div class="mask bottom blur">
+            <div class="actionsheet">
+              <div class="grab"></div>
+              <div class="as-t">「蛋炒饭」</div>
+              <div class="as-s">只从今晚这一桌拿掉，菜库里的记录还在。</div>
+              <div class="as-opt">
+                <div class="ic bad">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/></svg>
+                </div>
+                <div class="tx"><b style="color:#C94A3F">从今晚撤掉</b><span>这道菜回到「本周没吃」</span></div>
+                <div class="arrow bad">›</div>
+              </div>
+              <div class="btn btn-plain btn-block as-cancel">取消</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= 方案 C ================= -->
+    <div class="cell">
+      <div class="cell-hd"><span class="cell-name">方案 C · 极简白卡</span><span class="cell-tag">无图标 / 文字按钮 / 最安静</span></div>
+      <div class="stack">
+
+        <div class="scr">
+          <div class="bg-page">
+            <div class="hd"><div><div class="t-h1">今晚</div><div class="t-sub">今天 · 周五 10月9日</div></div></div>
+            <div class="mini-card"><div class="mini-nm">今晚 3 道菜</div><div class="mini-mt">蛋炒饭 · 紫菜蛋花汤 · 青椒肉丝</div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#C9A05A">蛋</div><div><div class="mini-nm">蛋炒饭</div><div class="mini-mt">主食 · 做过 6 次</div></div></div>
+          </div>
+          <div class="mask center blur">
+            <div class="dlg-min">
+              <div class="dm-body">
+                <div class="dm-t">填入 12 道家常菜？</div>
+                <div class="dm-s">写进你家菜库，之后随意改名、删改。</div>
+                <div class="dm-inner">蛋炒饭、紫菜蛋花汤、青椒肉丝… 已存在的同名菜会自动跳过。</div>
+              </div>
+              <div class="dm-acts"><div class="tbtn">再想想</div><div class="tbtn pri">填入</div></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scr">
+          <div class="bg-page">
+            <div class="hd"><div><div class="t-h1">今晚</div><div class="t-sub">今天 · 周五 10月9日</div></div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#C9A05A">蛋</div><div><div class="mini-nm">蛋炒饭</div><div class="mini-mt">主食 · 做过 6 次</div></div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#8FA8B8">紫</div><div><div class="mini-nm">紫菜蛋花汤</div><div class="mini-mt">汤羹 · 做过 3 次</div></div></div>
+          </div>
+          <div class="mask center blur">
+            <div class="dlg-min">
+              <div class="dm-body">
+                <div class="dm-t">从今晚撤掉「蛋炒饭」？</div>
+                <div class="dm-s">只影响今晚这一桌。</div>
+                <div class="dm-inner">菜库里的记录还在，随时能再加回来。</div>
+              </div>
+              <div class="dm-acts"><div class="tbtn">算了</div><div class="tbtn bad">撤掉</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- ================= 方案 D ================= -->
+    <div class="cell">
+      <div class="cell-hd"><span class="cell-name">方案 D · 暖橙卡</span><span class="cell-tag">浅橙底 / 按钮上下堆 / 最亲和</span></div>
+      <div class="stack">
+
+        <div class="scr">
+          <div class="bg-page">
+            <div class="hd"><div><div class="t-h1">今晚</div><div class="t-sub">今天 · 周五 10月9日</div></div></div>
+            <div class="mini-card"><div class="mini-nm">今晚 3 道菜</div><div class="mini-mt">蛋炒饭 · 紫菜蛋花汤 · 青椒肉丝</div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#C9A05A">蛋</div><div><div class="mini-nm">蛋炒饭</div><div class="mini-mt">主食 · 做过 6 次</div></div></div>
+          </div>
+          <div class="mask center blur">
+            <div class="dlg-warm">
+              <div class="dw-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3.2 11.2h17.6a8.8 8.8 0 0 1-8.8 8.8 8.8 8.8 0 0 1-8.8-8.8z"/><path d="M2 11.2h20"/><path d="M9.4 7.6c0-1.3 1.2-1.6 1.2-2.8M13.4 7.6c0-1.3 1.2-1.6 1.2-2.8"/></svg>
+              </div>
+              <div class="dw-t">填入 12 道家常菜？</div>
+              <div class="dw-s">写进你家菜库，之后随意改名、删改。<br>同名菜会自动跳过。</div>
+              <div class="dw-acts">
+                <div class="btn btn-primary btn-block">填入</div>
+                <div class="btn btn-plain btn-block">再想想</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="scr">
+          <div class="bg-page">
+            <div class="hd"><div><div class="t-h1">今晚</div><div class="t-sub">今天 · 周五 10月9日</div></div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#C9A05A">蛋</div><div><div class="mini-nm">蛋炒饭</div><div class="mini-mt">主食 · 做过 6 次</div></div></div>
+            <div class="mini-row"><div class="mini-thumb" style="background:#8FA8B8">紫</div><div><div class="mini-nm">紫菜蛋花汤</div><div class="mini-mt">汤羹 · 做过 3 次</div></div></div>
+          </div>
+          <div class="mask center blur">
+            <div class="dlg-warm bad">
+              <div class="dw-badge">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16"/><path d="M9.6 7V5.3A1.3 1.3 0 0 1 10.9 4h2.2a1.3 1.3 0 0 1 1.3 1.3V7"/><path d="M6.6 7l.9 11.1a2 2 0 0 0 2 1.9h5a2 2 0 0 0 2-1.9L17.4 7"/><path d="M10.3 11v5M13.7 11v5"/></svg>
+              </div>
+              <div class="dw-t">从今晚撤掉「蛋炒饭」？</div>
+              <div class="dw-s">只从今晚这一桌拿掉，菜库里的记录还在，<br>随时能再加回来。</div>
+              <div class="dw-acts">
+                <div class="btn btn-danger btn-block">撤掉</div>
+                <div class="btn btn-plain btn-block">算了</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="foot">
+    <h3>选定之后我会做的事</h3>
+    <ul>
+      <li>标题：改 <code>pages/tonight/tonight.wxml</code> 一行，导航栏「今晚」保持不变。</li>
+      <li>弹窗：新增一个自绘组件（遮罩 + 卡片 + 按钮），把 <code>utils/util.js</code> 里的 <code>confirm()</code> 从 <code>wx.showModal</code> 换掉 —— 全站 10 处确认框一次性统一，不用一处处改。</li>
+      <li>破坏性操作（删菜、撤菜、清空）自动用砖红按钮，普通操作用橙色，不用每次手写颜色。</li>
+      <li>深色模式同步出一套（浅橙底 → 柿子橙半透明底），跟现在的深色主题一致。</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>
