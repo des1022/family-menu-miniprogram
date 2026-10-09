@@ -252,7 +252,6 @@ Page({
         busy: false
       })
       this.applyRecords(records)
-      this.buildRecent(onDishes)
       this.attachWatcher()
     } catch (e) {
       console.error('[tonight] 加载失败', e)
@@ -291,6 +290,8 @@ Page({
     this.setData({ cards: cards, today: today })
     this.buildSuggest(cards)
     this.buildIngredients(records || [])
+    // 「最近家里常吃」两种状态都显示，所以要跟着今晚的桌一起刷新（标记哪几道已在桌上）
+    this.buildRecent(this.data.allDishes || [])
   },
 
   buildRecent(onDishes) {
@@ -316,10 +317,14 @@ Page({
       list = (onDishes || []).slice(0, 6)
     }
 
+    const onIds = {}
+    ;(this.data.cards || []).forEach(c => { onIds[c.dishId] = true })
+
     this.setData({
       recent: list.map(d => Object.assign({}, d, {
         initial: initialOf(d.name),
         ph: phOf(d._id),
+        onTonight: !!onIds[d._id],
         freqText: count[d._id] ? '近一个月做过 ' + count[d._id] + ' 次' : '还没做过'
       }))
     })
@@ -359,6 +364,23 @@ Page({
     const id = e.currentTarget.dataset.id
     const dish = (this.data.recent || []).filter(d => d._id === id)[0]
     if (!dish) return
+
+    // 已经在桌上：点一下给撤掉（带二次确认，避免误触）
+    if (dish.onTonight) {
+      const ok = await confirm('把「' + dish.name + '」从今晚撤掉？', '已在今晚', '撤掉')
+      if (!ok) return
+      try {
+        await db.removeFromTonight(this.data.today, dish._id)
+        toast('已从今晚撤掉')
+        const records = await db.getRecordsByDate(this.data.today)
+        this.applyRecords(records)
+      } catch (err) {
+        console.error('[tonight] 撤菜失败', err)
+        toast('撤掉失败，请重试')
+      }
+      return
+    }
+
     await this.addDishToTonight(dish)
   },
 

@@ -45,15 +45,10 @@
         <view class="row-t">分类管理</view>
         <text class="row-arw">›</text>
       </view>
-      <view class="row" bindtap="onExport">
+      <view class="row" bindtap="onBackup">
         <view class="row-ic"><image class="row-img" src="{{ico.download}}"/></view>
-        <view class="row-t">数据备份导出</view>
-        <text class="row-arw">›</text>
-      </view>
-      <view class="row" bindtap="onDiag">
-        <view class="row-ic"><image class="row-img" src="{{ico.gear}}"/></view>
-        <view class="row-t">数据连接自检</view>
-        <text class="row-v">出问题时点这</text>
+        <view class="row-t">数据备份与恢复</view>
+        <text class="row-v">导出 / 导入</text>
         <text class="row-arw">›</text>
       </view>
     </view>

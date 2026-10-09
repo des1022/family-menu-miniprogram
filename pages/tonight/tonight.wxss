@@ -115,6 +115,7 @@
 /* 横滑小卡 */
 .hscroll { white-space: nowrap; width: 100%; }
 .mini {
+  position: relative;
   display: inline-block;
   width: 210rpx;
   margin-right: 18rpx;
@@ -126,6 +127,25 @@
   vertical-align: top;
 }
 .mini--hover { opacity: 0.8; }
+/* 已在今晚的菜：右上角对勾 + 绿描边，点一下可以撤掉 */
+.mini--on { border-color: var(--ok); }
+.mini--on::after {
+  content: '✓';
+  position: absolute;
+  right: 12rpx;
+  top: 12rpx;
+  width: 38rpx;
+  height: 38rpx;
+  border-radius: 50%;
+  background: var(--ok);
+  color: var(--surf);
+  font-size: 24rpx;
+  font-weight: 700;
+  line-height: 38rpx;
+  text-align: center;
+  z-index: 2;
+}
+.mini--on .mini-sub { color: var(--ok-ink); font-weight: 600; }
 .mini-img { width: 100%; height: 132rpx; font-size: 34rpx; }
 .mini-nm { font-size: 25rpx; font-weight: 700; padding: 14rpx 16rpx 0; }
 .mini-sub { font-size: 20rpx; color: var(--ink2); padding: 4rpx 16rpx 16rpx; }

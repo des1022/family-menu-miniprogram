@@ -634,11 +634,169 @@ async function checkEnv() {
   return { ready: missing.length === 0, missing: missing, items: items }
 }
 
+/**
+ * 从备份 JSON 恢复（只做「合并」：已存在的跳过，不会动现有数据）。
+ *
+ * 两个必须处理的点：
+ * 1. `_id` / `_openid` 一律剥掉重新生成 —— 客户端 add 不接受外部 _id，
+ *    而 _openid 必须由云端按当前用户写入（否则自定义安全规则会对不上）。
+ * 2. records.dishId 指向 dishes._id、records.byId 指向 members._id。
+ *    重建后 _id 变了，必须建「旧 id → 新 id」映射把引用翻译过去，否则记录会变成孤儿。
+ *
+ * 写入一律顺序进行 + 每 5 条停一下：云开发客户端并发写有限制，
+ * 之前「12 条并发」就整批失败过（见 dev-notes 2026-10-08）。
+ */
+async function restoreBackup(payload, onProgress) {
+  payload = payload || {}
+  const report = { dishes: 0, records: 0, categories: 0, shopping: 0, members: 0, skipped: 0, failed: 0 }
+  const say = typeof onProgress === 'function' ? onProgress : function () {}
+  let count = 0
+  const pace = async () => {
+    count++
+    if (count % 5 === 0) await sleep(220)
+  }
+  const strip = (doc) => {
+    const o = Object.assign({}, doc)
+    delete o._id
+    delete o._openid
+    return o
+  }
+
+  /* ---------- 分类 ---------- */
+  say('恢复分类…')
+  const existCat = {}
+  ;(await getCategories().catch(() => [])).forEach(c => { if (c.name) existCat[c.name] = true })
+  for (const c of (payload.categories || [])) {
+    if (!c || !c.name) continue
+    if (existCat[c.name]) { report.skipped++; continue }
+    try {
+      await colCategories().add({
+        data: { name: c.name, sort: Number(c.sort) || 0, createTime: db().serverDate() }
+      })
+      existCat[c.name] = true
+      report.categories++
+      await pace()
+    } catch (e) {
+      console.warn('[db] 恢复分类失败', c.name, e)
+      report.failed++
+    }
+  }
+
+  /* ---------- 菜品（顺便建立 旧 _id → 新 _id 映射） ---------- */
+  say('恢复菜品…')
+  const dishMap = {}
+  const existDish = {}
+  ;(await getAllDishes().catch(() => [])).forEach(d => { if (d.name) existDish[d.name] = d._id })
+  for (const d of (payload.dishes || [])) {
+    if (!d || !d.name) continue
+    if (existDish[d.name]) {
+      if (d._id) dishMap[d._id] = existDish[d.name]
+      report.skipped++
+      continue
+    }
+    try {
+      const res = await colDishes().add({
+        data: strip(Object.assign({}, d, {
+          createTime: db().serverDate(),
+          updateTime: db().serverDate()
+        }))
+      })
+      if (d._id) dishMap[d._id] = res._id
+      existDish[d.name] = res._id
+      report.dishes++
+      await pace()
+    } catch (e) {
+      console.warn('[db] 恢复菜品失败', d.name, e)
+      report.failed++
+    }
+  }
+
+  /* ---------- 成员 ---------- */
+  say('恢复成员…')
+  const meMap = {}
+  const existMember = {}
+  ;(await getMembers().catch(() => [])).forEach(m => { if (m.nickname) existMember[m.nickname] = m._id })
+  for (const m of (payload.members || [])) {
+    if (!m) continue
+    const nick = m.nickname || ''
+    if (nick && existMember[nick]) {
+      if (m._id) meMap[m._id] = existMember[nick]
+      report.skipped++
+      continue
+    }
+    try {
+      const data = strip(m)
+      delete data.self              // 不让导入进来的记录抢「我是谁」的身份标记
+      data.eatTonight = Number(m.eatTonight) === 0 ? 0 : 1
+      data.createTime = db().serverDate()
+      data.updateTime = db().serverDate()
+      const res = await colMembers().add({ data: data })
+      if (m._id) meMap[m._id] = res._id
+      if (nick) existMember[nick] = res._id
+      report.members++
+      await pace()
+    } catch (e) {
+      console.warn('[db] 恢复成员失败', nick, e)
+      report.failed++
+    }
+  }
+
+  /* ---------- 点单记录 ---------- */
+  say('恢复点单记录…')
+  const existRec = {}
+  ;(await getAllRecords().catch(() => [])).forEach(r => { existRec[r.date + '|' + r.dishId] = true })
+  for (const r of (payload.records || [])) {
+    if (!r || !r.date) continue
+    const dishId = dishMap[r.dishId] || r.dishId
+    const key = r.date + '|' + dishId
+    if (existRec[key]) { report.skipped++; continue }
+    try {
+      const data = strip(r)
+      data.dishId = dishId
+      if (data.byId && meMap[data.byId]) data.byId = meMap[data.byId]
+      data.createTime = db().serverDate()
+      data.updateTime = db().serverDate()
+      await colRecords().add({ data: data })
+      existRec[key] = true
+      report.records++
+      await pace()
+    } catch (e) {
+      console.warn('[db] 恢复记录失败', r.date, e)
+      report.failed++
+    }
+  }
+
+  /* ---------- 采购清单 ---------- */
+  say('恢复采购清单…')
+  const existShop = {}
+  ;(await getAllShopping().catch(() => [])).forEach(s => { existShop[s.date + '|' + s.name] = true })
+  for (const s of (payload.shopping || [])) {
+    if (!s || !s.date || !s.name) continue
+    const key = s.date + '|' + s.name
+    if (existShop[key]) { report.skipped++; continue }
+    try {
+      const data = strip(s)
+      data.createTime = db().serverDate()
+      data.updateTime = db().serverDate()
+      await db().collection(COLLECTIONS.SHOPPING).add({ data: data })
+      existShop[key] = true
+      report.shopping++
+      await pace()
+    } catch (e) {
+      console.warn('[db] 恢复采购项失败', s.name, e)
+      report.failed++
+    }
+  }
+
+  return report
+}
+
 module.exports = {
   todayStr,
   recentDates,
   pingAllCollections,
   checkEnv,
+  restoreBackup,
   // 菜品
   getOnDishes,
   getAllDishes,

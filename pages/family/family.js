@@ -17,7 +17,7 @@ Page({
     themeCls: '',
     ico: {},
     // 版本标记：真机排查用 —— 一眼看出跑的是哪一版构建
-    ver: '1.1.1',
+    ver: '1.1.2',
     members: [],
     eatCount: 0,
     dishCount: 0,
@@ -60,8 +60,7 @@ Page({
     return {
       bowl: '/assets/icons/bowl' + n + '.png',
       folder: '/assets/icons/folder' + n + '.png',
-      download: '/assets/icons/download' + n + '.png',
-      gear: '/assets/icons/gear' + n + '.png'
+      download: '/assets/icons/download' + n + '.png'
     }
   },
 
@@ -288,7 +287,7 @@ Page({
       ])
       const payload = {
         app: 'family-menu',
-        version: '1.1.1',
+        version: '1.1.2',
         exportedAt: new Date().toISOString(),
         dishes: dishes,
         records: records,
@@ -330,23 +329,107 @@ Page({
   },
 
   /** 数据连接自检：手机上没有控制台，出问题时靠这个定位是哪个集合的事 */
-  async onDiag() {
-    wx.showLoading({ title: '检查中', mask: true })
+  /** 备份：导出 / 导入 二选一 */
+  onBackup() {
+    wx.showActionSheet({
+      itemList: ['导出备份文件', '从备份文件恢复'],
+      success: (res) => {
+        if (res.tapIndex === 0) this.onExport()
+        else if (res.tapIndex === 1) this.onImport()
+      },
+      fail: () => {}
+    })
+  },
+
+  /**
+   * 从备份恢复。
+   * 小程序没有「文件选择器」，只能从聊天记录里挑文件（wx.chooseMessageFile）——
+   * 所以操作路径是：先把导出的备份 JSON 发到微信「文件传输助手」，再回这里选它。
+   */
+  onImport() {
+    wx.chooseMessageFile({
+      count: 1,
+      type: 'file',
+      extension: ['json'],
+      success: (res) => {
+        const file = (res.tempFiles || [])[0]
+        if (!file) return
+
+        let payload = null
+        try {
+          payload = JSON.parse(wx.getFileSystemManager().readFileSync(file.path, 'utf-8'))
+        } catch (e) {
+          console.error('[family] 备份解析失败', e)
+          wx.showModal({
+            title: '这个文件读不了',
+            content: '请选择由本小程序「导出备份文件」生成的 .json 文件。',
+            showCancel: false,
+            confirmText: '知道了'
+          })
+          return
+        }
+
+        if (!payload || payload.app !== 'family-menu') {
+          wx.showModal({
+            title: '不是本小程序的备份',
+            content: '备份文件里应该有 app: "family-menu" 这个标记，但没找到。',
+            showCancel: false,
+            confirmText: '知道了'
+          })
+          return
+        }
+
+        const summary = [
+          '菜品 ' + ((payload.dishes || []).length) + ' 道',
+          '点单记录 ' + ((payload.records || []).length) + ' 条',
+          '分类 ' + ((payload.categories || []).length) + ' 个',
+          '采购项 ' + ((payload.shopping || []).length) + ' 条'
+        ].join(' · ')
+        const when = payload.exportedAt ? String(payload.exportedAt).slice(0, 10) : '未知'
+
+        wx.showModal({
+          title: '恢复这份备份？',
+          content: '备份日期：' + when + '\n' + summary + '\n\n只补进现在缺的，已有的菜和记录不会被覆盖。',
+          confirmText: '开始恢复',
+          cancelText: '取消',
+          success: (r) => { if (r.confirm) this.doRestore(payload) }
+        })
+      },
+      fail: (e) => {
+        if (e && /cancel/i.test(e.errMsg || '')) return
+        console.error('[family] 选择文件失败', e)
+        toast('没能选中文件，请重试')
+      }
+    })
+  },
+
+  async doRestore(payload) {
+    wx.showLoading({ title: '正在恢复…', mask: true })
     try {
-      const rows = await db.pingAllCollections()
+      const rep = await db.restoreBackup(payload, (text) => {
+        wx.showLoading({ title: text, mask: true })
+      })
       wx.hideLoading()
-      const bad = rows.filter(r => !r.ok)
+      await this.loadAll()
       wx.showModal({
-        title: bad.length ? '有 ' + bad.length + ' 个集合有问题' : '数据连接正常',
-        content: rows.map(r => (r.ok ? '✅ ' : '❌ ') + r.name + '\n     ' + r.info).join('\n'),
+        title: '恢复完成',
+        content: [
+          '菜品 +' + rep.dishes + ' 道',
+          '点单记录 +' + rep.records + ' 条',
+          '分类 +' + rep.categories + ' 个',
+          '采购项 +' + rep.shopping + ' 条',
+          rep.members ? '成员 +' + rep.members + ' 位' : '',
+          rep.skipped ? '跳过已存在 ' + rep.skipped + ' 条' : '',
+          rep.failed ? '⚠️ 有 ' + rep.failed + ' 条没写进去' : ''
+        ].filter(Boolean).join('\n'),
         showCancel: false,
         confirmText: '知道了'
       })
     } catch (e) {
       wx.hideLoading()
-      console.error('[family] 自检失败', e)
+      console.error('[family] 恢复失败', e)
       wx.showModal({
-        title: '自检没跑成',
+        title: '恢复没成功',
         content: errText(e),
         showCancel: false,
         confirmText: '知道了'
@@ -357,7 +440,7 @@ Page({
   onAbout() {
     wx.showModal({
       title: '家庭菜单 · 体验版',
-      content: '家里人自己用的餐桌计划本。\n数据存在你自己的微信云开发环境，随时可从「数据备份导出」取走。',
+      content: '家里人自己用的餐桌计划本。\n数据存在你自己的微信云开发环境，随时可从「数据备份与恢复」导出取走，也能从备份文件恢复回来。',
       showCancel: false,
       confirmText: '知道了'
     })

@@ -79,18 +79,6 @@
         </view>
       </view>
 
-      <block wx:if="{{recent.length}}">
-        <view class="sec-h"><text class="sec-t">最近家里常吃</text><text class="sec-m" bindtap="goDishes">看全部 ›</text></view>
-        <scroll-view class="hscroll" scroll-x enable-flex show-scrollbar="{{false}}">
-          <view class="mini" wx:for="{{recent}}" wx:key="_id" data-id="{{item._id}}" bindtap="onQuickAdd" hover-class="mini--hover">
-            <image class="mini-img" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
-            <view class="mini-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
-            <view class="mini-nm ellipsis">{{item.name}}</view>
-            <view class="mini-sub ellipsis">{{item.freqText}}</view>
-          </view>
-        </scroll-view>
-      </block>
-
       <view class="seed-card" wx:if="{{!allCount}}">
         <view class="seed-t">还没有菜品？</view>
         <view class="seed-s">一键填入 12 道家常菜，马上就能用</view>
@@ -147,6 +135,26 @@
         </view>
         <text class="rc-arw">›</text>
       </view>
+    </block>
+
+    <!-- 最近家里常吃：两种状态都显示（点了一道菜之后还想再加，不用再跳去菜库） -->
+    <block wx:if="{{env.ready && recent.length}}">
+      <view class="sec-h"><text class="sec-t">最近家里常吃</text><text class="sec-m" bindtap="goDishes">看全部 ›</text></view>
+      <scroll-view class="hscroll" scroll-x enable-flex show-scrollbar="{{false}}">
+        <view
+          class="mini {{item.onTonight ? 'mini--on' : ''}}"
+          wx:for="{{recent}}"
+          wx:key="_id"
+          data-id="{{item._id}}"
+          bindtap="onQuickAdd"
+          hover-class="mini--hover"
+        >
+          <image class="mini-img" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+          <view class="mini-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
+          <view class="mini-nm ellipsis">{{item.name}}</view>
+          <view class="mini-sub ellipsis">{{item.onTonight ? '已在今晚' : item.freqText}}</view>
+        </view>
+      </scroll-view>
     </block>
 
   </view>
