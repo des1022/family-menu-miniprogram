@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><meta charset="UTF-8"><title>标题文案与确认弹窗 · 方案预览</title>
+<style>
+:root {
+  --pri:#D9714E; --pri-d:#C4553A; --pri-l:#FBEEE8; --pri-ink:#A8462E;
+  --acc:#E9A323; --acc-l:#FCF3DF; --acc-ink:#8E5F0C;
+  --ok:#4F9367; --ok-l:#E9F3ED; --ok-ink:#3E7A55;
+  --danger:#C94A3F; --danger-l:#FBEDEA;
+  --bg:#FAF7F3; --surf:#FFFFFF; --surf2:#F4EFE9; --line:#EFE7DE;
+  --ink:#2A2521; --ink2:#8B8178; --ink3:#B7AEA4;
+  --btn-bg:linear-gradient(135deg,#DE7A56,#C4553A); --btn-ink:#FFFFFF;
+  --r-card:14px; --sh:0 2px 7px rgba(170,130,100,.08);
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0; padding: 28px 24px 60px; background: #E9E3DB; color: #2A2521;
+  font: 14px/1.6 -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+h1 { font-size: 20px; margin: 0 0 4px; }
+h2 { font-size: 17px; margin: 38px 0 14px; padding-top: 18px; border-top: 2px solid #D6CEC5; }
+h2:first-of-type { border-top: none; padding-top: 0; }
+.note { font-size: 13px; color: #6B6259; margin-bottom: 18px; }
+.grid { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+
+/* ---- ① 标题 ---- */
+.tcard { width: 375px; background: #E9E3DB; }
+.tno { font: 700 13px/1 monospace; color: #8B8178; margin-bottom: 6px; }
+.tphone { background: var(--bg); border-radius: 16px; padding: 18px 14px 16px; box-shadow: var(--sh); }
+.twhy { font-size: 12.5px; color: #6B6259; margin-top: 7px; line-height: 1.6; }
+.hd { display: flex; justify-content: space-between; align-items: flex-start; }
+.hd-l { flex: 1; min-width: 0; }
+.h1 { font-size: 20px; font-weight: 700; letter-spacing: -0.01em; line-height: 1.28; }
+.h2sub { font-size: 13px; color: var(--ink2); margin-top: 3px; }
+.avars { display: flex; flex: 0 0 auto; padding-top: 2px; }
+.avars span {
+  width: 22px; height: 22px; border-radius: 50%; color: #fff; font-size: 11px; font-weight: 700;
+  line-height: 22px; text-align: center; margin-left: -7px; border: 1.5px solid var(--bg);
+}
+
+/* ---- ② 弹窗 ---- */
+.dcard { width: 375px; }
+.dname { font-size: 14px; font-weight: 700; margin-bottom: 7px; }
+.dwhy { font-size: 12.5px; color: #6B6259; margin-top: 8px; line-height: 1.6; }
+.dphone { position: relative; height: 372px; background: var(--bg); border-radius: 16px; overflow: hidden; }
+.mock { padding: 16px 14px; }
+.mock-h { display: flex; justify-content: space-between; font-size: 15px; margin-bottom: 12px; }
+.mock-h span { font-size: 13px; color: var(--pri-ink); font-weight: 600; }
+.mock-row { display: flex; gap: 9px; }
+.mock-card { width: 108px; background: var(--surf); border-radius: 13px; overflow: hidden; box-shadow: var(--sh); }
+.mock-card--ghost { opacity: .5; height: 100px; background: var(--surf2); }
+.mock-img {
+  height: 74px; background: linear-gradient(140deg, #E3B58C, #C98A55); color: #fff; font-size: 22px;
+  display: flex; align-items: center; justify-content: center;
+}
+.mock-nm { font-size: 13px; font-weight: 700; padding: 7px 9px 9px; }
+
+.mask {
+  position: absolute; left: 0; right: 0; top: 0; bottom: 0;
+  background: rgba(28, 20, 14, .42);
+  display: flex; align-items: center; justify-content: center; padding: 20px;
+}
+.mask--bottom { align-items: flex-end; padding: 0; }
+
+.d-ic {
+  width: 42px; height: 42px; margin: 0 auto 12px; border-radius: 50%;
+  background: var(--danger-l); color: var(--danger); font-size: 20px; font-weight: 800;
+  line-height: 42px; text-align: center;
+}
+.d-ic--sm { width: 34px; height: 34px; margin: 0; font-size: 16px; line-height: 34px; flex: 0 0 auto; }
+.d-t { font-size: 17px; font-weight: 700; }
+.d-d { font-size: 13.5px; color: var(--ink2); margin-top: 7px; line-height: 1.55; }
+.d-btns { display: flex; gap: 10px; margin-top: 18px; }
+
+.b-ghost, .b-danger {
+  flex: 1; text-align: center; padding: 12px 0; border-radius: 99px;
+  font-size: 15px; font-weight: 700;
+}
+.b-ghost { background: var(--surf2); color: var(--ink2); }
+.b-danger { background: var(--danger); color: #fff; box-shadow: 0 4px 10px rgba(201,74,63,.26); }
+.b-sm { padding: 10px 0; font-size: 14px; }
+.b-block { display: block; width: 100%; margin-top: 9px; padding: 14px 0; font-size: 15.5px; }
+
+.dlg-a {
+  width: 268px; background: var(--surf); border-radius: 20px; padding: 24px 18px 16px;
+  text-align: center; box-shadow: 0 10px 30px rgba(40,25,15,.22);
+}
+.dlg-a .d-d { margin-top: 8px; }
+
+.dlg-b {
+  width: 100%; background: var(--bg); border-radius: 20px 20px 0 0;
+  padding: 18px 16px calc(16px + env(safe-area-inset-bottom));
+  box-shadow: 0 -8px 26px rgba(40,25,15,.2);
+}
+.db-top { display: flex; gap: 11px; align-items: flex-start; }
+.db-tx { flex: 1; min-width: 0; }
+.dlg-b .d-t { font-size: 16px; }
+.dlg-b .d-d { margin-top: 5px; }
+
+.dlg-c {
+  width: 248px; background: var(--surf); border-radius: 18px; padding: 20px 16px 14px;
+  text-align: center; box-shadow: 0 10px 30px rgba(40,25,15,.22);
+}
+.dlg-c .d-btns { margin-top: 16px; }
+</style></head>
+<body>
+
+<h1>标题文案 &amp; 确认弹窗 · 方案预览</h1>
+<div class="note">
+  按真实主题变量与尺寸渲染（375 宽），不是示意图。看完告诉我挑哪个编号就行。
+</div>
+
+<h2>① 页头标题 · 6 个候选</h2>
+<div class="note">现在是「今晚」两个字。下面每张都是真实的页头区域（含日期和家人头像）。</div>
+<div class="grid"><div class="tcard">
+      <div class="tno">①</div>
+      <div class="tphone"><div class="hd">
+      <div class="hd-l">
+        <div class="h1">今晚想吃点什么？</div>
+        <div class="h2sub">10月9日 周五</div>
+      </div>
+      <div class="avars">
+        <span style="background:#D9714E">我</span><span style="background:#C79A3C">家</span>
+      </div>
+    </div></div>
+      <div class="twhy">最自然的询问，和页面原本「今晚吃什么？」一脉相承</div>
+    </div><div class="tcard">
+      <div class="tno">②</div>
+      <div class="tphone"><div class="hd">
+      <div class="hd-l">
+        <div class="h1">今晚，咱家吃点啥？</div>
+        <div class="h2sub">10月9日 周五</div>
+      </div>
+      <div class="avars">
+        <span style="background:#D9714E">我</span><span style="background:#C79A3C">家</span>
+      </div>
+    </div></div>
+      <div class="twhy">口语、家常，像家里人在灶台边问一句</div>
+    </div><div class="tcard">
+      <div class="tno">③</div>
+      <div class="tphone"><div class="hd">
+      <div class="hd-l">
+        <div class="h1">今晚的菜，你来点</div>
+        <div class="h2sub">10月9日 周五</div>
+      </div>
+      <div class="avars">
+        <span style="background:#D9714E">我</span><span style="background:#C79A3C">家</span>
+      </div>
+    </div></div>
+      <div class="twhy">有托付感，呼应「家里人自己点」这个核心动作</div>
+    </div><div class="tcard">
+      <div class="tno">④</div>
+      <div class="tphone"><div class="hd">
+      <div class="hd-l">
+        <div class="h1">一家人，今晚吃点啥</div>
+        <div class="h2sub">10月9日 周五</div>
+      </div>
+      <div class="avars">
+        <span style="background:#D9714E">我</span><span style="background:#C79A3C">家</span>
+      </div>
+    </div></div>
+      <div class="twhy">把「一家人」放前面，强调这是全家的事</div>
+    </div><div class="tcard">
+      <div class="tno">⑤</div>
+      <div class="tphone"><div class="hd">
+      <div class="hd-l">
+        <div class="h1">今晚吃啥？</div>
+        <div class="h2sub">10月9日 周五</div>
+      </div>
+      <div class="avars">
+        <span style="background:#D9714E">我</span><span style="background:#C79A3C">家</span>
+      </div>
+    </div></div>
+      <div class="twhy">最短最直接，字号可以放大一号</div>
+    </div><div class="tcard">
+      <div class="tno">⑥</div>
+      <div class="tphone"><div class="hd">
+      <div class="hd-l">
+        <div class="h1">今晚，好好吃一顿</div>
+        <div class="h2sub">10月9日 周五</div>
+      </div>
+      <div class="avars">
+        <span style="background:#D9714E">我</span><span style="background:#C79A3C">家</span>
+      </div>
+    </div></div>
+      <div class="twhy">温柔一点的收束，不那么像任务</div>
+    </div></div>
+
+<h2>② 确认弹窗 · 3 个方案</h2>
+<div class="note">
+  现在的确认框用的是微信自带的 <code>wx.showModal</code>（就是你觉得丑的那个），
+  样式完全由微信决定、改不了。要改就必须换成自绘弹窗 —— 下面三个都是自绘方案，
+  场景统一取「把蛋炒饭从今晚撤掉」。
+</div>
+<div class="grid"><div class="dcard">
+      <div class="dname">方案 A · 居中卡片</div>
+      <div class="dphone">
+        <div class="mock">
+  <div class="mock-h"><b>今晚的桌 · 1 道</b><span>再加一道 ›</span></div>
+  <div class="mock-row">
+    <div class="mock-card">
+      <div class="mock-img">蛋</div>
+      <div class="mock-nm">蛋炒饭</div>
+    </div>
+    <div class="mock-card mock-card--ghost"></div>
+  </div>
+</div>
+        <div class="mask"><div class="dlg-a">
+  <div class="d-ic">!</div>
+  <div class="d-t">撤掉这道菜？</div>
+  <div class="d-d">「蛋炒饭」会从今晚的桌上移走，之后还能再点。</div>
+  <div class="d-btns">
+    <div class="b-ghost">取消</div>
+    <div class="b-danger">撤掉</div>
+  </div>
+</div></div>
+      </div>
+      <div class="dwhy">图标 + 标题 + 说明 + 并排按钮。最稳，什么场景都能用，破坏性操作的按钮用砖红以示区别。</div>
+    </div><div class="dcard">
+      <div class="dname">方案 B · 底部动作条</div>
+      <div class="dphone">
+        <div class="mock">
+  <div class="mock-h"><b>今晚的桌 · 1 道</b><span>再加一道 ›</span></div>
+  <div class="mock-row">
+    <div class="mock-card">
+      <div class="mock-img">蛋</div>
+      <div class="mock-nm">蛋炒饭</div>
+    </div>
+    <div class="mock-card mock-card--ghost"></div>
+  </div>
+</div>
+        <div class="mask mask--bottom"><div class="dlg-b">
+  <div class="db-top">
+    <div class="d-ic d-ic--sm">!</div>
+    <div class="db-tx">
+      <div class="d-t">撤掉这道菜？</div>
+      <div class="d-d">「蛋炒饭」会从今晚的桌上移走，之后还能再点。</div>
+    </div>
+  </div>
+  <div class="b-danger b-block">撤掉</div>
+  <div class="b-ghost b-block">取消</div>
+</div></div>
+      </div>
+      <div class="dwhy">图标与文字横排，按钮竖着排、更大更好点。手指不用往上够，和 App 里其它弹层（做法、决策器）语言一致。</div>
+    </div><div class="dcard">
+      <div class="dname">方案 C · 居中极简</div>
+      <div class="dphone">
+        <div class="mock">
+  <div class="mock-h"><b>今晚的桌 · 1 道</b><span>再加一道 ›</span></div>
+  <div class="mock-row">
+    <div class="mock-card">
+      <div class="mock-img">蛋</div>
+      <div class="mock-nm">蛋炒饭</div>
+    </div>
+    <div class="mock-card mock-card--ghost"></div>
+  </div>
+</div>
+        <div class="mask"><div class="dlg-c">
+  <div class="d-t">撤掉「蛋炒饭」？</div>
+  <div class="d-d">之后还能再点。</div>
+  <div class="d-btns">
+    <div class="b-ghost b-sm">取消</div>
+    <div class="b-danger b-sm">撤掉</div>
+  </div>
+</div></div>
+      </div>
+      <div class="dwhy">去掉图标和多余留白，只留一句问句和两个按钮。最轻，但破坏性操作的"分量感"也最弱。</div>
+    </div></div>
+
+</body></html>
