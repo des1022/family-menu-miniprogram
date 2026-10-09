@@ -77,11 +77,42 @@
   background: var(--surf);
   border: 2rpx solid var(--line);
   border-radius: 20rpx;
-  padding: 22rpx 24rpx;
+  /* 必须给明确高度：原生 input 没有高度、又带上下 padding 时，
+     输入区会被压扁，占位文字上下被切（2026-10-09 真机反馈）。
+     写法对齐 pages/category 的 .add-input。 */
+  height: 92rpx;
+  line-height: 92rpx;
+  padding: 0 24rpx;
   font-size: 30rpx;
+  color: var(--ink);
 }
 .fm-ph { color: var(--ink3); }
 .fm-taste { display: flex; flex-wrap: wrap; gap: 12rpx; }
+
+/* 「我」是谁 */
+.fm-me {
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  background: var(--surf2);
+  border: 2rpx solid var(--line);
+  border-radius: 20rpx;
+  padding: 22rpx 24rpx;
+  font-size: 27rpx;
+  font-weight: 600;
+  color: var(--ink2);
+}
+.fm-me-ok { color: var(--pri-ink); font-weight: 800; font-size: 30rpx; }
+.fm-mebtn {
+  background: var(--surf);
+  border: 2rpx dashed var(--pri);
+  border-radius: 20rpx;
+  padding: 24rpx;
+  text-align: center;
+  font-size: 28rpx;
+  font-weight: 700;
+  color: var(--pri-ink);
+}
 .fm-h { font-size: 22rpx; color: var(--ink3); margin-top: 12rpx; line-height: 1.6; }
 
 /* ---------- 身份未认领时的提示条 ---------- */

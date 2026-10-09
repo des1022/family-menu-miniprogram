@@ -94,9 +94,9 @@
       </view>
 
       <view class="g2">
-        <view class="dish" wx:for="{{cards}}" wx:key="id">
-          <image class="dish-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill" data-id="{{item.dishId}}" bindtap="onOpenDish"/>
-          <view class="dish-img img-ph {{item.ph}}" wx:else data-id="{{item.dishId}}" bindtap="onOpenDish">{{item.initial}}</view>
+        <view class="dish" wx:for="{{cards}}" wx:key="id" data-id="{{item.dishId}}" bindtap="onOpenDish">
+          <image class="dish-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+          <view class="dish-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
           <view class="owner" wx:if="{{item.byName}}">
             <view class="owner-dot" style="background:{{item.byColor}}"></view>
             <text>{{item.byName}}</text>
@@ -164,7 +164,7 @@
     <view class="btn btn-primary btn-block {{busy ? 'btn-disabled' : ''}}" bindtap="onConfirmTonight">确认这顿饭</view>
   </view>
 
-  <!-- 做法弹层 -->
+  <!-- 菜品详情弹层（点今晚桌上的菜就地弹出，不跳页） -->
   <view class="sheet-mask" wx:if="{{how}}" bindtap="closeHow" catchtouchmove="noop">
     <view class="sheet" catchtap="noop">
       <view class="sheet-grab"></view>
@@ -174,9 +174,16 @@
       </view>
 
       <scroll-view class="hw-scroll" scroll-y>
+        <view class="hw-hero">
+          <image class="hw-img dish-dim" wx:if="{{how.image}}" src="{{how.image}}" mode="aspectFill"/>
+          <view class="hw-img img-ph {{how.ph}}" wx:else>{{how.initial}}</view>
+        </view>
+
         <view class="hw-tags">
           <text class="tag" wx:if="{{how.category}}">{{how.category}}</text>
-          <text class="tag">{{how.stepList.length}} 步</text>
+          <text class="tag tag--pri" wx:for="{{how.tagList}}" wx:key="*this">{{item}}</text>
+          <text class="tag" wx:if="{{!how.stepList.length}}">没写做法</text>
+          <text class="t-micro hw-by" wx:if="{{how.byName}}">{{how.byName}} 点的</text>
         </view>
 
         <view class="hw-sec" wx:if="{{how.ingList.length}}">
@@ -186,8 +193,13 @@
           </view>
         </view>
 
-        <view class="hw-sec">
-          <view class="hw-h">做法</view>
+        <view class="hw-sec" wx:if="{{how.desc}}">
+          <view class="hw-h">备注</view>
+          <view class="hw-tx">{{how.desc}}</view>
+        </view>
+
+        <view class="hw-sec" wx:if="{{how.stepList.length}}">
+          <view class="hw-h">做法 <text class="hw-h-n">{{how.stepList.length}} 步</text></view>
           <view class="hw-steps">
             <view class="hw-step" wx:for="{{how.stepList}}" wx:key="index">
               <text class="hw-step-n">{{index + 1}}</text>
@@ -195,11 +207,17 @@
             </view>
           </view>
         </view>
+
+        <view class="hw-sec" wx:else>
+          <view class="hw-h">做法</view>
+          <view class="hw-tx">这道菜还没写做法。点下面的「编辑」补上，以后做饭的人点一下就能看。</view>
+        </view>
       </scroll-view>
 
       <view class="btn-row" style="margin-top:26rpx">
-        <view class="btn btn-ghost" bindtap="onCopyHow">复制做法</view>
-        <view class="btn btn-primary" bindtap="closeHow">开始做</view>
+        <view class="btn btn-ghost" bindtap="onEditDish">编辑</view>
+        <view class="btn btn-ghost" wx:if="{{how.stepList.length}}" bindtap="onCopyHow">复制做法</view>
+        <view class="btn btn-plain" bindtap="onRemoveFromHow">从今晚撤掉</view>
       </view>
     </view>
   </view>

@@ -252,10 +252,45 @@ async function createSelfMember(count) {
   return remember(doc)
 }
 
-/** 认领一条已有成员（页面「你是哪位」选中后调用） */
+/**
+ * 认领一条已有成员（页面「你是哪位」选中后调用；家庭页「把这条设成「我」」也走这里）
+ *
+ * 除了记住本地，还要把云端 members 里的 `self` 标记**搬**到这条上：
+ * 之前只写本地记忆，旧的那条还留着 self=1，于是「换客户端按 openid 找回」
+ * 又会认成旧的那个 —— 2026-10-09 反馈的「我标在陈瑞丽身上」就是这个原因。
+ * 规矩：云端任何时刻最多只有一条 self=1。
+ */
 async function claimMember(id) {
   const res = await colMembers().doc(id).get()
-  return remember(res.data)
+  const target = res.data
+  if (!target) return null
+
+  // 1) 先把别处的 self 清掉（失败不阻塞认领，本地照样认这条）
+  try {
+    const others = await colMembers().where({ self: 1 }).limit(20).get()
+    const list = others.data || []
+    for (let i = 0; i < list.length; i++) {
+      const m = list[i]
+      if (m._id === id) continue
+      await colMembers().doc(m._id).update({
+        data: { self: 0, updateTime: db().serverDate() }
+      })
+    }
+  } catch (e) {
+    console.warn('[db] 清理旧的「我」标记失败（不影响本次认领）', e)
+  }
+
+  // 2) 给这条打上标记
+  try {
+    await colMembers().doc(id).update({
+      data: { self: 1, updateTime: db().serverDate() }
+    })
+    target.self = 1
+  } catch (e) {
+    console.warn('[db] 写入「我」标记失败（本地仍然认这条）', e)
+  }
+
+  return remember(target)
 }
 
 /**

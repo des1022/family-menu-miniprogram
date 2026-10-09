@@ -203,6 +203,28 @@ Page({
     this.setData({ 'edit.nickname': e.detail.value })
   },
 
+  /** 认错了身份：把「我」改挂到这条成员上 */
+  async onClaimMe() {
+    const edit = this.data.edit
+    if (!edit || !edit.id) return
+    const nickname = edit.nickname || '这位成员'
+    const ok = await confirm(
+      '改完之后，「我」就代表本机登录的你：你点的菜记在 TA 头上，今晚在不在家吃也按 TA 算。',
+      '把「我」改成「' + nickname + '」？',
+      '就是 TA'
+    )
+    if (!ok) return
+    try {
+      await db.claimMember(edit.id)
+      this.setData({ sheet: false })
+      toast('好了，「我」现在是 ' + nickname)
+      this.loadAll()
+    } catch (e) {
+      console.error('[family] 改「我」失败', e)
+      toast('没改成，再试一次')
+    }
+  },
+
   onToggleTaste(e) {
     const t = e.currentTarget.dataset.t
     const map = Object.assign({}, this.data.tasteMap)

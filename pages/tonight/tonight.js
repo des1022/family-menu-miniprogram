@@ -2,7 +2,7 @@ const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const { SAMPLE_DISHES } = require('../../utils/samples.js')
-const { toast, confirm, alert, errText, parseSteps, parseIngredients } = require('../../utils/util.js')
+const { toast, confirm, alert, errText, parseSteps, parseIngredients, parseTags } = require('../../utils/util.js')
 
 const WEEK = ['日', '一', '二', '三', '四', '五', '六']
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
@@ -412,29 +412,70 @@ Page({
     }
   },
 
+  /* ============ 菜品详情（就地弹出，不再跳去菜库） ============ */
+
+  /**
+   * 点今晚桌上的一道菜 → 就地弹详情。
+   *
+   * 原来这里是 wx.switchTab 跳去「菜库」再看详情（tabBar 页面带不了参数，
+   * 只能拿本地缓存把菜 id 传过去）—— 真机上就是「点一下页面就跳走了」，
+   * 2026-10-09 反馈的问题。现在跟菜库一样就地弹层：图片 / 标签 / 食材 / 备注 / 做法 全在里面。
+   */
   onOpenDish(e) {
-    // 菜库是 tabBar 页面，只能 switchTab（不能带参数），用本地缓存把要看的菜传过去
-    wx.setStorageSync('fm_focus_dish', e.currentTarget.dataset.id)
-    wx.switchTab({ url: '/pages/dishes/dishes' })
+    this.openDishDetail(e.currentTarget.dataset.id)
   },
 
-  /* ==================== 做法（就地查看，做饭的人不用跳走） ==================== */
-
+  /** 「做法」小标签：用的是同一个弹层（内容本来就含做法），只是入口更直接 */
   onOpenHow(e) {
-    const dishId = e.currentTarget.dataset.id
-    const dish = this._dishMap ? this._dishMap[dishId] : null
-    if (!dish) return
-    const stepList = parseSteps(dish.steps)
-    if (!stepList.length) return
+    this.openDishDetail(e.currentTarget.dataset.id)
+  },
+
+  openDishDetail(dishId) {
+    if (!dishId) return
+    const dish = (this._dishMap && this._dishMap[dishId]) || null
+    const card = (this.data.cards || []).filter(c => c.dishId === dishId)[0] || null
+    if (!dish && !card) return
+    const name = (dish && dish.name) || (card && card.name) || ''
     this.setData({
       how: {
+        recordId: card ? card.id : '',
         dishId: dishId,
-        name: dish.name,
-        category: dish.category || '',
-        ingList: parseIngredients(dish.ingredients),
-        stepList: stepList
+        name: name,
+        image: (dish && dish.image) || (card && card.image) || '',
+        initial: initialOf(name),
+        ph: phOf(dishId),
+        category: (dish && dish.category) || (card && card.category) || '',
+        tagList: parseTags(dish && dish.tags),
+        byName: (card && card.byName) || '',
+        ingList: parseIngredients(dish && dish.ingredients),
+        desc: (dish && dish.desc) || '',
+        stepList: parseSteps(dish && dish.steps)
       }
     })
+  },
+
+  /** 弹层里的「编辑」：跳到菜品编辑页（这是唯一该离开当前页的动作） */
+  onEditDish() {
+    const h = this.data.how
+    if (!h || !h.dishId) return
+    wx.navigateTo({ url: '/pages/dish-edit/dish-edit?id=' + h.dishId })
+  },
+
+  /** 弹层里的「从今晚撤掉」 */
+  async onRemoveFromHow() {
+    const h = this.data.how
+    if (!h || !h.dishId) return
+    const ok = await confirm('把「' + h.name + '」从今晚的桌上撤掉？', '撤掉', '撤掉')
+    if (!ok) return
+    try {
+      await db.removeFromTonight(this.data.today, h.dishId)
+      this.setData({ how: null })
+      const records = await db.getRecordsByDate(this.data.today)
+      this.applyRecords(records)
+    } catch (err) {
+      console.error('[tonight] 撤菜失败', err)
+      toast('操作失败，请重试')
+    }
   },
 
   closeHow() {

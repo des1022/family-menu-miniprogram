@@ -10,6 +10,7 @@
       </view>
       <view class="img-mask" wx:if="{{form.image}}">点击更换</view>
     </view>
+    <view class="img-note">选好之后会自动缩到 800px 宽、200KB 以内再上传，不用自己处理。卡片按约 3:2 裁、详情页裁得更扁，所以把菜放在画面中间。</view>
   </view>
 
   <!-- 基本信息 -->

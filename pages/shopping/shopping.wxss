@@ -111,7 +111,10 @@
   background: var(--surf);
   border: 2rpx solid var(--line);
   border-radius: 20rpx;
-  padding: 22rpx 24rpx;
+  /* 同 family 页：原生 input 不给高度 + 有上下 padding 会把输入区压扁 */
+  height: 92rpx;
+  line-height: 92rpx;
+  padding: 0 24rpx;
   font-size: 30rpx;
   color: var(--ink);
 }

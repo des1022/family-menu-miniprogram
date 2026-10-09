@@ -116,6 +116,18 @@
           </view>
           <view class="fm-h">点菜时会用到，比如「不吃香菜」</view>
         </view>
+
+        <view class="fm" wx:if="{{!edit.isNew}}">
+          <view class="fm-l">「我」是谁</view>
+          <view class="fm-me" wx:if="{{edit.isMe}}">
+            <text class="fm-me-ok">✓</text>
+            <text>本机登录的「我」就是这条</text>
+          </view>
+          <view class="fm-mebtn" wx:else bindtap="onClaimMe">
+            把「{{edit.nickname || '这位'}}」设成「我」
+          </view>
+          <view class="fm-h">「我」用来记谁点的菜、谁在家吃饭。认错了就在这里改过来。</view>
+        </view>
       </scroll-view>
 
       <view class="btn-row fs-actions" style="margin-top:30rpx">
