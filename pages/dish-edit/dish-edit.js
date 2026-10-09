@@ -1,7 +1,6 @@
 const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const { chooseImage, uploadDishImage, deleteDishImage } = require('../../utils/image.js')
-const recipes = require('../../utils/recipes.js')
 const { toast, showLoading, hideLoading, parseTags } = require('../../utils/util.js')
 
 const NEW_CAT_FLAG = '＋ 新增分类…'
@@ -29,9 +28,7 @@ Page({
     pickerRange: [],
     pickerIndex: 0,
     oldImage: '',     // 编辑时记录原图，替换后删除云存储旧图
-    saving: false,
-    kw: '',           // 菜谱库搜索关键词
-    hits: []          // 搜索命中结果
+    saving: false
   },
 
   onLoad(options) {
@@ -146,65 +143,6 @@ Page({
     }
   },
 
-  /* ==================== 从内置菜谱库一键填好 ==================== */
-
-  onSearchInput(e) {
-    const kw = e.detail.value || ''
-    const hits = recipes.searchRecipes(kw, 6).map(r => ({
-      name: r.name,
-      category: r.category,
-      brief: (r.ingredients || '').split(',').slice(0, 4).join('、')
-    }))
-    this.setData({ kw: kw, hits: hits })
-  },
-
-  onClearSearch() {
-    this.setData({ kw: '', hits: [] })
-  },
-
-  /**
-   * 点一条菜谱 → 把分类 / 食材 / 做法 / 标签整份填进表单。
-   * 只覆盖这几个字段，价格和图片保持用户已填的内容。
-   */
-  onPickRecipe(e) {
-    const r = recipes.findByExactName(e.currentTarget.dataset.name)
-    if (!r) return
-
-    const selectedTags = String(r.tags || '').split(';').map(s => s.trim()).filter(Boolean)
-    const selectedMap = {}
-    selectedTags.forEach(t => { selectedMap[t] = true })
-
-    const form = Object.assign({}, this.data.form, {
-      name: r.name,
-      category: r.category || this.data.form.category,
-      desc: r.desc || '',
-      ingredients: r.ingredients || '',
-      steps: r.steps || ''
-    })
-    // 菜谱自带配图（随包内置的本地图）——只在用户还没传图时填，不覆盖他自己选的
-    if (r.image && !this.data.form.image) form.image = r.image
-    const patch = {
-      form: form,
-      selectedTags: selectedTags,
-      selectedMap: selectedMap,
-      kw: '',
-      hits: [],
-      showNewCat: false,
-      newCategory: ''
-    }
-    const idx = (this.data.pickerRange || []).indexOf(form.category)
-    if (idx > -1) patch.pickerIndex = idx
-
-    this.setData(patch)
-
-    const known = this.data.categories || []
-    if (r.category && known.indexOf(r.category) === -1) {
-      toast('已填好，分类「' + r.category + '」是新建的')
-    } else {
-      toast('已填好，检查一下就能保存')
-    }
-  },
-
   async onSave() {
     if (this.data.saving) return
     const { form, isEdit, dishId, oldImage } = this.data
@@ -213,6 +151,7 @@ Page({
 
     if (!name) return toast('请填写菜品名称')
     if (!category) return toast('请选择或输入菜品分类')
+    if (!form.image) return toast('请上传菜品图片')
 
     const price = form.price === '' || form.price === null ? 0 : Number(form.price)
     if (isNaN(price) || price < 0) return toast('价格请填写数字')
