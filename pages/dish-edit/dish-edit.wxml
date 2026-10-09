@@ -2,7 +2,7 @@
   <!-- ============ 菜品图片 ============ -->
   <view class="card">
     <view class="chd">
-      <view class="chip chip--pri"><image class="chip-img" src="{{ico.cam}}"/></view>
+      <view class="sec-ic sec-ic--pri"><image class="sec-ic-img" src="{{ico.cam}}"/></view>
       <view class="ct">菜品图片</view>
       <view class="cm">必填</view>
     </view>
@@ -24,7 +24,7 @@
   <!-- ============ 基本信息 ============ -->
   <view class="card">
     <view class="chd">
-      <view class="chip chip--acc"><image class="chip-img" src="{{ico.info}}"/></view>
+      <view class="sec-ic sec-ic--acc"><image class="sec-ic-img" src="{{ico.info}}"/></view>
       <view class="ct">基本信息</view>
     </view>
 
@@ -112,7 +112,7 @@
   <!-- ============ 食材清单 ============ -->
   <view class="card">
     <view class="chd">
-      <view class="chip chip--ok"><image class="chip-img" src="{{ico.basket}}"/></view>
+      <view class="sec-ic sec-ic--ok"><image class="sec-ic-img" src="{{ico.basket}}"/></view>
       <view class="ct">食材清单</view>
       <view class="cm">会汇总进买菜清单</view>
     </view>
@@ -143,7 +143,7 @@
   <!-- ============ 做法步骤 ============ -->
   <view class="card">
     <view class="chd">
-      <view class="chip chip--pri"><image class="chip-img" src="{{ico.steps}}"/></view>
+      <view class="sec-ic sec-ic--pri"><image class="sec-ic-img" src="{{ico.steps}}"/></view>
       <view class="ct">做法步骤</view>
       <view class="cm">每行一步</view>
     </view>
@@ -170,7 +170,7 @@
   <!-- ============ 标签 ============ -->
   <view class="card">
     <view class="chd">
-      <view class="chip chip--acc"><image class="chip-img" src="{{ico.tag}}"/></view>
+      <view class="sec-ic sec-ic--acc"><image class="sec-ic-img" src="{{ico.tag}}"/></view>
       <view class="ct">标签</view>
       <view class="cm">选填</view>
     </view>
@@ -193,7 +193,7 @@
   <!-- ============ 上架状态（新增时默认上架，不用问） ============ -->
   <view class="card" wx:if="{{isEdit}}">
     <view class="chd">
-      <view class="chip chip--ok"><image class="chip-img" src="{{ico.eye}}"/></view>
+      <view class="sec-ic sec-ic--ok"><image class="sec-ic-img" src="{{ico.eye}}"/></view>
       <view class="ct">上架状态</view>
     </view>
     <view class="strow">

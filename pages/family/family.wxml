@@ -72,7 +72,7 @@
     <view class="sec-h"><text class="sec-t">关于</text></view>
     <view class="card">
       <view class="row" bindtap="onAbout">
-        <view class="row-ic"><image class="row-img" src="{{ico.gear}}"/></view>
+        <view class="row-ic row-ic--logo"><image class="row-logo" src="{{ico.logo}}"/></view>
         <view class="row-t">家庭菜单 · 体验版</view>
         <text class="row-v">v{{ver}}</text>
       </view>

@@ -32,7 +32,7 @@
   gap: 18rpx;
   padding: 26rpx 28rpx 20rpx;
 }
-.chip {
+.sec-ic {
   width: 52rpx;
   height: 52rpx;
   border-radius: 18rpx;
@@ -41,10 +41,10 @@
   justify-content: center;
   flex: 0 0 auto;
 }
-.chip-img { width: 32rpx; height: 32rpx; }
-.chip--pri { background: var(--pri-l); }
-.chip--acc { background: var(--acc-l); }
-.chip--ok { background: var(--ok-l); }
+.sec-ic-img { width: 32rpx; height: 32rpx; }
+.sec-ic--pri { background: var(--pri-l); }
+.sec-ic--acc { background: var(--acc-l); }
+.sec-ic--ok { background: var(--ok-l); }
 .ct { font-size: 30rpx; font-weight: 800; }
 .cm { margin-left: auto; font-size: 23rpx; color: var(--ink3); }
 

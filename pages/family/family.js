@@ -60,7 +60,9 @@ Page({
     return {
       bowl: '/assets/icons/bowl' + n + '.png',
       folder: '/assets/icons/folder' + n + '.png',
-      download: '/assets/icons/download' + n + '.png'
+      download: '/assets/icons/download' + n + '.png',
+      // 「关于」那行放小程序自己的 logo，深浅共用一张（自己是带底色的方块图标）
+      logo: '/assets/icons/app-logo.png'
     }
   },
 

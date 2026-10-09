@@ -68,6 +68,10 @@
 .theme-tip { font-size: 23rpx; color: var(--ink2); margin-top: 18rpx; }
 
 /* ---------- 关于 ---------- */
+/* logo 自带底色和圆角，所以把行图标那枚浅底方块去掉 */
+.row .row-ic--logo { background: transparent; }
+.row-logo { width: 62rpx; height: 62rpx; border-radius: 18rpx; }
+
 .about-tx { font-size: 23rpx; color: var(--ink3); line-height: 1.7; padding: 16rpx 8rpx 0; }
 
 /* ---------- 成员编辑表单 ---------- */
