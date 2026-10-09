@@ -272,22 +272,31 @@
 .guide-t { font-size: 27rpx; line-height: 1.6; padding-top: 4rpx; }
 
 /* ==================== 决策器 ==================== */
+/* 高度分配要算准：参数区（3 行）+ 结果列表 + 底部按钮 必须同时放得下，
+   否则「就这些，定了」会被顶到屏幕外（真机反馈过「确认不了」）。
+   固定部分约 660rpx，列表按 28vh 留白 —— 矮屏也不会溢出。 */
 .dec-sub {
   font-size: 23rpx;
   color: var(--ink2);
   text-align: center;
-  margin: -8rpx 0 22rpx;
+  margin: 0 0 16rpx;
 }
-.dec-row { margin-bottom: 20rpx; }
+.dec-row { margin-bottom: 12rpx; }
 .dec-l {
   font-size: 22rpx;
   font-weight: 700;
   color: var(--ink2);
   letter-spacing: 0.06em;
-  margin-bottom: 12rpx;
+  margin-bottom: 8rpx;
 }
 .dec-chips { display: flex; flex-wrap: wrap; gap: 12rpx; }
-.dec-list { max-height: 44vh; padding: 6rpx 0 2rpx; }
+/* flex:0 0 auto 很关键 —— 不加的话 scroll-view 默认 flex-shrink:1，
+   在只有 max-height 的父容器里会被内容撑高，把底部按钮挤出去 */
+.dec-list {
+  flex: 0 0 auto;
+  max-height: 28vh;
+  padding: 6rpx 0 2rpx;
+}
 .dec-pick {
   display: flex;
   align-items: center;

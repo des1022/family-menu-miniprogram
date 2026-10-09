@@ -63,6 +63,11 @@
     text="还没有菜品"
     sub="点右下角「添加菜品」录入第一道菜"
   />
+  <empty
+    wx:elif="{{!loading && !groups.length}}"
+    text="{{filterCat === '已下架' ? '没有下架的菜' : '这里还没有菜'}}"
+    sub="{{filterCat === '已下架' ? '暂时不做的菜下架后会收在这里' : '换个分类看看'}}"
+  />
 
   <!-- 底部操作 -->
   <view class="admin-ft safe-bottom">
@@ -85,9 +90,8 @@
       <scroll-view class="move-list" scroll-y>
         <view
           class="move-item"
-          wx:for="{{catOptions}}"
+          wx:for="{{moveCats}}"
           wx:key="*this"
-          wx:if="{{item !== '全部'}}"
           data-name="{{item}}"
           bindtap="onPickMoveTarget"
         >{{item}}</view>

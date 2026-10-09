@@ -4,6 +4,7 @@ const { deleteDishImage } = require('../../utils/image.js')
 const { toast, confirm, formatPrice } = require('../../utils/util.js')
 
 const ALL_CAT = '全部'
+const OFF_CAT = '已下架'   // 状态筛选项：把下架的菜单独收在一处
 
 /** 菜品管理：列表 / 上下架 / 编辑 / 删除（免密码，家庭私有小程序） */
 Page({
@@ -11,6 +12,7 @@ Page({
     allDishes: [],
     groups: [],
     catOptions: [ALL_CAT],
+    moveCats: [],
     filterCat: ALL_CAT,
     loading: false,
     selecting: false,
@@ -33,11 +35,12 @@ Page({
       const dishes = await db.getAllDishes()
       const cats = await db.getCategories()
       const fromDishes = Array.from(new Set(dishes.map(d => d.category).filter(Boolean)))
-      const catOptions = [ALL_CAT].concat(
-        Array.from(new Set(cats.map(c => c.name).concat(fromDishes)))
-      )
+      const moveCats = Array.from(new Set(cats.map(c => c.name).concat(fromDishes)))
+      // 「已下架」只作为筛选胶囊存在，不能当成可移动的目标分类
+      const catOptions = [ALL_CAT].concat(moveCats).concat([OFF_CAT])
       const decorated = dishes.map(d => Object.assign({}, d, { priceText: formatPrice(d.price) }))
-      this.setData({ allDishes: decorated, catOptions: catOptions }, () => this.buildGroups())
+      this.setData({ allDishes: decorated, catOptions: catOptions, moveCats: moveCats },
+        () => this.buildGroups())
     } catch (e) {
       console.error('[admin] 加载菜品失败', e)
       toast('加载失败，请检查云环境配置')
@@ -49,7 +52,9 @@ Page({
   buildGroups() {
     const { allDishes, filterCat, selectedMap, selecting } = this.data
     let list = allDishes
-    if (filterCat !== ALL_CAT) {
+    if (filterCat === OFF_CAT) {
+      list = list.filter(d => Number(d.status) !== config.DISH_STATUS.ON)
+    } else if (filterCat !== ALL_CAT) {
       list = list.filter(d => d.category === filterCat)
     }
     const map = {}
@@ -135,7 +140,7 @@ Page({
 
   onBatchMove() {
     if (!this._selectedIds().length) return toast('请先勾选菜品')
-    if (!this.data.catOptions.filter(c => c !== ALL_CAT).length) return toast('没有其它分类可选')
+    if (!this.data.moveCats.length) return toast('没有其它分类可选')
     this.setData({ showMovePicker: true })
   },
 
