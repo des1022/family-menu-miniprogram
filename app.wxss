@@ -45,6 +45,13 @@ page {
   --cat-on-bg: #D9714E;
   --cat-on-ink: #FFFFFF;
 
+  /* 确认弹窗「暖橙卡」：图标圆底恒为白色，所以只需要管卡片与文字两色 */
+  --dlg-bg: #FBEEE8;
+  --dlg-tx: #A8462E;
+  --dlg-bg-d: #FBEAE8;
+  --dlg-tx-d: #8F3229;
+  --dlg-btn2: #FFFFFF;
+
   /* 形状 */
   --r-card: 28rpx;
   --r-lg: 32rpx;
@@ -94,6 +101,11 @@ page {
     --hero-veil: linear-gradient(180deg, rgba(46, 100, 89, 0.16) 0%, rgba(46, 100, 89, 0.3) 30%, rgba(46, 100, 89, 0.74) 48%, rgba(46, 100, 89, 0.88) 60%, rgba(46, 100, 89, 0.88) 100%);
     --cat-on-bg: #D2703F;
     --cat-on-ink: #FFFFFF;
+    --dlg-bg: rgba(210, 112, 63, 0.22);
+    --dlg-tx: #F8DAC8;
+    --dlg-bg-d: rgba(224, 138, 126, 0.2);
+    --dlg-tx-d: #FFDCD6;
+    --dlg-btn2: rgba(255, 255, 255, 0.14);
   }
 }
 
@@ -113,6 +125,7 @@ page {
   --hero-veil: linear-gradient(180deg, rgba(250, 247, 243, 0) 0%, rgba(250, 247, 243, 0.1) 30%, rgba(250, 247, 243, 0.62) 48%, rgba(250, 247, 243, 0.78) 60%, rgba(250, 247, 243, 0.78) 100%);
   --cat-on-bg: #D9714E;
   --cat-on-ink: #FFFFFF;
+  --dlg-bg: #FBEEE8; --dlg-tx: #A8462E; --dlg-bg-d: #FBEAE8; --dlg-tx-d: #8F3229; --dlg-btn2: #FFFFFF;
 }
 .theme-dark {
   --pri: #FFFFFF; --pri-d: #E6F1ED; --pri-l: rgba(255, 255, 255, 0.16); --pri-ink: #FFFFFF;
@@ -129,6 +142,7 @@ page {
   --hero-veil: linear-gradient(180deg, rgba(46, 100, 89, 0.16) 0%, rgba(46, 100, 89, 0.3) 30%, rgba(46, 100, 89, 0.74) 48%, rgba(46, 100, 89, 0.88) 60%, rgba(46, 100, 89, 0.88) 100%);
   --cat-on-bg: #D2703F;
   --cat-on-ink: #FFFFFF;
+  --dlg-bg: rgba(210, 112, 63, 0.22); --dlg-tx: #F8DAC8; --dlg-bg-d: rgba(224, 138, 126, 0.2); --dlg-tx-d: #FFDCD6; --dlg-btn2: rgba(255, 255, 255, 0.14);
 }
 
 view, text, input, textarea, button, picker, scroll-view {

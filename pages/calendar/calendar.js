@@ -244,6 +244,7 @@ Page({
       upcoming: dates.slice(0, 10).map(d => ({
         date: d,
         label: this.dateCN(d),
+        count: (byDate[d] || []).length,
         names: (byDate[d] || []).map(r => r.dishName || '这道菜').join('、')
       }))
     })

@@ -34,4 +34,7 @@
   <empty wx:if="{{!categories.length}}" text="还没有分类" sub="先添加几个分类，方便家人筛选" />
 
   <view class="tip">提示：删除分类时，若该分类下还有菜品，会先让你把菜品转移到其他分类。</view>
+
+  <!-- 统一确认弹窗：utils/util.js 的 confirm()/alert() 会自动找到它 -->
+  <ui-dialog id="uiDialog"/>
 </view>

@@ -2,7 +2,7 @@ const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const { SAMPLE_DISHES } = require('../../utils/samples.js')
-const { toast, confirm, errText, parseSteps, parseIngredients } = require('../../utils/util.js')
+const { toast, confirm, alert, errText, parseSteps, parseIngredients } = require('../../utils/util.js')
 
 const WEEK = ['日', '一', '二', '三', '四', '五', '六']
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
@@ -683,13 +683,11 @@ Page({
         this.loadAll()
 
         if (res.failed.length) {
-          wx.showModal({
-            title: '有 ' + res.failed.length + ' 道没填进去',
-            content: '成功 ' + res.ok + ' 道。失败原因：\n' +
+          alert(
+            '成功 ' + res.ok + ' 道。失败原因：\n' +
               res.failed.slice(0, 3).map(f => f.name + '：' + f.err).join('\n'),
-            showCancel: false,
-            confirmText: '知道了'
-          })
+            '有 ' + res.failed.length + ' 道没填进去'
+          )
         } else {
           toast('已填入 ' + res.ok + ' 道菜')
         }
@@ -697,12 +695,7 @@ Page({
         wx.hideLoading()
         this.setData({ busy: false })
         console.error('[tonight] 填入示例菜库失败', e)
-        wx.showModal({
-          title: '填入失败',
-          content: errText(e),
-          showCancel: false,
-          confirmText: '知道了'
-        })
+        alert(errText(e), '填入失败')
       }
     })
   },

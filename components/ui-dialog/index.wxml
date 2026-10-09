@@ -1,0 +1,16 @@
+<!-- 统一确认弹窗（方案 D · 暖橙卡，按钮左右横排） -->
+<view class="ud-mask" wx:if="{{show}}" catchtouchmove="noop" bindtap="onCancel">
+  <view class="ud-card {{danger ? 'ud-card--d' : ''}}" catchtap="noop">
+    <view class="ud-badge">
+      <image class="ud-ic" src="{{danger ? icoBad : icoWarm}}" mode="aspectFit"/>
+    </view>
+
+    <view class="ud-t">{{title}}</view>
+    <view class="ud-s" wx:if="{{content}}">{{content}}</view>
+
+    <view class="ud-acts">
+      <view class="ud-btn ud-btn--soft" wx:if="{{showCancel}}" bindtap="onCancel">{{cancelText}}</view>
+      <view class="ud-btn {{danger ? 'ud-btn--danger' : 'ud-btn--pri'}}" bindtap="onOk">{{confirmText}}</view>
+    </view>
+  </view>
+</view>

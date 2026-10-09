@@ -228,37 +228,37 @@
 }
 .cat-side {
   flex: 0 0 auto;
-  width: 152rpx;
+  width: 118rpx;
   /* 页面滚动时分类列吸附在顶部（sticky 的祖先没有 overflow:hidden，安全）。
      注意不能用 overflow:hidden —— 会把选中项的圆角切掉。 */
   position: sticky;
   top: 0;
   z-index: 5;
   background: var(--surf2);
-  border-radius: 26rpx;
-  padding: 10rpx;
+  border-radius: 22rpx;
+  padding: 8rpx;
 }
 .cat-i {
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 16rpx 6rpx 14rpx;
-  border-radius: 20rpx;
-  margin-bottom: 6rpx;
+  padding: 13rpx 4rpx 11rpx;
+  border-radius: 16rpx;
+  margin-bottom: 5rpx;
 }
 .cat-i:last-child { margin-bottom: 0; }
 /* 未选中＝彩色图标，选中＝白色图标（在实心主色块上） */
-.cat-i-ic { width: 54rpx; height: 54rpx; }
+.cat-i-ic { width: 44rpx; height: 44rpx; }
 .cat-i-nm {
-  margin-top: 8rpx;
-  font-size: 23rpx;
+  margin-top: 6rpx;
+  font-size: 21rpx;
   color: var(--ink2);
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.cat-i-n { font-size: 19rpx; color: var(--ink3); margin-top: 2rpx; }
+.cat-i-n { font-size: 17rpx; color: var(--ink3); margin-top: 1rpx; }
 .cat-i--on { background: var(--cat-on-bg); }
 .cat-i--on .cat-i-nm { color: var(--cat-on-ink); font-weight: 700; }
 .cat-i--on .cat-i-n { color: var(--cat-on-ink); opacity: 0.74; }

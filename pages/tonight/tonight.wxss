@@ -5,8 +5,10 @@
   justify-content: space-between;
   padding: 24rpx 4rpx 20rpx;
 }
+/* 标题从「今晚」换成了一句 9 个字的文案，左块要能吃剩余宽度、不允许把头像挤走 */
+.hd-main { flex: 1; min-width: 0; }
 
-.avars { display: flex; align-items: center; }
+.avars { display: flex; align-items: center; flex: 0 0 auto; }
 .avar {
   width: 52rpx; height: 52rpx;
   border-radius: 50%;

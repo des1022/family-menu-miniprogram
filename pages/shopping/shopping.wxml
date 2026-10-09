@@ -82,4 +82,7 @@
       <view class="btn btn-primary btn-block" bindtap="onConfirmAdd">加进清单</view>
     </view>
   </view>
+
+  <!-- 统一确认弹窗：utils/util.js 的 confirm()/alert() 会自动找到它 -->
+  <ui-dialog id="uiDialog"/>
 </view>

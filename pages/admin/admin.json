@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "菜品管理",
-  "enablePullDownRefresh": true
+  "enablePullDownRefresh": true,
+  "usingComponents": {
+    "ui-dialog": "/components/ui-dialog/index"
+  }
 }

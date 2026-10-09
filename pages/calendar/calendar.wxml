@@ -52,7 +52,10 @@
       <view class="card">
         <view class="up-i" wx:for="{{upcoming}}" wx:key="date" data-date="{{item.date}}" bindtap="onUpTap">
           <view class="up-l">
-            <view class="up-d">{{item.label}}</view>
+            <view class="up-hd">
+              <text class="up-d">{{item.label}}</text>
+              <text class="up-c">{{item.count}} 道</text>
+            </view>
             <view class="up-n">{{item.names}}</view>
           </view>
           <text class="up-arw">›</text>
@@ -213,4 +216,7 @@
       </view>
     </view>
   </view>
+
+  <!-- 统一确认弹窗：utils/util.js 的 confirm()/alert() 会自动找到它 -->
+  <ui-dialog id="uiDialog"/>
 </view>

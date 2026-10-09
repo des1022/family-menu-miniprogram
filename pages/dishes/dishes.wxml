@@ -168,4 +168,7 @@
       </view>
     </view>
   </view>
+
+  <!-- 统一确认弹窗：utils/util.js 的 confirm()/alert() 会自动找到它 -->
+  <ui-dialog id="uiDialog"/>
 </view>

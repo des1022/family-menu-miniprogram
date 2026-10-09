@@ -1,0 +1,120 @@
+/**
+ * 自包含样式：自定义组件默认样式隔离（app.wxss 的 class 不生效），
+ * 这里只依赖从 page 继承下来的 CSS 变量。
+ *
+ * 设计来源：docs/design/2026-10-09-标题与弹窗方案v2.html 的方案 D「暖橙卡」。
+ * 用户定稿：卡片浅橙底、圆形白底图标、标题与正文居中；**按钮左右横排**（不是上下堆叠）。
+ *
+ * 两个变体：
+ *   普通（--dlg-bg 暖橙）  → 面包碗图标 + 主色按钮
+ *   破坏性（--dlg-bg-d 砖红）→ 垃圾桶图标 + 砖红按钮
+ * 图标圆底两种主题下恒为白色，所以 PNG 里的描边色（橙 / 砖红）直接用死值也成立。
+ */
+
+.ud-mask {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background: rgba(26, 17, 11, 0.54);
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 44rpx;
+  animation: ud-fade 0.16s ease-out;
+}
+
+@keyframes ud-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes ud-pop {
+  from { transform: scale(0.92); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.ud-card {
+  width: 100%;
+  background: var(--dlg-bg);
+  border-radius: 52rpx;
+  padding: 56rpx 44rpx 40rpx;
+  text-align: center;
+  box-shadow: 0 24rpx 64rpx rgba(60, 30, 16, 0.3);
+  animation: ud-pop 0.18s ease-out;
+}
+.ud-card--d { background: var(--dlg-bg-d); }
+
+.ud-badge {
+  width: 140rpx;
+  height: 140rpx;
+  border-radius: 50%;
+  background: #FFFFFF;
+  margin: 0 auto 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(146, 76, 44, 0.16);
+}
+.ud-ic {
+  width: 76rpx;
+  height: 76rpx;
+}
+
+.ud-t {
+  font-size: 38rpx;
+  font-weight: 800;
+  line-height: 1.4;
+  color: var(--dlg-tx);
+}
+.ud-card--d .ud-t { color: var(--dlg-tx-d); }
+
+.ud-s {
+  font-size: 27rpx;
+  line-height: 1.7;
+  margin-top: 16rpx;
+  color: var(--dlg-tx);
+  opacity: 0.76;
+  /* 错误信息里带 \n 换行，要真的换行 */
+  white-space: pre-line;
+}
+.ud-card--d .ud-s { color: var(--dlg-tx-d); }
+
+.ud-acts {
+  display: flex;
+  gap: 18rpx;
+  margin-top: 44rpx;
+}
+.ud-btn {
+  flex: 1;
+  min-height: 92rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999rpx;
+  font-size: 31rpx;
+  font-weight: 700;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.ud-btn:active { opacity: 0.84; transform: scale(0.985); }
+
+/* 取消：暖橙卡上的一枚浅色按钮（深浅主题各自取色） */
+.ud-btn--soft {
+  background: var(--dlg-btn2);
+  color: var(--dlg-tx);
+}
+.ud-card--d .ud-btn--soft { color: var(--dlg-tx-d); }
+
+/* 确定：普通用产品主色，破坏性用砖红 */
+.ud-btn--pri {
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  box-shadow: var(--btn-sh);
+}
+.ud-btn--danger {
+  background: var(--danger);
+  color: #FFFFFF;
+  box-shadow: 0 8rpx 20rpx rgba(201, 74, 63, 0.3);
+}

@@ -3,6 +3,7 @@
   "enablePullDownRefresh": true,
   "backgroundTextStyle": "@bgTxtStyle",
   "usingComponents": {
-    "who": "/components/who/index"
+    "who": "/components/who/index",
+    "ui-dialog": "/components/ui-dialog/index"
   }
 }

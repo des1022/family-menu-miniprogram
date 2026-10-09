@@ -1,3 +1,6 @@
 {
-  "navigationBarTitleText": "分享海报"
+  "navigationBarTitleText": "分享海报",
+  "usingComponents": {
+    "ui-dialog": "/components/ui-dialog/index"
+  }
 }

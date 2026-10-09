@@ -1,7 +1,7 @@
 const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
-const { toast, confirm, errText } = require('../../utils/util.js')
+const { toast, confirm, alert, errText } = require('../../utils/util.js')
 
 function initialOf(name) {
   const s = String(name || '').trim()
@@ -360,22 +360,12 @@ Page({
           payload = JSON.parse(wx.getFileSystemManager().readFileSync(file.path, 'utf-8'))
         } catch (e) {
           console.error('[family] 备份解析失败', e)
-          wx.showModal({
-            title: '这个文件读不了',
-            content: '请选择由本小程序「导出备份文件」生成的 .json 文件。',
-            showCancel: false,
-            confirmText: '知道了'
-          })
+          alert('请选择由本小程序「导出备份文件」生成的 .json 文件。', '这个文件读不了')
           return
         }
 
         if (!payload || payload.app !== 'family-menu') {
-          wx.showModal({
-            title: '不是本小程序的备份',
-            content: '备份文件里应该有 app: "family-menu" 这个标记，但没找到。',
-            showCancel: false,
-            confirmText: '知道了'
-          })
+          alert('备份文件里应该有 app: "family-menu" 这个标记，但没找到。', '不是本小程序的备份')
           return
         }
 
@@ -387,13 +377,12 @@ Page({
         ].join(' · ')
         const when = payload.exportedAt ? String(payload.exportedAt).slice(0, 10) : '未知'
 
-        wx.showModal({
-          title: '恢复这份备份？',
-          content: '备份日期：' + when + '\n' + summary + '\n\n只补进现在缺的，已有的菜和记录不会被覆盖。',
-          confirmText: '开始恢复',
-          cancelText: '取消',
-          success: (r) => { if (r.confirm) this.doRestore(payload) }
-        })
+        confirm(
+          '备份日期：' + when + '\n' + summary + '\n\n只补进现在缺的，已有的菜和记录不会被覆盖。',
+          '恢复这份备份？',
+          '开始恢复',
+          { danger: false }
+        ).then(ok => { if (ok) this.doRestore(payload) })
       },
       fail: (e) => {
         if (e && /cancel/i.test(e.errMsg || '')) return
@@ -411,39 +400,27 @@ Page({
       })
       wx.hideLoading()
       await this.loadAll()
-      wx.showModal({
-        title: '恢复完成',
-        content: [
+      alert([
           '菜品 +' + rep.dishes + ' 道',
           '点单记录 +' + rep.records + ' 条',
           '分类 +' + rep.categories + ' 个',
           '采购项 +' + rep.shopping + ' 条',
           rep.members ? '成员 +' + rep.members + ' 位' : '',
           rep.skipped ? '跳过已存在 ' + rep.skipped + ' 条' : '',
-          rep.failed ? '⚠️ 有 ' + rep.failed + ' 条没写进去' : ''
-        ].filter(Boolean).join('\n'),
-        showCancel: false,
-        confirmText: '知道了'
-      })
+        rep.failed ? '⚠️ 有 ' + rep.failed + ' 条没写进去' : ''
+      ].filter(Boolean).join('\n'), '恢复完成')
     } catch (e) {
       wx.hideLoading()
       console.error('[family] 恢复失败', e)
-      wx.showModal({
-        title: '恢复没成功',
-        content: errText(e),
-        showCancel: false,
-        confirmText: '知道了'
-      })
+      alert(errText(e), '恢复没成功')
     }
   },
 
   onAbout() {
-    wx.showModal({
-      title: '家庭菜单 · 体验版',
-      content: '家里人自己用的餐桌计划本。\n数据存在你自己的微信云开发环境，随时可从「数据备份与恢复」导出取走，也能从备份文件恢复回来。',
-      showCancel: false,
-      confirmText: '知道了'
-    })
+    alert(
+      '家里人自己用的餐桌计划本。\n数据存在你自己的微信云开发环境，随时可从「数据备份与恢复」导出取走，也能从备份文件恢复回来。',
+      '家庭菜单 · 体验版'
+    )
   },
 
   noop() {}

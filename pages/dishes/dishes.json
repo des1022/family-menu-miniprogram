@@ -2,5 +2,7 @@
   "navigationBarTitleText": "菜库",
   "enablePullDownRefresh": true,
   "backgroundTextStyle": "@bgTxtStyle",
-  "usingComponents": {}
+  "usingComponents": {
+    "ui-dialog": "/components/ui-dialog/index"
+  }
 }

@@ -15,16 +15,84 @@ function hideLoading() {
   wx.hideLoading()
 }
 
-/** 二次确认弹窗 */
-function confirm(content, title = '提示', confirmText = '确定') {
+/**
+ * 取当前页面挂着的自绘弹窗（页面 wxml 里的 `<ui-dialog id="uiDialog"/>`）。
+ * 拿不到就返回 null，由调用方退回原生 wx.showModal —— 这样即使哪个页面漏挂了组件，
+ * 功能也不会挂掉，只是样式回退。
+ */
+function getDialog() {
+  try {
+    const pages = getCurrentPages()
+    const page = pages && pages[pages.length - 1]
+    if (!page || typeof page.selectComponent !== 'function') return null
+    const c = page.selectComponent('#uiDialog')
+    return c && typeof c.open === 'function' ? c : null
+  } catch (e) {
+    return null
+  }
+}
+
+/**
+ * 「这操作会不会丢东西」的兜底判断。
+ * 目的：全站 15 处 confirm 不用一处处改就能自动上砖红样式。
+ * 判不准时调用方可以显式传 opts.danger 覆盖。
+ */
+const DANGER_RE = /删|撤|移除|清空|清掉|丢掉|去掉|下架|重置/
+
+function isDangerous(text) {
+  return DANGER_RE.test(String(text || ''))
+}
+
+/**
+ * 二次确认弹窗（自绘，方案 D 暖橙卡；拿不到组件时退回原生）
+ * @param {string} content 正文
+ * @param {string} title   标题
+ * @param {string} confirmText 确定按钮文字
+ * @param {{danger?:boolean, cancelText?:string}} [opts] danger 不传则按文案自动判断
+ * @returns {Promise<boolean>}
+ */
+function confirm(content, title = '提示', confirmText = '确定', opts = {}) {
+  const danger = opts.danger === undefined ? isDangerous(title + ' ' + confirmText) : !!opts.danger
+  const dlg = getDialog()
+  if (dlg) {
+    return dlg.open({
+      title,
+      content,
+      confirmText,
+      cancelText: opts.cancelText || '取消',
+      danger
+    })
+  }
   return new Promise(resolve => {
     wx.showModal({
       title,
       content,
       confirmText,
-      confirmColor: '#D9714E',
+      confirmColor: danger ? '#C94A3F' : '#D9714E',
       cancelColor: '#8B8178',
       success: res => resolve(!!res.confirm),
+      fail: () => resolve(false)
+    })
+  })
+}
+
+/**
+ * 只有一个「知道了」的提示弹窗（替掉散落各处的 wx.showModal({showCancel:false})）
+ * 正文里的 \n 会真的换行。
+ */
+function alert(content, title = '提示', confirmText = '知道了') {
+  const dlg = getDialog()
+  if (dlg) {
+    return dlg.open({ title, content, confirmText, showCancel: false })
+  }
+  return new Promise(resolve => {
+    wx.showModal({
+      title,
+      content,
+      showCancel: false,
+      confirmText,
+      confirmColor: '#D9714E',
+      success: () => resolve(true),
       fail: () => resolve(false)
     })
   })
@@ -138,6 +206,7 @@ module.exports = {
   showLoading,
   hideLoading,
   confirm,
+  alert,
   formatTime,
   formatPrice,
   randomStr,

@@ -207,20 +207,38 @@
 
 .arr-actions { flex: 0 0 auto; margin-top: 22rpx; }
 
-/* ---------- 接下来的安排 ---------- */
+/* ---------- 接下来的安排 ----------
+   排版对齐「本月回顾」那些卡片：行内左右各留 28rpx（原来只有 4rpx，字直接贴在卡片边上，
+   看着又紧又糙），日期与「N 道」同一行左右对开，菜名另起一行；分隔线内缩，像系统列表。 */
 .up-i {
   display: flex;
   align-items: center;
   gap: 16rpx;
-  padding: 22rpx 4rpx;
+  padding: 26rpx 28rpx;
   border-bottom: 2rpx solid var(--line);
 }
 .up-i:last-child { border-bottom: none; }
 .up-l { flex: 1; min-width: 0; }
-.up-d { font-size: 27rpx; font-weight: 700; }
-.up-n { font-size: 24rpx; color: var(--ink2); margin-top: 6rpx; line-height: 1.5; }
+.up-hd { display: flex; align-items: baseline; }
+.up-d {
+  font-size: 28rpx;
+  font-weight: 700;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.up-c {
+  flex: 0 0 auto;
+  margin-left: 12rpx;
+  font-size: 23rpx;
+  font-weight: 600;
+  color: var(--ink2);
+}
+.up-n { font-size: 24rpx; color: var(--ink2); margin-top: 10rpx; line-height: 1.6; }
 .up-arw { color: var(--ink3); font-size: 34rpx; line-height: 1; flex: 0 0 auto; }
-.up-tip { font-size: 22rpx; color: var(--ink3); margin: -4rpx 0 8rpx 6rpx; }
+.up-tip { font-size: 22rpx; color: var(--ink3); margin: 14rpx 0 0 6rpx; }
 
 /* ---------- 菜品详情（叠在安排弹层之上） ---------- */
 .sheet-mask--top { z-index: 130; }

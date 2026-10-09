@@ -43,4 +43,7 @@
     </view>
   </view>
   <view class="tip" wx:if="{{!empty}}">保存后可在微信里长按图片发送给家人，或直接转发本小程序</view>
+
+  <!-- 统一确认弹窗：utils/util.js 的 confirm()/alert() 会自动找到它 -->
+  <ui-dialog id="uiDialog"/>
 </view>

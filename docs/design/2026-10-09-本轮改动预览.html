@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>本轮改动预览 · 2026-10-09</title>
+<style>
+:root{
+  --pri:#D9714E; --pri-d:#C4553A; --pri-l:#FBEEE8; --pri-ink:#A8462E;
+  --acc:#E9A323; --acc-l:#FCF3DF; --acc-ink:#8E5F0C;
+  --ok:#4F9367; --ok-l:#E9F3ED; --ok-ink:#3E7A55;
+  --bg:#FAF7F3; --surf:#FFFFFF; --surf2:#F4EFE9; --line:#EFE7DE;
+  --ink:#2A2521; --ink2:#8B8178; --ink3:#B7AEA4;
+  --danger:#C94A3F;
+  --btn-bg:linear-gradient(135deg,#DE7A56,#C4553A);
+  --btn-ink:#FFFFFF;
+  --sh:0 2px 7px rgba(170,130,100,.08);
+  --sh-lg:0 16px 44px rgba(90,60,40,.16);
+  --dlg-bg:#FBEEE8; --dlg-tx:#A8462E; --dlg-bg-d:#FBEAE8; --dlg-tx-d:#8F3229; --dlg-btn2:#FFFFFF;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#E6E0D8;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;color:var(--ink);padding:40px 32px 64px;-webkit-font-smoothing:antialiased}
+.wrap{width:838px;margin:0 auto}
+.board-title{font-size:15px;color:#8A8078;letter-spacing:.06em;margin-bottom:16px}
+h1{font-size:25px;font-weight:800;letter-spacing:-.01em;margin-bottom:10px}
+.lede{font-size:13.5px;color:#7A716A;line-height:1.75;margin-bottom:8px;max-width:790px}
+.lede b{color:#2A2521}
+.rule{height:1px;background:rgba(120,105,90,.2);margin:32px 0 24px}
+h2{font-size:18px;font-weight:800;margin-bottom:6px}
+h2 .n{display:inline-flex;width:23px;height:23px;border-radius:8px;background:#2A2521;color:#fff;font-size:12.5px;align-items:center;justify-content:center;margin-right:9px;vertical-align:2px}
+.sub{font-size:13px;color:#7A716A;line-height:1.7;margin-bottom:18px;max-width:790px}
+.sub code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:5px;font-size:12px}
+.grid2{display:grid;grid-template-columns:375px 375px;gap:22px 24px}
+.fig-hd{display:flex;align-items:center;gap:8px;margin-bottom:9px}
+.tagx{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px}
+.tagx.old{background:#E7E1DA;color:#7A716A}
+.tagx.new{background:#2A2521;color:#fff}
+.fig-cap{font-size:12.5px;color:#7A716A;line-height:1.65;margin-top:9px}
+
+/* 手机切片 */
+.phone{width:375px;background:var(--bg);border-radius:14px;overflow:hidden;box-shadow:var(--sh-lg)}
+.statusbar{height:24px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;font-weight:600}
+.navbar{height:44px;position:relative;display:flex;align-items:center;justify-content:center}
+.navbar .nav-t{font-size:15px;font-weight:600}
+.capsule{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:78px;height:28px;border:1px solid rgba(0,0,0,.1);background:rgba(255,255,255,.7);border-radius:14px;display:flex;align-items:center;justify-content:space-around;font-size:11px;color:#333;letter-spacing:2px}
+.pb{padding:0 14px}
+
+/* ---------- 菜库 ---------- */
+.dh{display:flex;align-items:flex-start;justify-content:space-between;padding:12px 2px 10px}
+.t-h1{font-size:20px;font-weight:700;letter-spacing:-.01em;line-height:1.3}
+.t-sub{font-size:13px;color:var(--ink2);margin-top:5px}
+.cat-split{display:flex;align-items:flex-start}
+.cat-side{flex:0 0 auto;background:var(--surf2);display:flex;flex-direction:column}
+.cat-i{display:flex;flex-direction:column;align-items:center}
+.cat-i-ic{display:block}
+.cat-i--on{background:#D9714E}
+.cat-i-nm{color:var(--ink2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%}
+.cat-i-n{color:var(--ink3)}
+.cat-i--on .cat-i-nm{color:#fff;font-weight:700}
+.cat-i--on .cat-i-n{color:#fff;opacity:.74}
+.cat-main{flex:1;min-width:0;padding-left:16px}
+.chips{display:flex;gap:8px;margin-bottom:8px}
+.chip{font-size:13px;font-weight:600;padding:7px 13px;border-radius:999px;background:var(--surf);color:var(--ink2);border:1px solid var(--line)}
+.chip--on{background:#D9714E;color:#fff;border-color:#D9714E}
+.chip--accstar{background:var(--acc-l);color:var(--acc-ink);border-color:var(--acc)}
+.hint{font-size:11.5px;color:var(--ink3);margin-bottom:10px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cd{background:#fff;border-radius:14px;overflow:hidden;box-shadow:var(--sh)}
+.cd-media{position:relative;height:78px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;font-weight:800}
+.cd-add{position:absolute;right:7px;bottom:7px;width:26px;height:26px;border-radius:50%;background:#D9714E;color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+.cd-body{padding:8px 9px 10px}
+.cd-nm{font-size:14px;font-weight:700}
+.cd-tg{margin-top:5px}
+.tg{font-size:11px;background:var(--surf2);color:var(--ink2);padding:2px 7px;border-radius:6px}
+
+/* ---------- 日历 ---------- */
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin:18px 2px 9px}
+.sec-t{font-size:15px;font-weight:700}
+.sec-m{font-size:12px;color:var(--pri-ink);font-weight:600}
+.card{background:#fff;border-radius:14px;border:1px solid var(--line);box-shadow:var(--sh);overflow:hidden}
+.up-i{display:flex;align-items:center;gap:8px;border-bottom:1px solid var(--line)}
+.up-i:last-child{border-bottom:none}
+.up-l{flex:1;min-width:0}
+.up-hd{display:flex;align-items:baseline}
+.up-d{font-size:14px;font-weight:700;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.up-c{flex:0 0 auto;margin-left:6px;font-size:11.5px;font-weight:600;color:var(--ink2)}
+.up-n{font-size:12px;color:var(--ink2);line-height:1.6}
+.up-arw{color:var(--ink3);font-size:17px;line-height:1;flex:0 0 auto}
+.up-tip{font-size:11px;color:var(--ink3)}
+/* 旧版 */
+.old .up-i{padding:11px 2px}
+.old .up-d{margin-bottom:3px}
+.old .up-n{line-height:1.5}
+.old .up-tip{margin:-2px 0 4px 3px}
+/* 新版 */
+.new .up-i{padding:13px 14px}
+.new .up-n{margin-top:5px}
+.new .up-tip{margin:7px 0 0 3px}
+
+/* ---------- 弹窗 ---------- */
+.scr{width:375px;height:330px;background:var(--bg);border-radius:14px;overflow:hidden;position:relative;box-shadow:var(--sh-lg)}
+.bgpage{position:absolute;inset:0;padding:0 14px}
+.mini-row{display:flex;align-items:center;gap:11px;background:#fff;border:1px solid var(--line);border-radius:14px;padding:11px 12px;margin-bottom:10px;box-shadow:var(--sh)}
+.mini-thumb{width:42px;height:42px;border-radius:11px;flex:0 0 auto;display:flex;align-items:center;justify-content:center;color:#fff;font-size:17px;font-weight:800}
+.mini-nm{font-size:15px;font-weight:700}
+.mini-mt{font-size:12px;color:var(--ink2);margin-top:3px}
+.mask{position:absolute;inset:0;background:rgba(26,17,11,.54);display:flex;align-items:center;justify-content:center;padding:0 22px;backdrop-filter:blur(2px)}
+.ud-card{width:100%;background:var(--dlg-bg);border-radius:26px;padding:28px 22px 20px;text-align:center;box-shadow:0 12px 32px rgba(60,30,16,.3)}
+.ud-card.d{background:var(--dlg-bg-d)}
+.ud-badge{width:70px;height:70px;border-radius:50%;background:#fff;margin:0 auto 15px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(146,76,44,.16)}
+.ud-badge img{width:38px;height:38px;display:block}
+.ud-t{font-size:19px;font-weight:800;line-height:1.4;color:var(--dlg-tx)}
+.ud-card.d .ud-t{color:var(--dlg-tx-d)}
+.ud-s{font-size:13.5px;line-height:1.7;margin-top:8px;color:var(--dlg-tx);opacity:.76}
+.ud-card.d .ud-s{color:var(--dlg-tx-d)}
+.ud-acts{display:flex;gap:9px;margin-top:22px}
+.ud-btn{flex:1;min-height:46px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:15.5px;font-weight:700}
+.ud-btn.soft{background:var(--dlg-btn2);color:var(--dlg-tx)}
+.ud-card.d .ud-btn.soft{color:var(--dlg-tx-d)}
+.ud-btn.pri{background:var(--btn-bg);color:#fff;box-shadow:0 4px 10px rgba(196,85,58,.28)}
+.ud-btn.danger{background:var(--danger);color:#fff;box-shadow:0 4px 10px rgba(201,74,63,.3)}
+
+.foot{margin-top:36px;background:#fff;border-radius:16px;padding:20px 24px;box-shadow:var(--sh)}
+.foot h3{font-size:14.5px;font-weight:800;margin-bottom:9px}
+.foot ul{margin:0 0 0 18px;font-size:13px;color:#5C544D;line-height:1.9}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="board-title">家庭菜单 · 本轮改动预览 · 2026-10-09 17:4x</div>
+  <h1>四处改动，按你选定的来</h1>
+  <p class="lede">
+    ① 菜库左侧分类列窄一点　② 页头换「好好吃饭，慢慢生活」　③ 弹窗用方案 D，按钮改左右横排　④ 日历「接下来的安排」排版放松
+  </p>
+  <p class="lede">下面把 ①②③④ 都按真机 1:1 渲染了一遍，「前 / 后」并排，你直接对一眼就行。</p>
+
+  <!-- ① 菜库分类列 -->
+  <div class="rule"></div>
+  <h2><span class="n">1</span>菜库左侧分类列：变窄</h2>
+  <p class="sub">
+    列宽 <code>152rpx → 118rpx</code>（手机上 76px → 59px，窄了约 1/5），图标 <code>54rpx → 44rpx</code>，
+    名称 <code>23rpx → 21rpx</code>，内边距一起收。让给菜品网格，右边一屏能多露一点内容。
+  </p>
+  <div class="grid2">
+
+    <div>
+      <div class="fig-hd"><span class="tagx old">前</span><span style="font-size:12.5px;color:#7A716A">152rpx · 图标 54rpx</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span>▪▪▪ ⌁ ▭</span></div>
+        <div class="navbar"><span class="nav-t">菜库</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pb">
+          <div class="dh"><div><div class="t-h1">菜库</div><div class="t-sub">12 道 · 上架 5 道</div></div></div>
+          <div class="cat-split">
+            <div class="cat-side" style="width:76px;border-radius:13px;padding:5px">
+              <div class="cat-i" style="padding:8px 3px 7px;border-radius:10px;margin-bottom:3px">
+                <img class="cat-i-ic" style="width:27px;height:27px" src="../../assets/icons/cat-all.png">
+                <div class="cat-i-nm" style="margin-top:4px;font-size:11.5px">全部</div>
+                <div class="cat-i-n" style="font-size:9.5px;margin-top:1px">12</div>
+              </div>
+              <div class="cat-i cat-i--on" style="padding:8px 3px 7px;border-radius:10px;margin-bottom:3px">
+                <img class="cat-i-ic" style="width:27px;height:27px" src="../../assets/icons/cat-hot-w.png">
+                <div class="cat-i-nm" style="margin-top:4px;font-size:11.5px">热菜</div>
+                <div class="cat-i-n" style="font-size:9.5px;margin-top:1px">5</div>
+              </div>
+              <div class="cat-i" style="padding:8px 3px 7px;border-radius:10px;margin-bottom:3px">
+                <img class="cat-i-ic" style="width:27px;height:27px" src="../../assets/icons/cat-veg.png">
+                <div class="cat-i-nm" style="margin-top:4px;font-size:11.5px">素菜</div>
+                <div class="cat-i-n" style="font-size:9.5px;margin-top:1px">3</div>
+              </div>
+              <div class="cat-i" style="padding:8px 3px 7px;border-radius:10px;margin-bottom:3px">
+                <img class="cat-i-ic" style="width:27px;height:27px" src="../../assets/icons/cat-soup.png">
+                <div class="cat-i-nm" style="margin-top:4px;font-size:11.5px">汤羹</div>
+                <div class="cat-i-n" style="font-size:9.5px;margin-top:1px">2</div>
+              </div>
+              <div class="cat-i" style="padding:8px 3px 7px;border-radius:10px">
+                <img class="cat-i-ic" style="width:27px;height:27px" src="../../assets/icons/cat-staple.png">
+                <div class="cat-i-nm" style="margin-top:4px;font-size:11.5px">主食</div>
+                <div class="cat-i-n" style="font-size:9.5px;margin-top:1px">2</div>
+              </div>
+            </div>
+            <div class="cat-main">
+              <div class="chips"><span class="chip chip--on chip--accstar">★ 常吃</span><span class="chip">本周没吃</span></div>
+              <div class="hint">点卡片右下角的 ＋ 就加进今晚</div>
+              <div class="grid">
+                <div class="cd"><div class="cd-media" style="background:#8FA65C">青<div class="cd-add">＋</div></div><div class="cd-body"><div class="cd-nm">青椒肉丝</div><div class="cd-tg"><span class="tg">热菜</span></div></div></div>
+                <div class="cd"><div class="cd-media" style="background:#7FA3B8">清<div class="cd-add">＋</div></div><div class="cd-body"><div class="cd-nm">清蒸鲈鱼</div><div class="cd-tg"><span class="tg">热菜</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="fig-hd"><span class="tagx new">后</span><span style="font-size:12.5px;color:#7A716A">118rpx · 图标 44rpx</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span>▪▪▪ ⌁ ▭</span></div>
+        <div class="navbar"><span class="nav-t">菜库</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pb">
+          <div class="dh"><div><div class="t-h1">菜库</div><div class="t-sub">12 道 · 上架 5 道</div></div></div>
+          <div class="cat-split">
+            <div class="cat-side" style="width:59px;border-radius:11px;padding:4px">
+              <div class="cat-i" style="padding:6.5px 2px 5.5px;border-radius:8px;margin-bottom:2.5px">
+                <img class="cat-i-ic" style="width:22px;height:22px" src="../../assets/icons/cat-all.png">
+                <div class="cat-i-nm" style="margin-top:3px;font-size:10.5px">全部</div>
+                <div class="cat-i-n" style="font-size:8.5px;margin-top:.5px">12</div>
+              </div>
+              <div class="cat-i cat-i--on" style="padding:6.5px 2px 5.5px;border-radius:8px;margin-bottom:2.5px">
+                <img class="cat-i-ic" style="width:22px;height:22px" src="../../assets/icons/cat-hot-w.png">
+                <div class="cat-i-nm" style="margin-top:3px;font-size:10.5px">热菜</div>
+                <div class="cat-i-n" style="font-size:8.5px;margin-top:.5px">5</div>
+              </div>
+              <div class="cat-i" style="padding:6.5px 2px 5.5px;border-radius:8px;margin-bottom:2.5px">
+                <img class="cat-i-ic" style="width:22px;height:22px" src="../../assets/icons/cat-veg.png">
+                <div class="cat-i-nm" style="margin-top:3px;font-size:10.5px">素菜</div>
+                <div class="cat-i-n" style="font-size:8.5px;margin-top:.5px">3</div>
+              </div>
+              <div class="cat-i" style="padding:6.5px 2px 5.5px;border-radius:8px;margin-bottom:2.5px">
+                <img class="cat-i-ic" style="width:22px;height:22px" src="../../assets/icons/cat-soup.png">
+                <div class="cat-i-nm" style="margin-top:3px;font-size:10.5px">汤羹</div>
+                <div class="cat-i-n" style="font-size:8.5px;margin-top:.5px">2</div>
+              </div>
+              <div class="cat-i" style="padding:6.5px 2px 5.5px;border-radius:8px">
+                <img class="cat-i-ic" style="width:22px;height:22px" src="../../assets/icons/cat-staple.png">
+                <div class="cat-i-nm" style="margin-top:3px;font-size:10.5px">主食</div>
+                <div class="cat-i-n" style="font-size:8.5px;margin-top:.5px">2</div>
+              </div>
+            </div>
+            <div class="cat-main">
+              <div class="chips"><span class="chip chip--on chip--accstar">★ 常吃</span><span class="chip">本周没吃</span></div>
+              <div class="hint">点卡片右下角的 ＋ 就加进今晚</div>
+              <div class="grid">
+                <div class="cd"><div class="cd-media" style="background:#8FA65C">青<div class="cd-add">＋</div></div><div class="cd-body"><div class="cd-nm">青椒肉丝</div><div class="cd-tg"><span class="tg">热菜</span></div></div></div>
+                <div class="cd"><div class="cd-media" style="background:#7FA3B8">清<div class="cd-add">＋</div></div><div class="cd-body"><div class="cd-nm">清蒸鲈鱼</div><div class="cd-tg"><span class="tg">热菜</span></div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ② 页头标题 -->
+  <div class="rule"></div>
+  <h2><span class="n">2</span>页头标题：④ 好好吃饭，慢慢生活</h2>
+  <p class="sub">
+    只改页头那一行大字，导航栏仍然是「今晚」（微信小程序的导航栏文字不跟着页面标题走，保持原样最稳）。
+    同时给左侧文字块加了 <code>flex:1; min-width:0</code>，长标题不会把右边的家人头像挤掉。
+  </p>
+  <div class="grid2">
+    <div>
+      <div class="fig-hd"><span class="tagx old">前</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span>▪▪▪ ⌁ ▭</span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pb"><div class="dh">
+          <div><div class="t-h1">今晚</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div style="display:flex;margin-top:3px"><span style="width:26px;height:26px;border-radius:50%;background:#D9714E;border:2px solid #FAF7F3;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">程</span><span style="width:26px;height:26px;border-radius:50%;background:#E9A323;border:2px solid #FAF7F3;margin-left:-8px;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">妈</span><span style="width:26px;height:26px;border-radius:50%;background:#4F9367;border:2px solid #FAF7F3;margin-left:-8px;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">爸</span></div>
+        </div></div>
+      </div>
+    </div>
+    <div>
+      <div class="fig-hd"><span class="tagx new">后</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>17:04</span><span>▪▪▪ ⌁ ▭</span></div>
+        <div class="navbar"><span class="nav-t">今晚</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pb"><div class="dh">
+          <div style="flex:1;min-width:0"><div class="t-h1">好好吃饭，慢慢生活</div><div class="t-sub">今天 · 周五 10月9日</div></div>
+          <div style="display:flex;flex:0 0 auto;margin-top:3px"><span style="width:26px;height:26px;border-radius:50%;background:#D9714E;border:2px solid #FAF7F3;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">程</span><span style="width:26px;height:26px;border-radius:50%;background:#E9A323;border:2px solid #FAF7F3;margin-left:-8px;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">妈</span><span style="width:26px;height:26px;border-radius:50%;background:#4F9367;border:2px solid #FAF7F3;margin-left:-8px;color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center">爸</span></div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ 弹窗 -->
+  <div class="rule"></div>
+  <h2><span class="n">3</span>确认弹窗：方案 D · 暖橙卡（按钮改左右横排）</h2>
+  <p class="sub">
+    圆形白底图标 + 居中标题正文不变，按钮从上下堆叠改成<b>左右横排</b>：左边取消（浅色），右边确定（主色 / 砖红）。
+    会丢东西的操作自动走右边那张砖红卡，不用每次手写颜色。
+  </p>
+  <div class="grid2">
+    <div>
+      <div class="fig-hd"><span class="tagx new">普通确认</span><span style="font-size:12.5px;color:#7A716A">暖橙底 · 面包碗图标</span></div>
+      <div class="scr">
+        <div class="bgpage"><div class="dh"><div><div class="t-h1">好好吃饭，慢慢生活</div><div class="t-sub">今天 · 周五 10月9日</div></div></div>
+          <div class="mini-row"><div class="mini-thumb" style="background:#C9A05A">蛋</div><div><div class="mini-nm">蛋炒饭</div><div class="mini-mt">主食 · 做过 6 次</div></div></div>
+          <div class="mini-row"><div class="mini-thumb" style="background:#8FA8B8">紫</div><div><div class="mini-nm">紫菜蛋花汤</div><div class="mini-mt">汤羹 · 做过 3 次</div></div></div>
+        </div>
+        <div class="mask">
+          <div class="ud-card">
+            <div class="ud-badge"><img src="../../assets/icons/dlg-warm.png"></div>
+            <div class="ud-t">填入 12 道家常菜？</div>
+            <div class="ud-s">这些菜会写进你家菜库，之后可以随意改名、删改。同名菜会自动跳过。</div>
+            <div class="ud-acts"><div class="ud-btn soft">再想想</div><div class="ud-btn pri">填入</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="fig-hd"><span class="tagx new">破坏性确认</span><span style="font-size:12.5px;color:#7A716A">砖红底 · 垃圾桶图标</span></div>
+      <div class="scr">
+        <div class="bgpage"><div class="dh"><div><div class="t-h1">好好吃饭，慢慢生活</div><div class="t-sub">今天 · 周五 10月9日</div></div></div>
+          <div class="mini-row"><div class="mini-thumb" style="background:#C9A05A">蛋</div><div><div class="mini-nm">蛋炒饭</div><div class="mini-mt">主食 · 做过 6 次</div></div></div>
+          <div class="mini-row"><div class="mini-thumb" style="background:#8FA8B8">紫</div><div><div class="mini-nm">紫菜蛋花汤</div><div class="mini-mt">汤羹 · 做过 3 次</div></div></div>
+        </div>
+        <div class="mask">
+          <div class="ud-card d">
+            <div class="ud-badge"><img src="../../assets/icons/dlg-danger.png"></div>
+            <div class="ud-t">从今晚撤掉「蛋炒饭」？</div>
+            <div class="ud-s">只从今晚这一桌拿掉，菜库里的记录还在，随时能再加回来。</div>
+            <div class="ud-acts"><div class="ud-btn soft">算了</div><div class="ud-btn danger">撤掉</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ④ 日历 -->
+  <div class="rule"></div>
+  <h2><span class="n">4</span>日历「接下来的安排」：放松排版</h2>
+  <p class="sub">
+    原来行内左右只留了 <code>4rpx</code>，字直接贴在卡片边上；底部提示还用负外边距往上顶，整块又紧又糙。
+    现在对齐「本月回顾」那些卡片：左右各留 <code>28rpx</code>，日期与「N 道」同一行左右对开，菜名另起一行，
+    分隔线内缩，提示改成正下边距。
+  </p>
+  <div class="grid2">
+    <div>
+      <div class="fig-hd"><span class="tagx old">前</span><span style="font-size:12.5px;color:#7A716A">行内 padding 4rpx</span></div>
+      <div class="phone old">
+        <div class="statusbar"><span>17:04</span><span>▪▪▪ ⌁ ▭</span></div>
+        <div class="navbar"><span class="nav-t">日历</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pb">
+          <div class="sec-h"><span class="sec-t">接下来的安排</span><span class="sec-m">2 天</span></div>
+          <div class="card">
+            <div class="up-i"><div class="up-l"><div class="up-d">10月21日 周三</div><div class="up-n">手擀面、冬瓜排骨汤</div></div><span class="up-arw">›</span></div>
+            <div class="up-i"><div class="up-l"><div class="up-d">10月23日 周五</div><div class="up-n">蛋炒饭、青椒肉丝、紫菜蛋花汤</div></div><span class="up-arw">›</span></div>
+          </div>
+          <div class="up-tip">点一行就能继续加菜或撤菜</div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="fig-hd"><span class="tagx new">后</span><span style="font-size:12.5px;color:#7A716A">行内 padding 28rpx</span></div>
+      <div class="phone new">
+        <div class="statusbar"><span>17:04</span><span>▪▪▪ ⌁ ▭</span></div>
+        <div class="navbar"><span class="nav-t">日历</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pb">
+          <div class="sec-h"><span class="sec-t">接下来的安排</span><span class="sec-m">2 天</span></div>
+          <div class="card">
+            <div class="up-i"><div class="up-l"><div class="up-hd"><span class="up-d">10月21日 周三</span><span class="up-c">2 道</span></div><div class="up-n">手擀面、冬瓜排骨汤</div></div><span class="up-arw">›</span></div>
+            <div class="up-i"><div class="up-l"><div class="up-hd"><span class="up-d">10月23日 周五</span><span class="up-c">3 道</span></div><div class="up-n">蛋炒饭、青椒肉丝、紫菜蛋花汤</div></div><span class="up-arw">›</span></div>
+          </div>
+          <div class="up-tip">点一行就能继续加菜或撤菜</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">
+    <h3>代码里做了什么</h3>
+    <ul>
+      <li>新增自绘弹窗组件 <code>components/ui-dialog</code>（暖橙卡 + 横排按钮 + 动画），全站 8 个页面挂上。</li>
+      <li><code>utils/util.js</code> 的 <code>confirm()</code> 改走自绘弹窗，另外新增 <code>alert()</code> 接管原来 9 处 <code>wx.showModal</code> 提示框 —— 现在全站只有一种弹窗样式。拿不到组件时自动退回原生，不会挂。</li>
+      <li>破坏性按钮颜色按文案自动判断（删 / 撤 / 移除 / 清空 / 去掉 / 下架 / 重置），也可以显式传 <code>danger</code>。</li>
+      <li>深色模式同步：暖橙卡换成半透明柿子橙，取消按钮换成半透明白，主按钮仍是白色（跟全局一致）。</li>
+      <li>页头标题、分类列宽度、日历行距都改了；日历每行新增「N 道」。</li>
+    </ul>
+  </div>
+
+</div>
+</body>
+</html>

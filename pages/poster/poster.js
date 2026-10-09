@@ -1,7 +1,7 @@
 const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const poster = require('../../utils/poster.js')
-const { toast } = require('../../utils/util.js')
+const { toast, confirm } = require('../../utils/util.js')
 
 const VARIANTS = [
   { key: 'WARM', label: '温馨' },
@@ -118,12 +118,8 @@ Page({
               fail: err => {
                 this.setData({ saving: false })
                 if (err.errMsg && err.errMsg.indexOf('auth') > -1) {
-                  wx.showModal({
-                    title: '需要相册权限',
-                    content: '请在设置中允许保存图片到相册',
-                    confirmText: '去设置',
-                    success: r2 => { if (r2.confirm) wx.openSetting() }
-                  })
+                  confirm('请在设置中允许保存图片到相册', '需要相册权限', '去设置')
+                    .then(ok => { if (ok) wx.openSetting() })
                 } else {
                   toast('保存失败')
                 }

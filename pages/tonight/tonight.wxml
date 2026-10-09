@@ -3,8 +3,8 @@
 
     <!-- 页头 -->
     <view class="hd">
-      <view>
-        <view class="t-h1">今晚</view>
+      <view class="hd-main">
+        <view class="t-h1">好好吃饭，慢慢生活</view>
         <view class="t-sub">{{dateText}}</view>
       </view>
       <view class="avars">
@@ -304,4 +304,7 @@
     bindcreate="onWhoCreate"
     bindclose="onWhoClose"
   />
+
+  <!-- 统一确认弹窗：utils/util.js 的 confirm()/alert() 会自动找到它 -->
+  <ui-dialog id="uiDialog"/>
 </view>
