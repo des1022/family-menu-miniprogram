@@ -219,3 +219,62 @@
   line-height: 1.62;
   color: var(--ink);
 }
+
+/* ---------- 左侧分类列（竖排分类，仿点餐 App） ---------- */
+.cat-split {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 8rpx;
+}
+.cat-side {
+  width: 164rpx;
+  flex: 0 0 auto;
+  /* 页面滚动时分类列吸附在顶部（sticky 的祖先没有 overflow:hidden，安全） */
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--surf2);
+  border-radius: 20rpx;
+  overflow: hidden;
+  padding: 6rpx 0;
+}
+.cat-i {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6rpx;
+  padding: 20rpx 12rpx 20rpx 18rpx;
+  font-size: 25rpx;
+  color: var(--ink2);
+}
+.cat-i-nm {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.cat-i-n { font-size: 20rpx; color: var(--ink3); flex: 0 0 auto; }
+.cat-i--on {
+  background: var(--surf);
+  color: var(--ink);
+  font-weight: 700;
+}
+.cat-i--on .cat-i-n { color: var(--pri-ink); }
+.cat-i--on::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 6rpx;
+  height: 34rpx;
+  margin-top: -17rpx;
+  background: var(--pri);
+  border-radius: 0 4rpx 4rpx 0;
+}
+.cat-main {
+  flex: 1;
+  min-width: 0;
+  padding-left: 20rpx;
+}

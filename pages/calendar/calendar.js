@@ -1,6 +1,7 @@
+const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
-const { toast, pad } = require('../../utils/util.js')
+const { toast, confirm, pad } = require('../../utils/util.js')
 
 const WEEK = ['一', '二', '三', '四', '五', '六', '日']
 
@@ -31,15 +32,28 @@ function phIdx(id) {
   return PH[h % PH.length]
 }
 
+/** 距离上次吃这道菜多久 */
+function lastText(lastMap, id) {
+  const d = (lastMap || {})[id]
+  if (!d) return '还没做过'
+  const t = new Date(d.replace(/-/g, '/') + ' 00:00:00').getTime()
+  const now = new Date(new Date().toDateString()).getTime()
+  const days = Math.round((now - t) / 86400000)
+  if (days <= 0) return '今天吃过'
+  if (days === 1) return '昨天吃过'
+  return days + ' 天没做了'
+}
+
 Page({
   data: {
     themeCls: '',
+    ico: {},
     year: 2026,
     month: 1,
     monthText: '',
     today: '',
     cells: [],
-    detail: null,
+    arr: null,
     reuseLoading: false,
     loading: true,
     mealCount: 0,
@@ -60,7 +74,11 @@ Page({
   },
 
   onShow() {
-    this.setData({ themeCls: theme.className() })
+    const n = theme.isDark() ? '-d' : ''
+    this.setData({
+      themeCls: theme.className(),
+      ico: { search: '/assets/icons/search' + n + '.png' }
+    })
     this.loadRecords()
   },
 
@@ -77,11 +95,14 @@ Page({
       const records = await db.getAllRecords()
       this._records = records
       const byDate = {}
+      const lastMap = {}
       records.forEach(r => {
         if (!byDate[r.date]) byDate[r.date] = []
         byDate[r.date].push(r)
+        if (!lastMap[r.dishId] || r.date > lastMap[r.dishId]) lastMap[r.dishId] = r.date
       })
       this._byDate = byDate
+      this._lastMap = lastMap
       this.buildCells()
       await this.ensureDishes()
       this.buildReview()
@@ -197,67 +218,192 @@ Page({
     this.ensureDishes().then(() => this.buildReview())
   },
 
-  /** 分类占比需要菜品表的 category，按月懒加载一次 */
+  /** 菜品表：分类占比要用 category，安排菜品时要用整个上架列表 */
   ensureDishes() {
-    if (this._dishMap && Object.keys(this._dishMap).length) return Promise.resolve()
+    if (this._dishList) return Promise.resolve()
     return db.getAllDishes().then(list => {
       const map = {}
       list.forEach(d => { map[d._id] = d })
       this._dishMap = map
-    }).catch(() => { this._dishMap = {} })
-  },
-
-  onDayTap(e) {
-    const date = e.currentTarget.dataset.date
-    if (!date) return
-    const list = (this._byDate || {})[date]
-    if (!list || !list.length) return
-
-    this.ensureDishes().then(() => {
-      this.setData({
-        detail: {
-          date: date,
-          dateText: date.replace('-', ' 年 ').replace('-', ' 月 ') + ' 日',
-          list: list.map(r => {
-            const d = (this._dishMap || {})[r.dishId]
-            return {
-              id: r._id,
-              dishId: r.dishId,
-              name: r.dishName || (d ? d.name : ''),
-              image: r.dishImage || '',
-              remark: r.remark || '',
-              byName: r.byName || '',
-              initial: initialOf(r.dishName),
-              ph: phIdx(r.dishId)
-            }
-          })
-        }
-      })
+      this._dishList = list.filter(d => d.status === config.DISH_STATUS.ON)
+    }).catch(() => {
+      this._dishMap = {}
+      this._dishList = []
     })
   },
 
-  closeDetail() {
-    this.setData({ detail: null })
+  /* ==================== 某天的一桌菜 / 提前安排 ==================== */
+
+  /** 日期中文写法：10月15日 周三 */
+  dateCN(date) {
+    const p = String(date).split('-')
+    const y = Number(p[0])
+    const m = Number(p[1])
+    const d = Number(p[2])
+    const w = '日一二三四五六'.charAt(new Date(y, m - 1, d).getDay())
+    return m + '月' + d + '日 周' + w
   },
 
-  /** 那天的一桌菜，一键加进今晚 */
+  /** 点任意日期（含未来）→ 打开「安排这一天」的弹层 */
+  onDayTap(e) {
+    const date = e.currentTarget.dataset.date
+    if (!date) return
+    this.openArrange(date)
+  },
+
+  async openArrange(date) {
+    await this.ensureDishes()
+    const today = db.todayStr()
+    const list = (this._byDate || {})[date] || []
+    const picked = {}
+    list.forEach(r => { picked[r.dishId] = true })
+
+    this._arrDate = date
+    this._picked = picked
+    this._arrRecords = list.slice()
+    this._arrDirty = false
+
+    const title = date === today
+      ? '今天 · ' + this.dateCN(date)
+      : (date < today ? '补记 · ' + this.dateCN(date) : '安排到 · ' + this.dateCN(date))
+
+    this.setData({
+      arr: {
+        date: date,
+        title: title,
+        keyword: '',
+        tab: 'all',
+        canReuse: date !== today && list.length > 0,
+        picked: this.pickedChips(),
+        items: []
+      }
+    })
+    this.buildArrItems()
+  },
+
+  pickedChips() {
+    return (this._arrRecords || []).map(r => ({
+      dishId: r.dishId,
+      name: r.dishName || '这道菜'
+    }))
+  },
+
+  buildArrItems() {
+    const arr = this.data.arr
+    if (!arr) return
+    const kw = String(arr.keyword || '').trim()
+    const picked = this._picked || {}
+    const lastMap = this._lastMap || {}
+
+    const list = (this._dishList || []).filter(d => {
+      if (kw) {
+        const hit = String(d.name || '').indexOf(kw) > -1
+          || String(d.ingredients || '').indexOf(kw) > -1
+        if (!hit) return false
+      }
+      if (arr.tab === 'fav' && d.favorite !== 1) return false
+      return true
+    })
+
+    // 已排在这一天的排前面，方便直接撤
+    const sorted = list.slice().sort((a, b) => (picked[b._id] ? 1 : 0) - (picked[a._id] ? 1 : 0))
+    this.setData({
+      'arr.items': sorted.map(d => ({
+        _id: d._id,
+        name: d.name,
+        initial: initialOf(d.name),
+        ph: phIdx(d._id),
+        sub: (d.category ? d.category + ' · ' : '') + lastText(lastMap, d._id),
+        on: !!picked[d._id]
+      }))
+    })
+  },
+
+  onArrSearch(e) {
+    this.setData({ 'arr.keyword': e.detail.value }, () => this.buildArrItems())
+  },
+
+  onArrTab(e) {
+    this.setData({ 'arr.tab': e.currentTarget.dataset.t }, () => this.buildArrItems())
+  },
+
+  onPlan(e) {
+    const id = e.currentTarget.dataset.id
+    if (!id) return
+    const dish = (this._dishList || []).filter(d => d._id === id)[0]
+    if (dish) this.togglePlan(dish)
+  },
+
+  onUnplan(e) {
+    const id = e.currentTarget.dataset.id
+    if (!id) return
+    const dish = (this._dishList || []).filter(d => d._id === id)[0] || { _id: id }
+    this.togglePlan(dish)
+  },
+
+  /** 加进这一天 / 从这一天撤掉 */
+  async togglePlan(dish) {
+    const date = this._arrDate
+    const id = dish && dish._id
+    if (!date || !id) return
+    const picked = this._picked || {}
+    const on = !!picked[id]
+    try {
+      if (on) {
+        await db.removeFromTonight(date, id)
+        delete picked[id]
+        this._arrRecords = (this._arrRecords || []).filter(r => r.dishId !== id)
+      } else {
+        await db.addToTonight(dish, date)
+        picked[id] = true
+        this._arrRecords = (this._arrRecords || []).concat([{
+          dishId: id,
+          dishName: dish.name || '',
+          dishImage: dish.image || ''
+        }])
+        wx.vibrateShort({ type: 'light', fail: () => {} })
+      }
+      this._picked = picked
+      this._arrDirty = true
+      this.setData({
+        'arr.picked': this.pickedChips(),
+        'arr.canReuse': date !== db.todayStr() && this._arrRecords.length > 0
+      })
+      this.buildArrItems()
+    } catch (err) {
+      console.error('[calendar] 安排菜品失败', err)
+      toast('操作失败，请重试')
+    }
+  },
+
+  closeArr() {
+    const dirty = this._arrDirty
+    this._arrDate = null
+    this._arrRecords = []
+    this._arrDirty = false
+    this.setData({ arr: null })
+    if (dirty) this.loadRecords()
+  },
+
+  /** 把这天的菜一键搬到今晚（替换今晚的草稿，会先确认） */
   async onReuse() {
-    const detail = this.data.detail
-    if (!detail || this.data.reuseLoading) return
+    if (this.data.reuseLoading) return
+    const records = this._arrRecords || []
+    if (!records.length) return
+    const today = db.todayStr()
+    const ok = await confirm('把今晚的菜单换成这 ' + records.length + ' 道菜？', '加进今晚', '换过去')
+    if (!ok) return
     this.setData({ reuseLoading: true })
     try {
-      const today = db.todayStr()
       await db.clearDrafts(today)
-      for (let i = 0; i < detail.list.length; i++) {
-        const r = detail.list[i]
-        await db.addToTonight({
-          _id: r.dishId,
-          name: r.name,
-          image: r.image
-        }, today)
+      for (let i = 0; i < records.length; i++) {
+        const r = records[i]
+        await db.addToTonight({ _id: r.dishId, name: r.dishName, image: r.dishImage || '' }, today)
       }
-      this.setData({ detail: null, reuseLoading: false })
-      toast('已把 ' + detail.list.length + ' 道菜加进今晚')
+      this.setData({ reuseLoading: false })
+      toast('已把 ' + records.length + ' 道菜加进今晚')
+      this._arrDirty = false
+      this.closeArr()
     } catch (e) {
       console.error('[calendar] 复用失败', e)
       this.setData({ reuseLoading: false })

@@ -41,6 +41,7 @@ Page({
     activeKey: '',
     activeCat: '',
     catNames: [],
+    catList: [],
     hasFilter: false,
 
     allCount: 0,
@@ -112,6 +113,7 @@ Page({
       this._cats = catNames
 
       this.setData({ allCount: dishes.length, catNames: catNames })
+      this.buildCatList()
       this.buildChips()
       this.filterList()
     } catch (e) {
@@ -123,12 +125,26 @@ Page({
   },
 
   buildChips() {
+    // 「全部」已经放到左侧分类列的第一项，这里只留两种状态筛选
     const chips = [
-      { key: '', label: '全部', acc: false },
       { key: config.CAT_FAV, label: '★ 常吃', acc: true },
       { key: config.CAT_RECENT, label: '本周没吃', acc: false }
     ]
     this.setData({ chips: chips })
+  },
+
+  /** 左侧分类列（含每类数量，「全部」排第一） */
+  buildCatList() {
+    const all = this._all || []
+    const count = {}
+    all.forEach(d => {
+      const c = d.category || '未分类'
+      count[c] = (count[c] || 0) + 1
+    })
+    const names = Array.from(new Set((this._cats || []).concat(Object.keys(count))))
+    const list = [{ name: '', label: '全部', count: all.length }]
+    names.forEach(n => list.push({ name: n, label: n, count: count[n] || 0 }))
+    this.setData({ catList: list })
   },
 
   onToggleLayout() {
@@ -148,9 +164,9 @@ Page({
     }, () => this.filterList())
   },
 
-  onPickCat(e) {
-    const idx = Number(e.detail.value)
-    const name = this.data.catNames[idx] || ''
+  /** 左侧分类列点击（name 为空 = 全部） */
+  onPickCatSide(e) {
+    const name = e.currentTarget.dataset.name || ''
     this.setData({
       activeCat: name,
       activeKey: name,

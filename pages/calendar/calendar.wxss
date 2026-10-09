@@ -122,3 +122,87 @@
 .dt-main { flex: 1; min-width: 0; }
 .dt-nm { font-size: 29rpx; font-weight: 700; }
 .dt-sub { font-size: 23rpx; color: var(--ink2); margin-top: 6rpx; }
+
+/* ---------- 日历页：操作提示 ---------- */
+.cal-hint {
+  font-size: 23rpx;
+  color: var(--acc-ink);
+  background: var(--acc-l);
+  border-radius: 16rpx;
+  padding: 14rpx 20rpx;
+  margin-top: 16rpx;
+}
+
+/* ---------- 「安排这一天」弹层 ---------- */
+.arr-picked {
+  white-space: nowrap;
+  margin-bottom: 16rpx;
+  flex: 0 0 auto;
+}
+.ap-i {
+  display: inline-flex;
+  align-items: center;
+  gap: 10rpx;
+  background: var(--pri-l);
+  color: var(--pri-ink);
+  border-radius: 999rpx;
+  padding: 10rpx 20rpx;
+  margin-right: 12rpx;
+  font-size: 24rpx;
+  font-weight: 600;
+}
+.ap-x { font-size: 22rpx; opacity: 0.7; }
+
+.arr-search {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 999rpx;
+  padding: 14rpx 24rpx;
+  margin-bottom: 16rpx;
+  flex: 0 0 auto;
+}
+.arr-sb-ico { width: 34rpx; height: 34rpx; flex: 0 0 auto; opacity: 0.5; }
+.arr-input { flex: 1; font-size: 27rpx; color: var(--ink); }
+.arr-ph { color: var(--ink3); }
+
+.arr-tabs {
+  display: flex;
+  gap: 14rpx;
+  margin-bottom: 12rpx;
+  flex: 0 0 auto;
+}
+.arr-tab {
+  padding: 10rpx 26rpx;
+  border-radius: 999rpx;
+  font-size: 25rpx;
+  font-weight: 600;
+  color: var(--ink2);
+  background: var(--surf2);
+}
+.arr-tab--on { background: var(--pri); color: var(--btn-ink); }
+
+/* 安排列表：行比「当天详情」更紧凑 */
+.dt-list .dt-thumb { width: 92rpx; height: 92rpx; font-size: 32rpx; }
+
+.ar-btn {
+  width: 64rpx; height: 64rpx; flex: 0 0 auto;
+  border-radius: 50%;
+  background: var(--btn-bg);
+  color: var(--btn-ink);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34rpx; font-weight: 700;
+}
+.ar-btn--on { background: var(--ok); }
+.theme-dark .ar-btn--on { color: #2A5F54; }
+
+.ar-empty {
+  text-align: center;
+  color: var(--ink3);
+  font-size: 25rpx;
+  padding: 60rpx 0;
+}
+
+.arr-actions { flex: 0 0 auto; margin-top: 22rpx; }
