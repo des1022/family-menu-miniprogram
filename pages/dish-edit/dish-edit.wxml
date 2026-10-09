@@ -1,7 +1,49 @@
 <view class="page">
-  <!-- 菜品图片（必填） -->
+  <!-- 搜菜名一键填好：内置菜谱库，不用联网、不用一个个字段敲 -->
+  <view class="card recipe">
+    <view class="card-title">搜菜名，一键填好</view>
+    <view class="recipe-bar">
+      <input
+        class="recipe-input"
+        value="{{kw}}"
+        placeholder="试试「宫保鸡丁」「西红柿」"
+        placeholder-class="ph"
+        confirm-type="search"
+        bindinput="onSearchInput"
+        bindconfirm="onSearchInput"
+      />
+      <view class="recipe-x" wx:if="{{kw}}" bindtap="onClearSearch">✕</view>
+    </view>
+
+    <view class="recipe-tip" wx:if="{{!kw}}">
+      内置 60 道家常菜，会自动填好分类、食材和做法步骤
+    </view>
+
+    <view class="recipe-list" wx:if="{{kw}}">
+      <view
+        class="recipe-i"
+        wx:for="{{hits}}"
+        wx:key="name"
+        data-name="{{item.name}}"
+        bindtap="onPickRecipe"
+        hover-class="recipe-i--hover"
+      >
+        <view class="ri-main">
+          <view class="ri-nm">{{item.name}}</view>
+          <view class="ri-mt">{{item.category}} · {{item.brief}}</view>
+        </view>
+        <view class="ri-go">填入</view>
+      </view>
+      <view class="recipe-none" wx:if="{{!hits.length}}">
+        菜谱库里没有「{{kw}}」。换个说法试试（「西红柿」也能搜到番茄），或者照旧手动填下面的字段。
+      </view>
+    </view>
+  </view>
+
+  <!-- 菜品图片（选填） -->
   <view class="card">
-    <view class="card-title">菜品图片 <text class="required">*</text></view>
+    <view class="card-title">菜品图片</view>
+    <view class="img-hint">不传也行，会用菜名首字的色块显示</view>
     <view class="img-wrap" bindtap="onChooseImage">
       <image wx:if="{{form.image}}" class="dish-img" src="{{form.image}}" mode="aspectFill" />
       <view wx:else class="img-placeholder">

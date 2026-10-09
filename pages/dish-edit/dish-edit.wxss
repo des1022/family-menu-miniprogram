@@ -182,3 +182,67 @@
   color: var(--ink3);
   margin-top: 12rpx;
 }
+
+/* ---------- 搜菜名，一键填好 ---------- */
+.recipe-bar {
+  display: flex;
+  align-items: center;
+  gap: 14rpx;
+  background: var(--surf2);
+  border: 2rpx solid var(--line);
+  border-radius: 999rpx;
+  padding: 16rpx 24rpx;
+}
+.recipe-input { flex: 1; font-size: 29rpx; color: var(--ink); }
+.recipe-x {
+  flex: 0 0 auto;
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: var(--line);
+  color: var(--ink2);
+  font-size: 22rpx;
+  line-height: 40rpx;
+  text-align: center;
+}
+.recipe-tip { font-size: 23rpx; color: var(--ink3); margin-top: 14rpx; }
+.recipe-list { margin-top: 18rpx; }
+.recipe-i {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  padding: 20rpx 22rpx;
+  margin-bottom: 12rpx;
+  background: var(--surf2);
+  border: 2rpx solid var(--line);
+  border-radius: 20rpx;
+}
+.recipe-i:last-child { margin-bottom: 0; }
+.recipe-i--hover { opacity: 0.72; }
+.ri-main { flex: 1; min-width: 0; }
+.ri-nm { font-size: 29rpx; font-weight: 700; }
+.ri-mt {
+  font-size: 22rpx;
+  color: var(--ink2);
+  margin-top: 6rpx;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.ri-go {
+  flex: 0 0 auto;
+  font-size: 23rpx;
+  font-weight: 700;
+  color: var(--pri-ink);
+  background: var(--pri-l);
+  border-radius: 999rpx;
+  padding: 8rpx 20rpx;
+}
+.recipe-none {
+  font-size: 24rpx;
+  color: var(--ink2);
+  line-height: 1.7;
+  padding: 6rpx 4rpx;
+}
+/* 图片改成选填后，标题下给一句说明 */
+.img-hint { font-size: 23rpx; color: var(--ink3); margin: -6rpx 0 16rpx; }
