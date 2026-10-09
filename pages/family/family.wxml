@@ -95,33 +95,35 @@
         <view class="sheet-x" bindtap="closeSheet">✕</view>
       </view>
 
-      <view class="fm">
-        <view class="fm-l">昵称</view>
-        <input
-          class="fm-input"
-          value="{{edit.nickname}}"
-          maxlength="10"
-          placeholder="例如：爸爸 / 妈妈 / 小明"
-          placeholder-class="fm-ph"
-          bindinput="onNickInput"
-        />
-      </view>
-
-      <view class="fm">
-        <view class="fm-l">口味 / 忌口</view>
-        <view class="fm-taste">
-          <view
-            class="chip {{tasteMap[item] ? 'chip--on' : ''}}"
-            wx:for="{{tasteOptions}}"
-            wx:key="*this"
-            data-t="{{item}}"
-            bindtap="onToggleTaste"
-          >{{item}}</view>
+      <scroll-view class="fs-scroll" scroll-y>
+        <view class="fm">
+          <view class="fm-l">昵称</view>
+          <input
+            class="fm-input"
+            value="{{edit.nickname}}"
+            maxlength="10"
+            placeholder="例如：爸爸 / 妈妈 / 小明"
+            placeholder-class="fm-ph"
+            bindinput="onNickInput"
+          />
         </view>
-        <view class="fm-h">点菜时会用到，比如「不吃香菜」</view>
-      </view>
 
-      <view class="btn-row" style="margin-top:30rpx">
+        <view class="fm">
+          <view class="fm-l">口味 / 忌口</view>
+          <view class="fm-taste">
+            <view
+              class="chip {{tasteMap[item] ? 'chip--on' : ''}}"
+              wx:for="{{tasteOptions}}"
+              wx:key="*this"
+              data-t="{{item}}"
+              bindtap="onToggleTaste"
+            >{{item}}</view>
+          </view>
+          <view class="fm-h">点菜时会用到，比如「不吃香菜」</view>
+        </view>
+      </scroll-view>
+
+      <view class="btn-row fs-actions" style="margin-top:30rpx">
         <view class="btn btn-danger" wx:if="{{!edit.isNew && !edit.isMe}}" bindtap="onRemoveMember">移除</view>
         <view class="btn btn-primary" bindtap="onSaveMember">保存</view>
       </view>

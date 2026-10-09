@@ -103,3 +103,11 @@
   margin-left: 12rpx;
   letter-spacing: 0;
 }
+
+/* ---------- 成员编辑弹层：内容滚动，按钮不被挤走 ---------- */
+.fs-scroll {
+  flex: 1;
+  min-height: 0;
+  max-height: 56vh;
+}
+.fs-actions { flex: 0 0 auto; }
