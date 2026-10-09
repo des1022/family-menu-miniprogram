@@ -168,12 +168,20 @@
   border-radius: 999rpx; padding: 8rpx 20rpx;
 }
 .dt-tx { font-size: 27rpx; color: var(--ink2); line-height: 1.6; }
-.dt-actions { margin-top: 34rpx; }
+.dt-actions {
+  margin-top: 24rpx;
+  /* 关键：底部按钮行永远不被内容挤走 */
+  flex: 0 0 auto;
+}
 
 /* ---------- 详情弹层：内容可滚动 + 做法步骤 ---------- */
 .dt-scroll {
   flex: 1;
   min-height: 0;
+  /* 之前只有 flex:1 —— 做法一长（3 步以上），scroll-view 撑高，
+     底部「编辑 / 加入今晚」被顶到屏幕外，用户就是「找不到加入今晚」。
+     给它一个明确的高度上限，内容超了在里面滚，按钮永远留在视野里。 */
+  max-height: 64vh;
 }
 .dt-h-n {
   font-weight: 600;
