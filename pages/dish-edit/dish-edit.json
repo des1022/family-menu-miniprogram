@@ -1,4 +1,6 @@
 {
   "navigationBarTitleText": "新增菜品",
-  "usingComponents": {}
+  "usingComponents": {
+    "ui-dialog": "/components/ui-dialog/index"
+  }
 }

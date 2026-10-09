@@ -1,138 +1,185 @@
-<view class="page">
-  <!-- 菜品图片（必填） -->
+<view class="page {{themeCls}}">
+  <!-- ============ 菜品图片 ============ -->
   <view class="card">
-    <view class="card-title">菜品图片 <text class="required">*</text></view>
-    <view class="img-wrap" bindtap="onChooseImage">
-      <image wx:if="{{form.image}}" class="dish-img" src="{{form.image}}" mode="aspectFill" />
-      <view wx:else class="img-placeholder">
-        <view class="img-plus">＋</view>
-        <view class="img-tip">点击从相册选择</view>
-      </view>
-      <view class="img-mask" wx:if="{{form.image}}">点击更换</view>
+    <view class="chd">
+      <view class="chip chip--pri"><image class="chip-img" src="{{ico.cam}}"/></view>
+      <view class="ct">菜品图片</view>
+      <view class="cm">必填</view>
     </view>
-    <view class="img-note">选好之后会自动缩到 800px 宽、200KB 以内再上传，不用自己处理。卡片按约 3:2 裁、详情页裁得更扁，所以把菜放在画面中间。</view>
+
+    <view class="hero" bindtap="onChooseImage">
+      <image class="hero-img dish-dim" wx:if="{{form.image}}" src="{{form.image}}" mode="aspectFill"/>
+      <block wx:else>
+        <view class="hero-line"></view>
+        <view class="hg-ring">＋</view>
+        <view class="hg-t1">点击从相册选择</view>
+        <view class="hg-t2">自动压缩到 200KB 以内</view>
+      </block>
+      <view class="hero-swap" wx:if="{{form.image}}">点击更换</view>
+    </view>
+
+    <view class="cnote">卡片按约 3:2 裁、详情页裁得更扁 —— 把菜放在画面中间。</view>
   </view>
 
-  <!-- 基本信息 -->
+  <!-- ============ 基本信息 ============ -->
   <view class="card">
-    <view class="form-row">
-      <text class="form-label">菜品名称 <text class="required">*</text></text>
-      <input
-        class="form-input"
-        value="{{form.name}}"
-        maxlength="10"
-        placeholder="最多 10 个字"
-        placeholder-class="ph"
-        bindinput="onInput"
-        data-field="name"
-      />
+    <view class="chd">
+      <view class="chip chip--acc"><image class="chip-img" src="{{ico.info}}"/></view>
+      <view class="ct">基本信息</view>
     </view>
 
-    <view class="form-row">
-      <text class="form-label">菜品分类 <text class="required">*</text></text>
-      <picker
-        range="{{pickerRange}}"
-        value="{{pickerIndex}}"
-        bindchange="onCategoryPick"
-      >
-        <view class="picker-view">
+    <view class="fld">
+      <view class="fld-lb">菜品名称 <text class="req">*</text></view>
+      <view class="ib ib--row {{focusField === 'name' ? 'ib--focus' : ''}}">
+        <input
+          class="ib-in"
+          value="{{form.name}}"
+          maxlength="10"
+          placeholder="最多 10 个字"
+          placeholder-class="ph"
+          bindinput="onInput"
+          bindfocus="onFieldFocus"
+          bindblur="onFieldBlur"
+          data-field="name"
+        />
+      </view>
+    </view>
+
+    <view class="fld">
+      <view class="fld-lb">菜品分类 <text class="req">*</text></view>
+      <picker range="{{pickerRange}}" value="{{pickerIndex}}" bindchange="onCategoryPick">
+        <view class="ib ib--row ib--sel">
           <text class="{{form.category ? '' : 'ph'}}">{{form.category || '请选择分类'}}</text>
-          <text class="arrow">›</text>
+          <text class="arw">›</text>
         </view>
       </picker>
     </view>
 
-    <!-- 手动输入新增分类 -->
-    <view class="form-row" wx:if="{{showNewCat}}">
-      <text class="form-label">新分类名</text>
-      <input
-        class="form-input"
-        value="{{newCategory}}"
-        maxlength="8"
-        placeholder="输入新分类名称"
-        placeholder-class="ph"
-        bindinput="onInput"
-        data-field="newCategory"
-      />
+    <view class="fld" wx:if="{{showNewCat}}">
+      <view class="fld-lb">新分类名</view>
+      <view class="ib ib--row {{focusField === 'newCategory' ? 'ib--focus' : ''}}">
+        <input
+          class="ib-in"
+          value="{{newCategory}}"
+          maxlength="8"
+          placeholder="输入新分类名称"
+          placeholder-class="ph"
+          bindinput="onInput"
+          bindfocus="onFieldFocus"
+          bindblur="onFieldBlur"
+          data-field="newCategory"
+        />
+      </view>
     </view>
 
-    <view class="form-row">
-      <text class="form-label">价格</text>
-      <input
-        class="form-input"
-        value="{{form.price}}"
-        type="digit"
-        maxlength="8"
-        placeholder="选填，留空表示时价"
-        placeholder-class="ph"
-        bindinput="onInput"
-        data-field="price"
-      />
+    <view class="fld">
+      <view class="fld-lb">价格</view>
+      <view class="ib ib--row {{focusField === 'price' ? 'ib--focus' : ''}}">
+        <input
+          class="ib-in"
+          value="{{form.price}}"
+          type="digit"
+          maxlength="8"
+          placeholder="选填，留空表示时价"
+          placeholder-class="ph"
+          bindinput="onInput"
+          bindfocus="onFieldFocus"
+          bindblur="onFieldBlur"
+          data-field="price"
+        />
+      </view>
     </view>
 
-    <view class="form-row form-row--top">
-      <text class="form-label">描述</text>
-      <textarea
-        class="form-textarea"
-        value="{{form.desc}}"
-        maxlength="30"
-        placeholder="选填，最多 30 字"
-        placeholder-class="ph"
-        auto-height
-        bindinput="onInput"
-        data-field="desc"
-      />
+    <view class="fld">
+      <view class="fld-lb">描述</view>
+      <view class="ib ib--block {{focusField === 'desc' ? 'ib--focus' : ''}}">
+        <textarea
+          class="ib-ta"
+          value="{{form.desc}}"
+          maxlength="30"
+          placeholder="选填，最多 30 字"
+          placeholder-class="ph"
+          auto-height
+          bindinput="onInput"
+          bindfocus="onFieldFocus"
+          bindblur="onFieldBlur"
+          data-field="desc"
+        />
+      </view>
     </view>
   </view>
 
-  <!-- 食材清单 -->
+  <!-- ============ 食材清单 ============ -->
   <view class="card">
-    <view class="form-row">
-      <text class="form-label">食材清单</text>
-      <text class="form-tip">选填，点单页可汇总成买菜清单</text>
+    <view class="chd">
+      <view class="chip chip--ok"><image class="chip-img" src="{{ico.basket}}"/></view>
+      <view class="ct">食材清单</view>
+      <view class="cm">会汇总进买菜清单</view>
     </view>
-    <textarea
-      class="form-textarea"
-      value="{{form.ingredients}}"
-      maxlength="80"
-      placeholder="如：西红柿,鸡蛋,葱（逗号/顿号分隔）"
-      placeholder-class="ph"
-      auto-height
-      bindinput="onInput"
-      data-field="ingredients"
-    />
+
+    <view class="fld">
+      <view class="ib ib--block {{focusField === 'ingredients' ? 'ib--focus' : ''}}">
+        <textarea
+          class="ib-ta"
+          value="{{form.ingredients}}"
+          maxlength="80"
+          placeholder="如：西红柿,鸡蛋,葱（逗号 / 顿号分隔）"
+          placeholder-class="ph"
+          auto-height
+          bindinput="onInput"
+          bindfocus="onFieldFocus"
+          bindblur="onFieldBlur"
+          data-field="ingredients"
+        />
+      </view>
+    </view>
+
+    <view class="chips" wx:if="{{ingList.length}}">
+      <text class="chip-tag" wx:for="{{ingList}}" wx:key="*this">{{item}}</text>
+    </view>
+    <view class="cnote" wx:else>点单页会按这里的食材汇总成买菜清单。</view>
   </view>
 
-  <!-- 做法步骤 -->
+  <!-- ============ 做法步骤 ============ -->
   <view class="card">
-    <view class="form-row">
-      <text class="form-label">做法步骤</text>
-      <text class="form-tip">选填，每行一步</text>
+    <view class="chd">
+      <view class="chip chip--pri"><image class="chip-img" src="{{ico.steps}}"/></view>
+      <view class="ct">做法步骤</view>
+      <view class="cm">每行一步</view>
     </view>
-    <textarea
-      class="form-textarea form-textarea--steps"
-      value="{{form.steps}}"
-      maxlength="600"
-      placeholder="一行写一步，例如：&#10;1 番茄去皮切块，鸡蛋打散&#10;2 热锅多油炒蛋，凝固就盛出&#10;3 炒番茄出汁，倒回鸡蛋翻匀"
-      placeholder-class="ph"
-      auto-height
-      bindinput="onInput"
-      data-field="steps"
-    />
-    <view class="form-h">做饭的人点开菜品就能照着做</view>
+
+    <view class="fld">
+      <view class="ib ib--block ib--steps {{focusField === 'steps' ? 'ib--focus' : ''}}">
+        <textarea
+          class="ib-ta"
+          value="{{form.steps}}"
+          maxlength="600"
+          placeholder="一行写一步，例如：&#10;1 番茄去皮切块，鸡蛋打散&#10;2 热锅多油炒蛋，凝固就盛出&#10;3 炒番茄出汁，倒回鸡蛋翻匀"
+          placeholder-class="ph"
+          auto-height
+          bindinput="onInput"
+          bindfocus="onFieldFocus"
+          bindblur="onFieldBlur"
+          data-field="steps"
+        />
+      </view>
+    </view>
+    <view class="cnote">做饭的人点开菜品就能照着做。</view>
   </view>
 
-  <!-- 标签 -->
+  <!-- ============ 标签 ============ -->
   <view class="card">
-    <view class="form-row">
-      <text class="form-label">标签</text>
-      <text class="form-tip">选填，首页可按标签筛选</text>
+    <view class="chd">
+      <view class="chip chip--acc"><image class="chip-img" src="{{ico.tag}}"/></view>
+      <view class="ct">标签</view>
+      <view class="cm">选填</view>
     </view>
-    <view class="tag-group" wx:for="{{tagGroups}}" wx:key="name" wx:for-item="group">
-      <view class="tag-group-name">{{group.name}}</view>
-      <view class="tag-chips">
+
+    <view class="grp" wx:for="{{tagGroups}}" wx:key="name" wx:for-item="group">
+      <view class="gn">{{group.name}}</view>
+      <view class="tags">
         <view
-          class="tag-chip {{selectedMap[option] ? 'tag-chip--on' : ''}}"
+          class="tg {{selectedMap[option] ? 'tg--on' : ''}}"
           wx:for="{{group.options}}"
           wx:key="*this"
           wx:for-item="option"
@@ -143,20 +190,27 @@
     </view>
   </view>
 
-  <!-- 上架状态：新增默认上架 -->
+  <!-- ============ 上架状态（新增时默认上架，不用问） ============ -->
   <view class="card" wx:if="{{isEdit}}">
-    <view class="form-row">
-      <text class="form-label">上架状态</text>
-      <switch
-        color="#FF7A45"
-        checked="{{form.status === 1}}"
-        bindchange="onStatusChange"
-      />
+    <view class="chd">
+      <view class="chip chip--ok"><image class="chip-img" src="{{ico.eye}}"/></view>
+      <view class="ct">上架状态</view>
+    </view>
+    <view class="strow">
+      <view class="strow-l">
+        <view class="strow-b">{{form.status === 1 ? '已上架' : '已下架'}}</view>
+        <view class="strow-i">关掉后，首页和点菜里都看不到这道菜</view>
+      </view>
+      <switch color="{{switchColor}}" checked="{{form.status === 1}}" bindchange="onStatusChange"/>
     </view>
   </view>
 
-  <view class="btn-row">
-    <view class="btn btn-ghost btn-block" bindtap="onCancel">取消</view>
-    <view class="btn btn-primary btn-block" bindtap="onSave">保存</view>
+  <!-- 统一确认弹窗 -->
+  <ui-dialog id="uiDialog"/>
+
+  <!-- 固定底部操作条：滚到哪都点得到保存（放在 .page 里面才能继承主题变量） -->
+  <view class="fixveil">
+    <view class="btn btn-ghost fix-b" bindtap="onCancel">取消</view>
+    <view class="btn btn-primary fix-b {{saving ? 'btn-disabled' : ''}}" bindtap="onSave">{{saving ? '保存中…' : '保存'}}</view>
   </view>
 </view>

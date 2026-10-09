@@ -1,9 +1,35 @@
 const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const { chooseImage, uploadDishImage, deleteDishImage } = require('../../utils/image.js')
-const { toast, showLoading, hideLoading, parseTags } = require('../../utils/util.js')
+const { toast, showLoading, hideLoading, parseTags, parseIngredients } = require('../../utils/util.js')
+const theme = require('../../utils/theme.js')
 
 const NEW_CAT_FLAG = '＋ 新增分类…'
+
+/** 章节图标：浅色用各区块的墨色，深色用亮色（都写在完整的路径字面量里，
+    静态检查才能校验图片是否真的存在 —— 运行时拼字符串会漏检）。 */
+const SEC_ICONS = {
+  light: {
+    cam: '/assets/icons/sec-cam.png',
+    info: '/assets/icons/sec-info.png',
+    basket: '/assets/icons/sec-basket.png',
+    steps: '/assets/icons/sec-steps.png',
+    tag: '/assets/icons/sec-tag.png',
+    eye: '/assets/icons/sec-eye.png'
+  },
+  dark: {
+    cam: '/assets/icons/sec-cam-d.png',
+    info: '/assets/icons/sec-info-d.png',
+    basket: '/assets/icons/sec-basket-d.png',
+    steps: '/assets/icons/sec-steps-d.png',
+    tag: '/assets/icons/sec-tag-d.png',
+    eye: '/assets/icons/sec-eye-d.png'
+  }
+}
+
+/** switch 组件的 color 只能收真实色值，按主题给两个值 */
+const SWITCH_LIGHT = '#D9714E'
+const SWITCH_DARK = '#D2703F'
 
 Page({
   data: {
@@ -28,10 +54,29 @@ Page({
     pickerRange: [],
     pickerIndex: 0,
     oldImage: '',     // 编辑时记录原图，替换后删除云存储旧图
-    saving: false
+    saving: false,
+    themeCls: '',
+    ico: SEC_ICONS.light,
+    switchColor: SWITCH_LIGHT,
+    ingList: [],      // 食材解析结果，填完显示成小签，方便一眼看出有没有写错
+    focusField: ''    // 当前聚焦的字段（输入块变白底 + 橙色光圈）
+  },
+
+  onShow() {
+    this.applyTheme()
+  },
+
+  applyTheme() {
+    const dark = theme.isDark()
+    this.setData({
+      themeCls: theme.className(),
+      ico: dark ? SEC_ICONS.dark : SEC_ICONS.light,
+      switchColor: dark ? SWITCH_DARK : SWITCH_LIGHT
+    })
   },
 
   onLoad(options) {
+    this.applyTheme()
     if (options && options.id) {
       this.setData({ isEdit: true, dishId: options.id })
       wx.setNavigationBarTitle({ title: '编辑菜品' })
@@ -75,6 +120,7 @@ Page({
           status: typeof dish.status === 'number' ? dish.status : config.DISH_STATUS.ON
         },
         oldImage: dish.image || '',
+        ingList: parseIngredients(dish.ingredients || ''),
         selectedTags: parseTags(dish.tags),
         selectedMap: (function (arr) { const m = {}; arr.forEach(x => { m[x] = true }); return m })(parseTags(dish.tags))
       })
@@ -94,7 +140,19 @@ Page({
       })
       return
     }
+    if (field === 'ingredients') {
+      this.setData({ [`form.${field}`]: value, ingList: parseIngredients(value) })
+      return
+    }
     this.setData({ [`form.${field}`]: value })
+  },
+
+  onFieldFocus(e) {
+    this.setData({ focusField: (e.currentTarget.dataset && e.currentTarget.dataset.field) || '' })
+  },
+
+  onFieldBlur() {
+    this.setData({ focusField: '' })
   },
 
   /** 分类下拉：选中末项时展开手动输入 */

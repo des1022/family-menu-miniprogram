@@ -1,193 +1,227 @@
+/**
+ * 编辑菜品 · 方案 A「卡片分区」视觉优化版
+ * （设计稿：docs/design/2026-10-09-编辑菜品方案A优化.html）
+ *
+ * 三条之前的问题都在这里解决：
+ *   1. 卡片通栏 → 页面左右各留 26rpx，白卡有完整圆角
+ *   2. 写死的灰（#F5F6F7 / #DCDFE5 / #C9CDD4 / #FF7A45）→ 全部走主题变量
+ *   3. 输入框通栏、值右对齐 → 统一「标签在上 + 浅底圆角输入块」，只有选择类才右对齐
+ * 另外底部固定「取消 / 保存」，压在一条渐隐上，不用滚到底。
+ */
+
 .page {
-  padding: 20rpx 0 60rpx;
+  padding: 16rpx 26rpx 0;
+  /* 给固定底栏 + 安全区让位，最后一张卡不会被压住 */
+  padding-bottom: calc(200rpx + env(safe-area-inset-bottom));
 }
 
-.card-title {
-  padding: 28rpx 32rpx 16rpx;
-  font-size: 30rpx;
-  font-weight: 600;
-}
-
-.required {
-  color: var(--danger);
-}
-
-/* ===== 图片 ===== */
-.img-wrap {
-  position: relative;
-  margin: 0 32rpx 20rpx;
-  height: 340rpx;
-  border-radius: 16rpx;
+/* ---------- 卡片 ---------- */
+.card {
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-card);
+  box-shadow: var(--sh);
+  margin-bottom: 22rpx;
   overflow: hidden;
-  background: var(--bg);
 }
 
-.dish-img {
+/* ---------- 章节头：色块图标 + 标题 + 右侧说明 ---------- */
+.chd {
+  display: flex;
+  align-items: center;
+  gap: 18rpx;
+  padding: 26rpx 28rpx 20rpx;
+}
+.chip {
+  width: 52rpx;
+  height: 52rpx;
+  border-radius: 18rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+.chip-img { width: 32rpx; height: 32rpx; }
+.chip--pri { background: var(--pri-l); }
+.chip--acc { background: var(--acc-l); }
+.chip--ok { background: var(--ok-l); }
+.ct { font-size: 30rpx; font-weight: 800; }
+.cm { margin-left: auto; font-size: 23rpx; color: var(--ink3); }
+
+/* ---------- 字段 ---------- */
+.fld { padding: 0 28rpx 24rpx; }
+.fld-lb {
+  font-size: 24rpx;
+  font-weight: 700;
+  color: var(--ink2);
+  margin-bottom: 10rpx;
+}
+.req { color: var(--danger); font-weight: 700; }
+
+.ib {
+  background: var(--surf2);
+  border: 2rpx solid transparent;
+  border-radius: 22rpx;
+  padding: 22rpx 26rpx;
+  font-size: 30rpx;
+  line-height: 1.55;
+}
+.ib--row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 88rpx;
+}
+.ib--block { display: block; min-height: 124rpx; }
+.ib--steps { min-height: 240rpx; }
+/* 选择类不是输入项：白底 + 描边，和输入块区分开 */
+.ib--sel { background: var(--surf); border-color: var(--line); }
+/* 聚焦：变白底 + 橙色描边 + 一圈淡橙光圈 */
+.ib--focus {
+  background: var(--surf);
+  border-color: var(--pri);
+  box-shadow: 0 0 0 6rpx var(--pri-l);
+}
+
+/* 原生 input 必须给明确高度，否则输入区会被压扁（占位文字上下被切） */
+.ib-in {
+  flex: 1;
+  min-width: 0;
+  height: 44rpx;
+  line-height: 44rpx;
+  font-size: 30rpx;
+  color: var(--ink);
+}
+.ib-ta {
   width: 100%;
-  height: 340rpx;
+  min-height: 60rpx;
+  font-size: 30rpx;
+  line-height: 1.62;
+  color: var(--ink);
 }
+.ph { color: var(--ink3); }
+.arw { color: var(--ink3); font-size: 34rpx; line-height: 1; }
 
-.img-placeholder {
+/* ---------- 图片主视觉 ---------- */
+.hero {
+  position: relative;
+  margin: 0 28rpx 20rpx;
   height: 340rpx;
-  border: 2rpx dashed #DCDFE5;
-  border-radius: 16rpx;
+  border-radius: 26rpx;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  background: linear-gradient(150deg, var(--pri-l), var(--acc-l));
 }
-
-.img-plus {
-  font-size: 72rpx;
-  color: #C9CDD4;
-  line-height: 1;
-}
-
-.img-tip {
-  font-size: 26rpx;
-  color: var(--ink3);
-  margin-top: 16rpx;
-}
-
-.img-note {
-  /* 卡片本身没有内边距（子元素各自留），这里必须自己补左右，
-     否则说明文字会顶到屏幕边缘、溢出卡片圆角（2026-10-09 真机反馈） */
-  margin: 0 32rpx 28rpx;
-  font-size: 24rpx;
-  color: var(--ink3);
-  line-height: 1.65;
-}
-
-.img-mask {
+/* 虚线框单独一层：这样底色能跟着主题走，虚线只压透明度 */
+.hero-line {
   position: absolute;
   left: 0;
   right: 0;
+  top: 0;
   bottom: 0;
-  height: 64rpx;
-  line-height: 64rpx;
+  border: 2rpx dashed var(--pri);
+  border-radius: 26rpx;
+  opacity: 0.34;
+}
+.hero-img { width: 100%; height: 340rpx; }
+.hg-ring {
+  width: 96rpx;
+  height: 96rpx;
+  border-radius: 50%;
+  background: var(--surf);
+  color: var(--pri-ink);
+  font-size: 44rpx;
+  font-weight: 700;
+  line-height: 96rpx;
   text-align: center;
-  background: rgba(0, 0, 0, 0.5);
-  color: var(--surf);
+  box-shadow: 0 8rpx 24rpx rgba(146, 76, 44, 0.18);
+}
+.hg-t1 {
+  margin-top: 18rpx;
   font-size: 26rpx;
+  font-weight: 700;
+  color: var(--pri-ink);
+  opacity: 0.92;
+}
+.hg-t2 { margin-top: 6rpx; font-size: 22rpx; color: var(--ink2); }
+.hero-swap {
+  position: absolute;
+  right: 18rpx;
+  bottom: 18rpx;
+  padding: 10rpx 22rpx;
+  border-radius: 999rpx;
+  background: rgba(20, 12, 8, 0.52);
+  color: #FFFFFF;
+  font-size: 23rpx;
 }
 
-/* ===== 表单 ===== */
-.form-row {
-  display: flex;
-  align-items: center;
-  padding: 24rpx 32rpx;
-  min-height: 100rpx;
-  border-bottom: 2rpx solid #F5F6F7;
-}
-
-.form-row:last-child {
-  border-bottom: none;
-}
-
-.form-row--top {
-  align-items: flex-start;
-}
-
-.form-label {
-  width: 200rpx;
-  font-size: 30rpx;
-  color: var(--ink);
-  flex-shrink: 0;
-}
-
-.form-input {
-  flex: 1;
-  font-size: 30rpx;
-  color: var(--ink);
-  text-align: right;
-}
-
-.form-textarea {
-  flex: 1;
-  font-size: 30rpx;
-  color: var(--ink);
-  min-height: 120rpx;
+.cnote {
+  font-size: 23rpx;
+  color: var(--ink3);
   line-height: 1.6;
+  padding: 0 28rpx 26rpx;
 }
 
-.ph {
-  color: var(--ink3);
-}
-
-.picker-view {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  font-size: 30rpx;
-  color: var(--ink);
-  min-height: 60rpx;
-}
-
-.arrow {
-  font-size: 40rpx;
-  color: #C9CDD4;
-  margin-left: 8rpx;
-  line-height: 1;
-}
-
-/* ===== 按钮 ===== */
-.btn-row {
-  display: flex;
-  margin: 40rpx 24rpx 0;
-}
-
-.btn-row .btn {
-  flex: 1;
-  margin: 0 12rpx;
-}
-
-
-/* ===== 食材/标签 ===== */
-.form-tip {
-  font-size: 22rpx;
-  color: var(--ink3);
-}
-
-.tag-group {
-  margin-top: 16rpx;
-}
-
-.tag-group-name {
-  font-size: 24rpx;
-  color: var(--ink2);
-  margin-bottom: 10rpx;
-}
-
-.tag-chips {
+/* ---------- 食材签 ---------- */
+.chips {
   display: flex;
   flex-wrap: wrap;
   gap: 12rpx;
+  padding: 0 28rpx 26rpx;
 }
-
-.tag-chip {
-  padding: 8rpx 24rpx;
-  border-radius: 999rpx;
-  background: #F5F6F7;
-  color: var(--ink2);
-  font-size: 26rpx;
-  border: 2rpx solid #F5F6F7;
-}
-
-.tag-chip--on {
-  background: #FFF0E8;
-  color: var(--pri);
-  border-color: #FFC9AE;
+.chip-tag {
+  font-size: 24rpx;
   font-weight: 600;
+  padding: 8rpx 22rpx;
+  border-radius: 999rpx;
+  background: var(--ok-l);
+  color: var(--ok-ink);
 }
 
-/* ---------- 做法步骤 ---------- */
-.form-textarea--steps {
-  min-height: 260rpx;
-  line-height: 1.8;
+/* ---------- 标签 ---------- */
+.grp { padding: 0 28rpx 20rpx; }
+.grp:last-child { padding-bottom: 28rpx; }
+.gn { font-size: 23rpx; color: var(--ink3); margin-bottom: 12rpx; }
+.tags { display: flex; flex-wrap: wrap; gap: 14rpx; }
+.tg {
+  font-size: 25rpx;
+  padding: 12rpx 26rpx;
+  border-radius: 999rpx;
+  background: var(--surf2);
+  color: var(--ink2);
+  border: 2rpx solid transparent;
 }
-.form-h {
-  font-size: 23rpx;
-  color: var(--ink3);
-  margin-top: 12rpx;
+.tg--on {
+  background: var(--pri-l);
+  color: var(--pri-ink);
+  border-color: var(--pri);
+  font-weight: 700;
 }
+
+/* ---------- 上架状态 ---------- */
+.strow {
+  display: flex;
+  align-items: center;
+  gap: 22rpx;
+  padding: 0 28rpx 26rpx;
+}
+.strow-l { flex: 1; min-width: 0; }
+.strow-b { font-size: 29rpx; font-weight: 700; }
+.strow-i { font-size: 23rpx; color: var(--ink3); margin-top: 6rpx; }
+
+/* ---------- 固定底栏 ---------- */
+.fixveil {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  display: flex;
+  gap: 20rpx;
+  padding: 24rpx 26rpx calc(28rpx + env(safe-area-inset-bottom));
+  background: var(--fix-veil);
+}
+.fix-b { flex: 1; }

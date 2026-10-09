@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>编辑菜品 · 方案 A 视觉优化</title>
+<style>
+:root{
+  --pri:#D9714E; --pri-d:#C4553A; --pri-l:#FBEEE8; --pri-ink:#A8462E;
+  --acc:#E9A323; --acc-l:#FCF3DF; --acc-ink:#8E5F0C;
+  --ok:#4F9367; --ok-l:#E9F3ED; --ok-ink:#3E7A55;
+  --bg:#FAF7F3; --surf:#FFFFFF; --surf2:#F4EFE9; --line:#EFE7DE;
+  --ink:#2A2521; --ink2:#8B8178; --ink3:#B7AEA4;
+  --danger:#C94A3F;
+  --btn-bg:linear-gradient(135deg,#DE7A56,#C4553A);
+  --btn-ink:#FFFFFF;
+  --sh:0 2px 7px rgba(170,130,100,.08);
+  --sh-lg:0 16px 44px rgba(90,60,40,.16);
+  --veil:linear-gradient(180deg,rgba(250,247,243,0),rgba(250,247,243,.94) 34%,#FAF7F3 62%);
+}
+.dark{
+  --pri:#FFFFFF; --pri-d:#E6F1ED; --pri-l:rgba(255,255,255,.16); --pri-ink:#FFFFFF;
+  --acc:#D2703F; --acc-l:rgba(210,112,63,.26); --acc-ink:#F8DAC8;
+  --ok:#FFFFFF; --ok-l:rgba(255,255,255,.16); --ok-ink:#2A5F54;
+  --bg:#37776A; --surf:#438476; --surf2:#2F6A5C; --line:#51998A;
+  --ink:#F0F7F4; --ink2:#C6DCD5; --ink3:#A0C3B9;
+  --btn-bg:#FFFFFF; --btn-ink:#2A5F54;
+  --sh:0 2px 6px rgba(0,40,32,.22);
+  --veil:linear-gradient(180deg,rgba(55,119,106,0),rgba(55,119,106,.94) 34%,#37776A 62%);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#E6E0D8;font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;color:var(--ink);padding:40px 32px 60px;-webkit-font-smoothing:antialiased}
+.wrap{width:1232px;margin:0 auto}
+.board-title{font-size:15px;color:#8A8078;letter-spacing:.06em;margin-bottom:16px}
+h1{font-size:25px;font-weight:800;letter-spacing:-.01em;margin-bottom:10px}
+.lede{font-size:13.5px;color:#7A716A;line-height:1.75;margin-bottom:6px;max-width:1180px}
+.lede b{color:#2A2521}
+.note{background:#fff;border-radius:16px;padding:18px 22px;margin:20px 0 26px;box-shadow:0 2px 7px rgba(170,130,100,.1)}
+.note h3{font-size:14.5px;font-weight:800;margin-bottom:9px}
+.note ul{margin-left:18px;font-size:13px;color:#5C544D;line-height:1.9}
+.note code{background:rgba(0,0,0,.06);padding:1px 5px;border-radius:5px;font-size:12px}
+
+.board{display:grid;grid-template-columns:375px 375px 375px;gap:22px}
+.fig-hd{margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.tagx{font-size:11px;font-weight:800;padding:3px 9px;border-radius:999px}
+.tagx.old{background:#E7E1DA;color:#7A716A}
+.tagx.new{background:#2A2521;color:#fff}
+.tagx.dk{background:#37776A;color:#fff}
+
+/* ---------- 手机 ---------- */
+.phone{width:375px;border-radius:14px;overflow:hidden;box-shadow:var(--sh-lg);height:1580px;position:relative;background:var(--bg)}
+.statusbar{height:24px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;font-size:11px;font-weight:600}
+.navbar{height:44px;position:relative;display:flex;align-items:center;justify-content:center}
+.navbar .nav-t{font-size:15px;font-weight:600}
+.navbar .nav-l{position:absolute;left:16px;font-size:19px}
+.capsule{position:absolute;right:12px;top:50%;transform:translateY(-50%);width:78px;height:28px;border:1px solid rgba(140,140,140,.22);background:rgba(180,180,180,.28);border-radius:14px;display:flex;align-items:center;justify-content:space-around;font-size:11px;letter-spacing:2px}
+.req{color:var(--danger);font-weight:700}
+
+/* ==================== 现状（同上一版方案文档） ==================== */
+.now{padding:10px 0 0}
+.now .cfull{background:#fff;border-bottom:1px solid #F5F6F7}
+.now .ct{padding:14px 16px 8px;font-size:15px;font-weight:600}
+.now .imgbox{margin:0 16px 16px;height:170px;border:1px dashed #DCDFE5;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#C9CDD4}
+.now .imgbox .plus{font-size:36px;line-height:1}
+.now .imgbox em{font-size:13px;font-style:normal;color:var(--ink3);margin-top:8px}
+.now .bleed{font-size:12px;color:var(--ink3);line-height:1.65;margin:0 0 14px;padding-left:2px}
+.now .row{display:flex;align-items:center;padding:12px 16px;min-height:50px;border-bottom:1px solid #F5F6F7}
+.now .row--top{align-items:flex-start}
+.now .row .lb{width:100px;flex-shrink:0;font-size:15px}
+.now .row .val{flex:1;text-align:right;font-size:15px}
+.now .row .phv{flex:1;text-align:right;font-size:15px;color:var(--ink3)}
+.now .row .tip{flex:1;text-align:right;font-size:11px;color:var(--ink3)}
+.now .ta{font-size:15px;line-height:1.6;padding:0 16px 14px}
+.now .ta--tall{min-height:130px}
+.now .hint{font-size:11.5px;color:var(--ink3);padding:0 16px 14px}
+.now .tg{padding:8px 0 14px}
+.now .tg-n{font-size:12px;color:var(--ink2);margin:0 16px 5px}
+.now .chips{display:flex;gap:6px;flex-wrap:wrap;padding-left:2px}
+.now .c{font-size:13px;padding:4px 12px;border-radius:999px;background:#F5F6F7;color:var(--ink2);border:1px solid #F5F6F7}
+.now .c.on{background:#FFF0E8;color:#FF7A45;border-color:#FFC9AE;font-weight:600}
+.now .rowsw{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;min-height:50px}
+.now .sw{width:44px;height:26px;border-radius:13px;background:#FF7A45;position:relative}
+.now .sw::after{content:'';position:absolute;right:2px;top:2px;width:22px;height:22px;border-radius:50%;background:#fff}
+.now .acts{display:flex;gap:12px;margin:20px 12px 0}
+.now .b{flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:16px;font-weight:600}
+.now .b.ghost{background:#fff;border:1px solid var(--line)}
+.now .b.pri{background:var(--btn-bg);color:#fff}
+
+/* ==================== 新版 ==================== */
+.pb{padding:2px 13px 0}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh);margin-bottom:11px;overflow:hidden}
+.chd{display:flex;align-items:center;gap:9px;padding:13px 14px 11px}
+.chip{width:26px;height:26px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+.chip img{width:16px;height:16px;display:block}
+.chip.pri{background:var(--pri-l)}
+.chip.acc{background:var(--acc-l)}
+.chip.ok{background:var(--ok-l)}
+.ct{font-size:15px;font-weight:800}
+.cm{margin-left:auto;font-size:11.5px;color:var(--ink3)}
+.fld{padding:0 14px 12px}
+.fld > label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin-bottom:5px}
+.ib{background:var(--surf2);border:1px solid transparent;border-radius:11px;padding:11px 13px;min-height:44px;font-size:15px;display:flex;align-items:center;justify-content:space-between;line-height:1.5}
+.ib.ph{color:var(--ink3)}
+.ib.tall{min-height:62px;align-items:flex-start;line-height:1.65}
+.ib.steps{min-height:118px;align-items:flex-start;line-height:1.75}
+.ib.sel{background:var(--surf);border-color:var(--line)}
+.ib.focus{background:var(--surf);border-color:var(--pri);box-shadow:0 0 0 3px var(--pri-l)}
+.arw{color:var(--ink3);font-size:17px;line-height:1}
+
+/* 图片主视觉 */
+.hero{margin:0 14px 12px;height:170px;border-radius:13px;position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;
+      background:linear-gradient(150deg,var(--pri-l),var(--acc-l));border:1px dashed rgba(217,113,78,.42)}
+.hero .ring{width:48px;height:48px;border-radius:50%;background:var(--surf);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:var(--pri-ink);box-shadow:0 4px 12px rgba(146,76,44,.16)}
+.hero .t1{font-size:13px;font-weight:700;color:var(--pri-ink);opacity:.9}
+.hero .t2{font-size:11px;color:var(--ink2)}
+.hero .imgph{position:absolute;left:0;right:0;top:0;bottom:0;display:flex;align-items:center;justify-content:center;font-size:56px;font-weight:800;color:rgba(255,255,255,.85)}
+.hero .swap{position:absolute;right:9px;bottom:9px;background:rgba(20,12,8,.52);color:#fff;font-size:11.5px;padding:5px 11px;border-radius:999px}
+.cnote{font-size:11.5px;color:var(--ink3);line-height:1.6;padding:0 14px 14px}
+
+.chips{display:flex;flex-wrap:wrap;gap:6px;padding:0 14px 14px}
+.chips span{font-size:12px;font-weight:600;padding:4px 11px;border-radius:999px;background:var(--ok-l);color:var(--ok-ink)}
+.grp{padding:0 14px 12px}
+.grp:last-child{padding-bottom:14px}
+.grp .gn{font-size:11.5px;color:var(--ink3);margin-bottom:6px}
+.tags{display:flex;flex-wrap:wrap;gap:7px}
+.tags span{font-size:12.5px;padding:6px 13px;border-radius:999px;background:var(--surf2);color:var(--ink2);border:1px solid transparent}
+.tags span.on{background:var(--pri-l);color:var(--pri-ink);border-color:var(--pri);font-weight:700}
+.strow{display:flex;align-items:center;gap:12px;padding:0 14px 14px}
+.strow .sl{flex:1;min-width:0}
+.strow .sl b{font-size:14.5px;display:block}
+.strow .sl i{font-size:11.5px;font-style:normal;color:var(--ink3);display:block;margin-top:3px}
+.sw{width:46px;height:28px;border-radius:14px;background:#D9714E;position:relative;flex:0 0 auto}
+.dark .sw{background:#D2703F}
+.sw::after{content:'';position:absolute;right:2px;top:2px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.16)}
+
+.fix{position:absolute;left:0;right:0;bottom:0;padding:12px 13px 20px;background:var(--veil);display:flex;gap:10px}
+.fix .b{flex:1;min-height:46px;display:flex;align-items:center;justify-content:center;border-radius:999px;font-size:16px;font-weight:700}
+.fix .b.ghost{background:var(--surf);border:1px solid var(--line);color:var(--ink);box-shadow:var(--sh)}
+.fix .b.pri{background:var(--btn-bg);color:var(--btn-ink);box-shadow:0 4px 12px rgba(196,85,58,.3)}
+
+.fig-cap{font-size:12.5px;color:#7A716A;line-height:1.7;margin-top:10px}
+.fig-cap b{color:#2A2521}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="board-title">家庭菜单 · 「编辑菜品」方案 A · 视觉优化版 · 2026-10-09</div>
+  <h1>方案 A 优化：加色块、拉层级</h1>
+  <p class="lede">在 A 的基础上把「视觉」这一层做厚：每个区块前面加一枚<b>淡色圆角图标块</b>（红=图片/做法、琥珀=信息/标签、绿=食材/状态），
+    图片位从灰虚线框换成<b>暖色渐变主视觉 + 白色圆形按钮</b>，输入框改成浅底圆角块（聚焦时变白底 + 橙色光圈），
+    底部按钮条压在渐变上。第三格是<b>深色模式</b>的样子。</p>
+
+  <div class="note">
+    <h3>这次加了什么</h3>
+    <ul>
+      <li><b>区块图标色块</b>：26px 圆角方块 + 16px 线性图标，三种底色（<code>--pri-l</code> 陶土 / <code>--acc-l</code> 琥珀 / <code>--ok-l</code> 青绿），深浅两套各一份图 —— 这是「家庭 → 管理」那组列表已经有的语言，不是新发明。</li>
+      <li><b>图片位改成主视觉</b>：暖色渐变底（陶土→琥珀）+ 虚线细边，中间一枚白色圆形 ＋ 按钮带阴影；有图时右下角一枚半透明「点击更换」胶囊。</li>
+      <li><b>输入框有状态了</b>：默认浅底无边框；聚焦变白底 + 1px 橙边 + 3px 橙色光圈。选择类（分类/上架）本来就不是输入，用白底 + 描边区分开。</li>
+      <li><b>食材识别成签</b>：填完自动把「隔夜饭,鸡蛋,葱,火腿」拆成四枚青绿小签，一眼看出有没有写错、有没有漏。</li>
+      <li><b>底部按钮条</b>：压在一条从透明到背景色的渐变上，滚动时内容从按钮下面淡出，不是硬切一条线。</li>
+      <li>写死的灰（<code>#F5F6F7</code> / <code>#DCDFE5</code> / <code>#C9CDD4</code> / <code>#FF7A45</code>）全部换成主题变量。</li>
+    </ul>
+  </div>
+
+  <div class="board">
+
+    <!-- 现状 -->
+    <div>
+      <div class="fig-hd"><span class="tagx old">前</span><span style="font-size:12.5px;color:#7A716A">现状</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>18:30</span><span>▪▪▪ ⌁ ▭</span></div>
+        <div class="navbar"><span class="nav-l">‹</span><span class="nav-t">编辑菜品</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="now">
+          <div class="cfull">
+            <div class="ct">菜品图片 <span class="req">*</span></div>
+            <div class="imgbox"><div class="plus">＋</div><em>点击从相册选择</em></div>
+            <div class="bleed">选好之后会自动缩到 800px 宽、200KB 以内再上传，不用自己处理。卡片按约 3:2 裁、详情页裁得更扁，所以把菜放在画面中间。</div>
+          </div>
+          <div class="cfull">
+            <div class="row"><span class="lb">菜品名称 <span class="req">*</span></span><span class="val">蛋炒饭</span></div>
+            <div class="row"><span class="lb">菜品分类 <span class="req">*</span></span><span class="val">主食 ›</span></div>
+            <div class="row"><span class="lb">价格</span><span class="phv">选填，留空表示时价</span></div>
+            <div class="row"><span class="lb">描述</span><span class="val">隔夜饭最合适，粒粒分明</span></div>
+          </div>
+          <div class="cfull">
+            <div class="row"><span class="lb">食材清单</span><span class="tip">选填，点单页可汇总成买菜清单</span></div>
+            <div class="ta">隔夜饭,鸡蛋,葱,火腿</div>
+          </div>
+          <div class="cfull">
+            <div class="row"><span class="lb">做法步骤</span><span class="tip">选填，每行一步</span></div>
+            <div class="ta ta--tall">1 隔夜饭打散，鸡蛋加盐打匀<br>2 热锅多油炒蛋，凝固就盛出<br>3 下饭炒散，倒回鸡蛋翻匀</div>
+          </div>
+          <div class="cfull">
+            <div class="row"><span class="lb">标签</span><span class="tip">选填</span></div>
+            <div class="tg">
+              <div class="tg-n">口味</div>
+              <div class="chips"><span class="c on">家常</span><span class="c">清淡</span><span class="c">重口</span></div>
+              <div class="tg-n" style="margin-top:8px">耗时</div>
+              <div class="chips"><span class="c on">半小时</span><span class="c">小时菜</span><span class="c">快手</span></div>
+            </div>
+          </div>
+          <div class="cfull"><div class="rowsw"><span class="lb" style="width:auto">上架状态</span><span class="sw"></span></div></div>
+          <div class="acts"><span class="b ghost">取消</span><span class="b pri">保存</span></div>
+        </div>
+      </div>
+      <div class="fig-cap">卡片通栏、灰值写死、值右对齐、输入框顶屏幕边、保存要滚到底。</div>
+    </div>
+
+    <!-- 新版 · 浅色 -->
+    <div>
+      <div class="fig-hd"><span class="tagx new">后</span><span style="font-size:12.5px;color:#7A716A">浅色</span></div>
+      <div class="phone">
+        <div class="statusbar"><span>18:30</span><span>▪▪▪ ⌁ ▭</span></div>
+        <div class="navbar"><span class="nav-l">‹</span><span class="nav-t">编辑菜品</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pb">
+          <div class="card">
+            <div class="chd"><div class="chip pri"><img src="../../assets/icons/sec-cam.png"></div><div class="ct">菜品图片</div><div class="cm">必填</div></div>
+            <div class="hero">
+              <div class="ring">＋</div>
+              <div class="t1">点击从相册选择</div>
+              <div class="t2">自动压缩到 200KB 以内</div>
+            </div>
+            <div class="cnote">卡片按约 3:2 裁、详情页裁得更扁 —— 把菜放在画面中间。</div>
+          </div>
+
+          <div class="card">
+            <div class="chd"><div class="chip acc"><img src="../../assets/icons/sec-info.png"></div><div class="ct">基本信息</div></div>
+            <div class="fld"><label>菜品名称 <span class="req">*</span></label><div class="ib focus">蛋炒饭</div></div>
+            <div class="fld"><label>菜品分类 <span class="req">*</span></label><div class="ib sel">主食<span class="arw">›</span></div></div>
+            <div class="fld"><label>价格</label><div class="ib ph">选填，留空表示时价</div></div>
+            <div class="fld"><label>描述</label><div class="ib tall">隔夜饭最合适，粒粒分明</div></div>
+          </div>
+
+          <div class="card">
+            <div class="chd"><div class="chip ok"><img src="../../assets/icons/sec-basket.png"></div><div class="ct">食材清单</div><div class="cm">会汇总进买菜清单</div></div>
+            <div class="fld"><div class="ib">隔夜饭,鸡蛋,葱,火腿</div></div>
+            <div class="chips"><span>隔夜饭</span><span>鸡蛋</span><span>葱</span><span>火腿</span></div>
+          </div>
+
+          <div class="card">
+            <div class="chd"><div class="chip pri"><img src="../../assets/icons/sec-steps.png"></div><div class="ct">做法步骤</div><div class="cm">每行一步</div></div>
+            <div class="fld"><div class="ib steps">1 隔夜饭打散，鸡蛋加盐打匀<br>2 热锅多油炒蛋，凝固就盛出<br>3 下饭炒散，倒回鸡蛋翻匀</div></div>
+          </div>
+
+          <div class="card">
+            <div class="chd"><div class="chip acc"><img src="../../assets/icons/sec-tag.png"></div><div class="ct">标签</div><div class="cm">选填</div></div>
+            <div class="grp"><div class="gn">辣度</div><div class="tags"><span>不辣</span><span class="on">微辣</span><span>中辣</span><span>特辣</span></div></div>
+            <div class="grp"><div class="gn">难度</div><div class="tags"><span>简单</span><span class="on">中等</span><span>较难</span></div></div>
+            <div class="grp"><div class="gn">时长</div><div class="tags"><span>10分钟内</span><span>15分钟</span><span class="on">半小时</span><span>慢炖</span></div></div>
+            <div class="grp"><div class="gn">菜系</div><div class="tags"><span class="on">家常</span><span>川湘</span><span>粤式</span><span>北方</span><span>汤羹</span><span>甜品</span></div></div>
+          </div>
+
+          <div class="card">
+            <div class="chd"><div class="chip ok"><img src="../../assets/icons/sec-eye.png"></div><div class="ct">上架状态</div></div>
+            <div class="strow">
+              <div class="sl"><b>已上架</b><i>关掉后，首页和点菜里都看不到这道菜</i></div>
+              <div class="sw"></div>
+            </div>
+          </div>
+        </div>
+        <div class="fix"><span class="b ghost">取消</span><span class="b pri">保存</span></div>
+      </div>
+      <div class="fig-cap">区块色块一眼能扫；输入框有聚焦态；食材拆成签；底部按钮压在渐变上。</div>
+    </div>
+
+    <!-- 新版 · 深色 -->
+    <div>
+      <div class="fig-hd"><span class="tagx dk">后</span><span style="font-size:12.5px;color:#7A716A">深色</span></div>
+      <div class="phone dark">
+        <div class="statusbar"><span>18:30</span><span>▪▪▪ ⌁ ▭</span></div>
+        <div class="navbar"><span class="nav-l">‹</span><span class="nav-t">编辑菜品</span><span class="capsule">••• &nbsp;—&nbsp; ⊙</span></div>
+        <div class="pb">
+          <div class="card">
+            <div class="chd"><div class="chip pri"><img src="../../assets/icons/sec-cam-d.png"></div><div class="ct">菜品图片</div><div class="cm">必填</div></div>
+            <div class="hero">
+              <div class="ring">＋</div>
+              <div class="t1">点击从相册选择</div>
+              <div class="t2">自动压缩到 200KB 以内</div>
+            </div>
+            <div class="cnote">卡片按约 3:2 裁、详情页裁得更扁 —— 把菜放在画面中间。</div>
+          </div>
+
+          <div class="card">
+            <div class="chd"><div class="chip acc"><img src="../../assets/icons/sec-info-d.png"></div><div class="ct">基本信息</div></div>
+            <div class="fld"><label>菜品名称 <span class="req">*</span></label><div class="ib focus">蛋炒饭</div></div>
+            <div class="fld"><label>菜品分类 <span class="req">*</span></label><div class="ib sel">主食<span class="arw">›</span></div></div>
+            <div class="fld"><label>价格</label><div class="ib ph">选填，留空表示时价</div></div>
+            <div class="fld"><label>描述</label><div class="ib tall">隔夜饭最合适，粒粒分明</div></div>
+          </div>
+
+          <div class="card">
+            <div class="chd"><div class="chip ok"><img src="../../assets/icons/sec-basket-d.png"></div><div class="ct">食材清单</div><div class="cm">会汇总进买菜清单</div></div>
+            <div class="fld"><div class="ib">隔夜饭,鸡蛋,葱,火腿</div></div>
+            <div class="chips"><span>隔夜饭</span><span>鸡蛋</span><span>葱</span><span>火腿</span></div>
+          </div>
+
+          <div class="card">
+            <div class="chd"><div class="chip pri"><img src="../../assets/icons/sec-steps-d.png"></div><div class="ct">做法步骤</div><div class="cm">每行一步</div></div>
+            <div class="fld"><div class="ib steps">1 隔夜饭打散，鸡蛋加盐打匀<br>2 热锅多油炒蛋，凝固就盛出<br>3 下饭炒散，倒回鸡蛋翻匀</div></div>
+          </div>
+
+          <div class="card">
+            <div class="chd"><div class="chip acc"><img src="../../assets/icons/sec-tag-d.png"></div><div class="ct">标签</div><div class="cm">选填</div></div>
+            <div class="grp"><div class="gn">辣度</div><div class="tags"><span>不辣</span><span class="on">微辣</span><span>中辣</span><span>特辣</span></div></div>
+            <div class="grp"><div class="gn">难度</div><div class="tags"><span>简单</span><span class="on">中等</span><span>较难</span></div></div>
+            <div class="grp"><div class="gn">时长</div><div class="tags"><span>10分钟内</span><span>15分钟</span><span class="on">半小时</span><span>慢炖</span></div></div>
+            <div class="grp"><div class="gn">菜系</div><div class="tags"><span class="on">家常</span><span>川湘</span><span>粤式</span><span>北方</span><span>汤羹</span><span>甜品</span></div></div>
+          </div>
+
+          <div class="card">
+            <div class="chd"><div class="chip ok"><img src="../../assets/icons/sec-eye-d.png"></div><div class="ct">上架状态</div></div>
+            <div class="strow">
+              <div class="sl"><b>已上架</b><i>关掉后，首页和点菜里都看不到这道菜</i></div>
+              <div class="sw"></div>
+            </div>
+          </div>
+        </div>
+        <div class="fix"><span class="b ghost">取消</span><span class="b pri">保存</span></div>
+      </div>
+      <div class="fig-cap">深色下：卡片用 <code>--surf</code> 墨绿、输入框用 <code>--surf2</code> 深绿，色块换成半透明，主按钮仍是白色（跟全局一致）。</div>
+    </div>
+
+  </div>
+</div>
+</body>
+</html>
