@@ -220,64 +220,48 @@
   color: var(--ink);
 }
 
-/* ---------- 左侧分类列（竖排分类，仿点餐 App） ---------- */
+/* ---------- 左侧分类列（图标在上，名称 + 数量在下） ---------- */
 .cat-split {
   display: flex;
   align-items: flex-start;
   margin-bottom: 8rpx;
 }
 .cat-side {
-  /* 不写死宽度：宽度由最长的「分类名 + 数量」自己决定，中间不留空；
-     万一有超长分类名，最多到这个上限，名字省略号 */
   flex: 0 0 auto;
-  min-width: 96rpx;
-  max-width: 176rpx;
-  flex: 0 0 auto;
-  /* 页面滚动时分类列吸附在顶部（sticky 的祖先没有 overflow:hidden，安全） */
+  width: 152rpx;
+  /* 页面滚动时分类列吸附在顶部（sticky 的祖先没有 overflow:hidden，安全）。
+     注意不能用 overflow:hidden —— 会把选中项的圆角切掉。 */
   position: sticky;
   top: 0;
   z-index: 5;
   background: var(--surf2);
-  border-radius: 20rpx;
-  overflow: hidden;
-  padding: 6rpx 0;
+  border-radius: 26rpx;
+  padding: 10rpx;
 }
 .cat-i {
-  position: relative;
   display: flex;
-  align-items: baseline;
-  /* 名称和数量紧挨着，不往两边撑开 */
-  justify-content: flex-start;
-  gap: 8rpx;
-  padding: 18rpx 6rpx 18rpx 12rpx;
-  font-size: 24rpx;
-  color: var(--ink2);
+  flex-direction: column;
+  align-items: center;
+  padding: 16rpx 6rpx 14rpx;
+  border-radius: 20rpx;
+  margin-bottom: 6rpx;
 }
+.cat-i:last-child { margin-bottom: 0; }
+/* 未选中＝彩色图标，选中＝白色图标（在实心主色块上） */
+.cat-i-ic { width: 54rpx; height: 54rpx; }
 .cat-i-nm {
-  flex: 0 1 auto;
-  min-width: 0;
+  margin-top: 8rpx;
+  font-size: 23rpx;
+  color: var(--ink2);
+  max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.cat-i-n { font-size: 19rpx; color: var(--ink3); flex: 0 0 auto; }
-.cat-i--on {
-  background: var(--surf);
-  color: var(--ink);
-  font-weight: 700;
-}
-.cat-i--on .cat-i-n { color: var(--pri-ink); }
-.cat-i--on::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 6rpx;
-  height: 34rpx;
-  margin-top: -17rpx;
-  background: var(--pri);
-  border-radius: 0 4rpx 4rpx 0;
-}
+.cat-i-n { font-size: 19rpx; color: var(--ink3); margin-top: 2rpx; }
+.cat-i--on { background: var(--cat-on-bg); }
+.cat-i--on .cat-i-nm { color: var(--cat-on-ink); font-weight: 700; }
+.cat-i--on .cat-i-n { color: var(--cat-on-ink); opacity: 0.74; }
 .cat-main {
   flex: 1;
   min-width: 0;

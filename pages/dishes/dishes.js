@@ -6,6 +6,48 @@ const { toast, confirm, parseTags, parseIngredients, parseSteps } = require('../
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
 const FOCUS_KEY = 'fm_focus_dish'
 
+/* ==================== 分类图标 ==================== */
+
+const CAT_ICON_EXACT = {
+  '全部': 'all', '热菜': 'hot', '炒菜': 'hot', '荤菜': 'hot',
+  '素菜': 'veg', '青菜': 'veg', '蔬菜': 'veg',
+  '汤羹': 'soup', '汤': 'soup',
+  '主食': 'staple', '饭面': 'staple',
+  '凉菜': 'cold', '凉拌': 'cold',
+  '水产': 'fish', '海鲜': 'fish'
+}
+
+/** 分类名 -> 图标键。精确命中优先，否则按关键词猜，最后兜底「盘子」 */
+function catIconKey(name) {
+  const n = String(name || '').trim()
+  if (!n) return 'all'
+  if (CAT_ICON_EXACT[n]) return CAT_ICON_EXACT[n]
+  if (/凉|拌/.test(n)) return 'cold'          // 要先判，否则「凉菜」会被 /菜/ 抢走
+  if (/热菜|炒|荤|肉|锅/.test(n)) return 'hot'
+  if (/汤|羹|煲/.test(n)) return 'soup'
+  if (/主食|饭|面|粥|馍|粉/.test(n)) return 'staple'
+  if (/水产|海鲜|鱼|虾|蟹|贝/.test(n)) return 'fish'
+  if (/素|青|蔬|菜/.test(n)) return 'veg'
+  return 'def'
+}
+
+/** 分类项图标表：未选中＝彩色版，选中＝白色版（压在实心色块上）。
+    写成完整路径而不是拼字符串，静态检查才校验得到图片是否真的存在。 */
+const CAT_ICONS = {
+  all: { icon: '/assets/icons/cat-all.png', iconW: '/assets/icons/cat-all-w.png' },
+  hot: { icon: '/assets/icons/cat-hot.png', iconW: '/assets/icons/cat-hot-w.png' },
+  veg: { icon: '/assets/icons/cat-veg.png', iconW: '/assets/icons/cat-veg-w.png' },
+  soup: { icon: '/assets/icons/cat-soup.png', iconW: '/assets/icons/cat-soup-w.png' },
+  staple: { icon: '/assets/icons/cat-staple.png', iconW: '/assets/icons/cat-staple-w.png' },
+  cold: { icon: '/assets/icons/cat-cold.png', iconW: '/assets/icons/cat-cold-w.png' },
+  fish: { icon: '/assets/icons/cat-fish.png', iconW: '/assets/icons/cat-fish-w.png' },
+  def: { icon: '/assets/icons/cat-def.png', iconW: '/assets/icons/cat-def-w.png' }
+}
+
+function catIcons(name) {
+  return CAT_ICONS[catIconKey(name)] || CAT_ICONS.def
+}
+
 function initialOf(name) {
   const s = String(name || '').trim()
   return s ? s.charAt(0) : '菜'
@@ -142,8 +184,8 @@ Page({
       count[c] = (count[c] || 0) + 1
     })
     const names = Array.from(new Set((this._cats || []).concat(Object.keys(count))))
-    const list = [{ name: '', label: '全部', count: all.length }]
-    names.forEach(n => list.push({ name: n, label: n, count: count[n] || 0 }))
+    const list = [Object.assign({ name: '', label: '全部', count: all.length }, catIcons(''))]
+    names.forEach(n => list.push(Object.assign({ name: n, label: n, count: count[n] || 0 }, catIcons(n))))
     this.setData({ catList: list })
   },
 

@@ -35,8 +35,9 @@
           data-name="{{item.name}}"
           bindtap="onPickCatSide"
         >
-          <text class="cat-i-nm">{{item.label}}</text>
-          <text class="cat-i-n">{{item.count}}</text>
+          <image class="cat-i-ic" src="{{activeKey === item.name ? item.iconW : item.icon}}"/>
+          <view class="cat-i-nm">{{item.label}}</view>
+          <view class="cat-i-n">{{item.count}}</view>
         </view>
       </view>
 
