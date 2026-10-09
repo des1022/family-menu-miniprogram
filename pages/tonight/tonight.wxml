@@ -61,13 +61,13 @@
         <view class="dash-s">让家里一起点，或者我帮你选一顿</view>
       </view>
 
-      <button class="big-btn big-btn--primary" open-type="share">
-        <view class="bb-ic"><image class="bb-img" src="{{ico.share}}"/></view>
+      <view class="big-btn big-btn--primary" bindtap="goDishes">
+        <view class="bb-ic"><image class="bb-img" src="{{ico.bowl}}"/></view>
         <view class="bb-tx">
-          <view class="bb-t">让家里点菜</view>
-          <view class="bb-s">分享到家庭群，每人点一道</view>
+          <view class="bb-t">去菜库挑菜</view>
+          <view class="bb-s">{{allCount ? allCount + ' 道菜，点一下加进今晚' : '先去菜库加几道菜'}}</view>
         </view>
-      </button>
+      </view>
 
       <view class="big-btn big-btn--ghost" bindtap="onPickForMe">
         <view class="bb-ic"><image class="bb-img" src="{{ico.dice}}"/></view>
@@ -151,10 +151,7 @@
 
   <!-- 底部固定操作 -->
   <view class="fixbar" wx:if="{{cards.length}}">
-    <view class="btn-row">
-      <button class="btn btn-ghost" open-type="share">分享</button>
-      <view class="btn btn-primary {{busy ? 'btn-disabled' : ''}}" bindtap="onConfirmTonight">确认这顿饭</view>
-    </view>
+    <view class="btn btn-primary btn-block {{busy ? 'btn-disabled' : ''}}" bindtap="onConfirmTonight">确认这顿饭</view>
   </view>
 
   <!-- 做法弹层 -->

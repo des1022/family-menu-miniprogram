@@ -307,19 +307,26 @@ Page({
         wx.shareFileMessage({
           filePath: filePath,
           fileName: '家庭菜单备份-' + db.todayStr() + '.json',
-          fail: () => toast('已保存到本地，可稍后再试分享')
+          // 未认证小程序转发文件也可能被拦 → 兜底复制到剪贴板，别让备份走到死路
+          fail: () => this.copyBackup(json)
         })
       } else {
-        wx.setClipboardData({
-          data: json,
-          success: () => toast('已复制备份内容到剪贴板')
-        })
+        this.copyBackup(json)
       }
     } catch (e) {
       wx.hideLoading()
       console.error('[family] 导出失败', e)
       toast('导出失败，请重试')
     }
+  },
+
+  /** 备份兜底：分享文件走不通时，直接把 JSON 复制到剪贴板（未认证小程序没有转发能力） */
+  copyBackup(json) {
+    wx.setClipboardData({
+      data: json,
+      success: () => toast('已复制备份内容，粘到文件里保存即可'),
+      fail: () => toast('备份内容已生成，但复制失败，请再试一次')
+    })
   },
 
   /** 数据连接自检：手机上没有控制台，出问题时靠这个定位是哪个集合的事 */

@@ -130,6 +130,9 @@ Page({
     })
     if (!wx.getStorageSync(config.KEYS.GUIDE_SHOWN)) this.setData({ guide: true })
 
+    // 未认证小程序用不了转发，先把入口藏掉，别让用户点到一个必然报错的按钮
+    if (typeof wx.hideShareMenu === 'function') wx.hideShareMenu()
+
     this._unsub = theme.subscribe(() => this.applyTheme())
   },
 
@@ -729,13 +732,10 @@ Page({
     this.setData({ whoShow: false })
   },
 
-  onShareAppMessage() {
-    const n = this.data.cards.length
-    return {
-      title: n ? '今晚我家吃这 ' + n + ' 道，你也来点一道？' : '今晚吃什么？来点一道',
-      path: '/pages/tonight/tonight'
-    }
-  },
+  // 分享：小程序未认证时微信会直接提示「由于小程序未完成认证，分享功能暂时无法使用」，
+  // 所以先把转发入口从界面上撤掉（页面按钮 + 右上角菜单），改用「生成今日海报」——
+  // 海报走 canvas + 保存相册，不依赖认证，家人照样能看到今晚这一桌。
+  // 以后完成认证要恢复分享：把下面的 hideShareMenu 去掉，并恢复 onShareAppMessage 即可。
 
   noop() {}
 })

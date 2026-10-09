@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>家庭菜单小程序 · 全面评估（2026-10-09）</title>
+<style>
+  :root{
+    --pri:#D9714E; --pri-d:#C4553A; --pri-l:#FBEEE8; --pri-ink:#A8462E;
+    --ok:#4F9367; --ok-l:#E9F3ED; --ok-ink:#3E7A55;
+    --acc:#E9A323; --acc-l:#FCF3DF; --acc-ink:#8E5F0C;
+    --danger:#C94A3F; --danger-l:#FBEAE8;
+    --bg:#FAF7F3; --surf:#FFFFFF; --surf2:#F4EFE9; --line:#EFE7DE;
+    --ink:#2A2521; --ink2:#8B8178; --ink3:#B7AEA4;
+    --sh:0 4px 14px rgba(170,130,100,.08);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:15px/1.72 -apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:960px; margin:0 auto; padding:48px 28px 90px}
+  header{border-bottom:3px solid var(--pri); padding-bottom:22px; margin-bottom:34px}
+  h1{font-size:30px; margin:0 0 8px; letter-spacing:-.3px}
+  .sub{color:var(--ink2); font-size:14px}
+  .sub b{color:var(--pri-ink)}
+  h2{
+    font-size:20px; margin:44px 0 16px; padding-left:12px;
+    border-left:5px solid var(--pri); line-height:1.3;
+  }
+  h3{font-size:16px; margin:26px 0 10px; color:var(--ink)}
+  p{margin:10px 0}
+  .card{background:var(--surf); border:1px solid var(--line); border-radius:16px; padding:20px 22px; box-shadow:var(--sh); margin:14px 0}
+  .lead{background:var(--pri-l); border:1px solid #F3DED3; border-radius:16px; padding:20px 22px; margin:0 0 8px}
+  .lead ol{margin:8px 0 0; padding-left:22px}
+  .lead li{margin:6px 0}
+  table{width:100%; border-collapse:collapse; margin:14px 0; font-size:14px; background:var(--surf); border-radius:12px; overflow:hidden}
+  th,td{padding:10px 12px; border-bottom:1px solid var(--line); text-align:left; vertical-align:top}
+  th{background:var(--surf2); font-weight:700; font-size:13px; color:var(--ink2); white-space:nowrap}
+  tr:last-child td{border-bottom:none}
+  td.n{white-space:nowrap; font-variant-numeric:tabular-nums}
+  .chip{display:inline-block; padding:2px 9px; border-radius:6px; font-size:12px; font-weight:700; white-space:nowrap}
+  .p0{background:var(--danger-l); color:var(--danger)}
+  .p1{background:var(--acc-l); color:var(--acc-ink)}
+  .p2{background:var(--surf2); color:var(--ink2)}
+  .done{background:var(--ok-l); color:var(--ok-ink)}
+  .issue{border-left:4px solid var(--line); padding:2px 0 2px 16px; margin:18px 0}
+  .issue.p0i{border-left-color:var(--danger)}
+  .issue.p1i{border-left-color:var(--acc)}
+  .issue.p2i{border-left-color:var(--ink3)}
+  .issue h3{margin:0 0 6px; display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .kv{font-size:14px; color:var(--ink2)}
+  .kv b{color:var(--ink); font-weight:600}
+  code{background:var(--surf2); padding:1px 6px; border-radius:5px; font-size:13px; font-family:ui-monospace,Menlo,Consolas,monospace}
+  .good{background:var(--ok-l); border-radius:12px; padding:14px 18px; margin:14px 0; font-size:14px}
+  .good b{color:var(--ok-ink)}
+  footer{margin-top:50px; padding-top:20px; border-top:1px solid var(--line); color:var(--ink3); font-size:13px}
+  ul{margin:8px 0; padding-left:22px} li{margin:5px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>家庭菜单小程序 · 全面评估</h1>
+  <div class="sub">2026-10-09 · 评估范围：<b>源码 49 个文件 / 7757 行</b> + 云端数据 + 部署链路 · 结论来自逐文件读码与云端取证（含 openid 比对）</div>
+</header>
+
+<div class="lead">
+  <b>一句话结论</b>
+  <ol>
+    <li><b>能不能用：能，而且核心闭环是通的</b>——点菜 → 采购 → 确认 → 日历留痕，家人共享也生效，这些我已经从云端数据端到端验证过。</li>
+    <li><b>最该补的不是功能，是「数据安全网」</b>：这个云环境被清空过一次，家里录的菜和历史全丢了，而目前只有手动导出这一条退路。<b>这是唯一一个可能让你真的损失东西的问题。</b></li>
+    <li><b>工程结构上欠了三笔账</b>：没有云函数、没有自动化测试、没有错误上报。都不影响今天使用，但会让你后面每一次改动都靠「真机撞」——这三天我们撞了四次（日历没日期、分类进不去、成员重复、跑错版本）。</li>
+  </ol>
+</div>
+
+<h2>01 · 现状快照</h2>
+<table>
+  <tr><th>维度</th><th>实情</th></tr>
+  <tr><td>产品定位</td><td>家庭内部用的「餐桌计划本」；4 Tab（今晚 / 菜库 / 日历 / 家庭）</td></tr>
+  <tr><td>已实现</td><td>点菜、每周日历（菜品色点）、采购清单（勾选/货架分组/常备折叠）、决策器（搭配·人数·口味）、做法步骤、海报、分类/菜品管理、家庭成员与口味忌口、数据备份导出、深浅双主题</td></tr>
+  <tr><td>代码量</td><td class="n">49 文件 / 7757 行（pages 5312 · utils 1698 · components 343）<br>最大单页 <code>tonight.js</code> 741 行</td></tr>
+  <tr><td>数据层</td><td class="n">5 个集合：dishes / records / categories / members / shopping<br><code>utils/db.js</code> 约 660 行，60+ 个数据函数，分页拉取 100 条/页（最多 20 页）</td></tr>
+  <tr><td>技术栈</td><td>原生小程序 + 微信云开发；<b>无第三方依赖、无自建后端</b></td></tr>
+  <tr><td>部署</td><td>全自动：GitHub Actions（<code>deploy-mp.yml</code> preview/upload + <code>init-env.yml</code> 建集合）；本机不需要开发者工具</td></tr>
+  <tr><td>质量门禁</td><td><code>tools/lint.py</code> 9 组静态检查（JS 语法 / JSON / 页面四件套 / WXML 无方法调用 / 事件处理函数 / 组件路径 / 图片资源 / 跳转注册 / wx:for 变量名）</td></tr>
+  <tr><td>账号状态</td><td>未认证；线上版本、审核版本均未提交 —— <b>走体验版路线</b>（家人需加入「体验成员」白名单）</td></tr>
+  <tr><td>集合权限</td><td class="n">自定义安全规则 <code>{"read": true, "write": true}</code>（5 个集合）</td></tr>
+</table>
+
+<h2>02 · 本次已处理</h2>
+<div class="card">
+  <p><span class="chip done">已改</span> <b>去掉转发入口</b>：未认证小程序用不了转发（点一下就提示「由于小程序未完成认证…」）。已移除「让家里点菜」卡片、已点态的「分享」按钮，并隐藏右上角转发菜单。<br>
+  <span class="kv">顺手发现：那张卡用的 <code>ico.share</code> 图标<b>在项目里根本不存在</b>，所以它的图标一直是空的。已替换为能用的主动作「<b>去菜库挑菜</b>」。</span></p>
+  <p><span class="chip done">已改</span> <b>备份导出的死路</b>：转发文件失败时，改为自动退回「复制到剪贴板」，不再只弹一句「稍后再试」。</p>
+  <p><span class="chip done">已改</span> <b>上传版本号</b>：CI 里版本号原来写死 <code>1.0.0</code>，后台每次看着都一样；改为 <code>1.0.&lt;构建号&gt;</code> 并在备注附 commit 短号。</p>
+</div>
+
+<h2>03 · 问题清单</h2>
+
+<h3>A · 数据与安全（最该先看）</h3>
+
+<div class="issue p0i">
+  <h3><span class="chip p0">P0</span> 没有自动备份，而环境已经被清空过一次</h3>
+  <p class="kv"><b>现象：</b>5 个集合曾被整体清空，旧数据（几十道菜 + 历史记录）没有找回来。现在唯一的退路是家庭页手动点「数据备份导出」。</p>
+  <p class="kv"><b>为什么是 P0：</b>功能坏了能修，数据丢了修不回来。而且导出的 JSON <b>目前没有「导入/恢复」功能</b>——备份出来，真要恢复还得手写代码。</p>
+  <p class="kv"><b>建议：</b>① GitHub Actions 加一条<b>每周定时任务</b>，用微信云开发 HTTP API 把 5 个集合导出成 JSON 提交到仓库（或存为 artifact）；② 补一个「从备份恢复」。两件事合起来，环境再被清空也能一键还原。</p>
+</div>
+
+<div class="issue p1i">
+  <h3><span class="chip p1">P1</span> 集合权限是「所有用户可读写」</h3>
+  <p class="kv"><b>现象：</b>5 个集合都是 <code>{"read": true, "write": true}</code>。这是当初为了「家人之间互相能改对方的数据」（买菜的人勾掉做饭的人加的采购项）才这么设的 —— 云开发的四种简易权限都做不到跨用户读写。</p>
+  <p class="kv"><b>风险边界：</b>目前能打开小程序的人 = 项目成员 + 体验成员白名单，所以实际暴露面有限，openid 也是随机的。<b>但一旦上线、或把体验二维码发给外人，就等于把整个家庭数据公开可写。</b></p>
+  <p class="kv"><b>建议：</b>短期可以不动（接受这个交换），但要在书面上写清这条边界；长期如果要做严肃一点，就要引入云函数把写操作收口，权限改回「仅创建者可读写」。</p>
+</div>
+
+<div class="issue p1i">
+  <h3><span class="chip p1">P1</span> 「我是谁」只记在本机，换客户端就得猜</h3>
+  <p class="kv"><b>现象：</b>成员身份靠本地缓存记；PC 微信那边<b>本地记忆不跨会话保留</b>，所以每次打开都得重新认一次（这两天已经因此产生过 4 条重复成员）。</p>
+  <p class="kv"><b>建议：</b>把身份记到云端：<code>members</code> 上存「认领过这条成员的 openid 列表」，客户端用云函数（或临时文档探测）拿到自己的 openid 就能自动认回。<b>一次投入，之后在任何设备都免打扰。</b></p>
+</div>
+
+<div class="issue p2i">
+  <h3><span class="chip p2">P2</span> 导出有、导入无</h3>
+  <p class="kv">备份文件目前只能留档，没有一键恢复入口。建议和 P0 一起做。</p>
+</div>
+
+<h3>B · 工程结构</h3>
+
+<div class="issue p1i">
+  <h3><span class="chip p1">P1</span> 没有云函数，等于放弃了服务端</h3>
+  <p class="kv"><b>现在做不到的事：</b>拿自己的 openid（身份问题）、写操作的服务端校验、定时任务（自动备份）、给家人发订阅消息提醒（「今晚吃红烧肉，谁来买菜」）。</p>
+  <p class="kv"><b>建议：</b>先只加一个很小的 <code>whoami</code> 云函数（返回 openid）——它顺手解决身份问题，也把云函数这条链路打通，后面想加什么都有地方放。</p>
+</div>
+
+<div class="issue p1i">
+  <h3><span class="chip p1">P1</span> 没有自动化测试，回归全靠真机</h3>
+  <p class="kv"><b>事实：</b>2600 行页面逻辑 + 1700 行 utils，只有 <code>lint.py</code> 的静态检查兜底（它已经立功了——日历那个 bug 就是它抓出来的同类）。数据层（<code>db.js</code> 60+ 函数）<b>一行测试都没有</b>。</p>
+  <p class="kv"><b>建议：</b>把纯逻辑函数（食材分组、做法解析、决策器挑选、日期计算）抽出来做 node 单测 —— 这些不依赖小程序环境，成本低、回报高。顺带在 CI 里加一步跑 lint + 单测，不合格不许部署。</p>
+</div>
+
+<div class="issue p1i">
+  <h3><span class="chip p1">P1</span> 全量拉取 + 常驻监听，数据涨上来会变慢</h3>
+  <p class="kv"><b>现象：</b><code>fetchAll</code> 每次打开把集合整表拉下来（100 条/页，最多 20 页 → <b>2000 条是硬上限，超出会静默截断</b>）；<code>getAllRecords</code> 为了算「最近常吃」在 4 个页面各拉一次全表历史；今晚页还常驻一个 <code>watch</code> 实时监听。</p>
+  <p class="kv"><b>建议：</b>把「记录统计」在写入时增量维护（记录一条就更新菜品上的次数/最近日期），页面改成按需查；分页上限那 2000 条要么明确报错、要么真的分完。</p>
+</div>
+
+<div class="issue p2i">
+  <h3><span class="chip p2">P2</span> 单页过大、无错误上报</h3>
+  <p class="kv"><code>tonight.js</code> 741 行，一个文件里塞了「未点/已点 + 决策器 + 做法 + 环境引导 + 身份认领」五套状态。手机上出问题只能靠用户描述，没有错误收集（只有「数据连接自检」这一个诊断入口）。</p>
+</div>
+
+<h3>C · 体验与产品</h3>
+
+<div class="issue p1i">
+  <h3><span class="chip p1">P1</span> 分享能力被认证卡住，「让家人点菜」这条路没了</h3>
+  <p class="kv">未认证 → 转发、分享到群都不可用。所以「让家里每人点一道」这个初衷，现在只能靠：<b>把体验版二维码发到家庭群</b>（一次性）+ 家人自己从「最近使用」进。海报能保存到相册再发群，是目前唯一顺畅的分享路径。</p>
+  <p class="kv"><b>建议：</b>把「发家庭群」这条路径做扎实（例如首页给一个「怎么让家人进来」的说明，而不是靠口头讲）；要真正恢复转发，就得走小程序认证。</p>
+</div>
+
+<div class="issue p1i">
+  <h3><span class="chip p1">P1</span> 家里人年纪大的话，字偏小</h3>
+  <p class="kv">正文字号 24–30rpx（约 12–15px），对长辈偏小。你之前把「大字号模式」列为暂缓，但它是这个产品最直接的可用性提升。</p>
+</div>
+
+<div class="issue p2i">
+  <h3><span class="chip p2">P2</span> 没有菜图、日历只能看不能改</h3>
+  <p class="kv">菜品没图时是色块 + 首字占位，不难看但缺辨识度；日历只能浏览，想撤掉某天的菜得回今晚页。另外「忌口冲突提示 / 点菜留言」你已明确暂缓。</p>
+</div>
+
+<h2>04 · 建议的下一步（按性价比排）</h2>
+<table>
+  <tr><th>#</th><th>做什么</th><th>为什么排在前面</th><th>量级</th></tr>
+  <tr><td class="n">1</td><td><b>自动备份 + 一键恢复</b></td><td>唯一能造成真实损失的问题；做完之后「环境被清空」这类事故就彻底不怕了</td><td>小～中</td></tr>
+  <tr><td class="n">2</td><td><b>身份落库</b>（openid 记到 members）</td><td>消掉「每次开都问一次」；顺手把云函数链路打通，为后面铺路</td><td>小</td></tr>
+  <tr><td class="n">3</td><td><b>CI 加质量门禁</b>（lint + 纯逻辑单测）</td><td>成本极低；这三天四次真机撞坑，一半本来是能被拦住的</td><td>小</td></tr>
+  <tr><td class="n">4</td><td><b>大字号模式</b></td><td>对长辈是刚需，改动集中在变量层</td><td>小</td></tr>
+  <tr><td class="n">5</td><td><b>「怎么让家人进来」引导</b></td><td>补上被封掉的分享路径，减少你每次口述</td><td>小</td></tr>
+  <tr><td class="n">6</td><td>数据层瘦身（统计改增量、分页上限处理）</td><td>现在不痛，但使用满一年后会痛</td><td>中</td></tr>
+  <tr><td class="n">7</td><td>小程序认证</td><td>恢复转发、支持上线；属于「要不要长期用」的决定，不是技术问题</td><td>流程性</td></tr>
+</table>
+
+<h2>05 · 值得肯定的地方</h2>
+<div class="good">
+  <b>这套东西的底子比我预想的好。</b>原生小程序 + 云开发，<b>零第三方依赖、零自建后端</b>，任何一台电脑 clone 下来就能改；部署全自动（本机连开发者工具都不用装）；图标是自己渲染出来的、深浅两套主题一次做对；数据层把 60 多个操作收在一个 <code>db.js</code> 里，换页面不会牵一发动全身。<br><br>
+  真正的问题不在这些，而在<b>「出错了你看不见」</b>——没测试、没上报、没备份。把第 1、3 两条做完，这个项目的可靠度会跳一个台阶。
+</div>
+
+<footer>
+  评估依据：源码逐文件通读（pages / utils / components / tools / .github）、云端 5 个集合实际数据比对（含 <code>_openid</code> 与创建时间取证）、近三天真机反馈与修复记录。<br>
+  涉及改动的部分已落地：转发入口移除、备份兜底、CI 版本号 —— 详见 <code>docs/dev-notes/2026-10-08.md</code>。
+</footer>
+
+</div>
+</body>
+</html>
