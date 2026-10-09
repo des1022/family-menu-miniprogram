@@ -55,10 +55,13 @@
     <block wx:if="{{env.ready && !cards.length}}">
       <view class="hero-q">今晚<text class="hero-q-hl">吃什么？</text></view>
 
-      <view class="dash">
-        <image class="dash-ico" src="{{ico.bowl}}"/>
-        <view class="dash-t">今晚还没点菜</view>
-        <view class="dash-s">让家里一起点，或者我帮你选一顿</view>
+      <!-- 一二和布布的海报式空态：上方奶油文案区 + 下方完整插画（不裁人物、文字不压脸） -->
+      <view class="hero">
+        <view class="hero-dim"></view>
+        <view class="hero-tx">
+          <view class="hero-t">今晚还没点菜</view>
+          <view class="hero-s">让家里一起点，或者我帮你选一顿</view>
+        </view>
       </view>
 
       <view class="big-btn big-btn--primary" bindtap="goDishes">

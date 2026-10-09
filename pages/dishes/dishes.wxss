@@ -227,7 +227,11 @@
   margin-bottom: 8rpx;
 }
 .cat-side {
-  width: 132rpx;
+  /* 不写死宽度：宽度由最长的「分类名 + 数量」自己决定，中间不留空；
+     万一有超长分类名，最多到这个上限，名字省略号 */
+  flex: 0 0 auto;
+  min-width: 96rpx;
+  max-width: 176rpx;
   flex: 0 0 auto;
   /* 页面滚动时分类列吸附在顶部（sticky 的祖先没有 overflow:hidden，安全） */
   position: sticky;
@@ -241,15 +245,16 @@
 .cat-i {
   position: relative;
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 6rpx;
-  padding: 18rpx 8rpx 18rpx 14rpx;
+  align-items: baseline;
+  /* 名称和数量紧挨着，不往两边撑开 */
+  justify-content: flex-start;
+  gap: 8rpx;
+  padding: 18rpx 6rpx 18rpx 12rpx;
   font-size: 24rpx;
   color: var(--ink2);
 }
 .cat-i-nm {
-  flex: 1;
+  flex: 0 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -42,16 +42,36 @@
 }
 .hero-q-hl { color: var(--pri-ink); }
 
-.dash {
-  background: var(--surf);
-  border: 2rpx dashed var(--line);
+/* ---------- 空态：一二 & 布布（还没点菜时的画面） ---------- */
+/* 卡片 = 上方奶油文案区 + 下方完整插画：背景图按宽度铺满、贴底对齐，
+   所以插画不会被裁掉，文字也不会压在人物脸上。 */
+.hero {
+  position: relative;
+  height: 560rpx;
+  border: 2rpx solid var(--line);
   border-radius: var(--r-card);
-  padding: 44rpx 28rpx;
-  text-align: center;
+  overflow: hidden;
+  margin-top: 8rpx;
+  background-color: var(--surf);
+  background-image: url('/assets/hero/couple.jpg');
+  background-size: 100% auto;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  box-shadow: var(--sh);
 }
-.dash-ico { width: 96rpx; height: 96rpx; opacity: 0.55; }
-.dash-t { font-size: 30rpx; font-weight: 700; margin-top: 12rpx; }
-.dash-s { font-size: 25rpx; color: var(--ink2); margin-top: 8rpx; }
+/* 深色主题下压一层墨绿，别让浅蓝插画扎眼（浅色时是透明的） */
+.hero-dim {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  background: var(--hero-dim);
+}
+.hero-tx {
+  position: relative;
+  z-index: 2;
+  padding: 40rpx 30rpx 0;
+}
+.hero-t { font-size: 38rpx; font-weight: 800; letter-spacing: -0.01em; }
+.hero-s { font-size: 25rpx; color: var(--ink2); margin-top: 10rpx; }
 
 /* 大动作按钮 */
 .big-btn {
