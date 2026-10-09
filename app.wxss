@@ -41,7 +41,7 @@ page {
   --danger: #C94A3F;
 
   /* 首页插画（今晚页空态）：上方渐隐 + 整体压制，深浅两套不同 */
-  --hero-dim: rgba(250, 247, 243, 0);
+  --hero-veil: linear-gradient(180deg, rgba(250, 247, 243, 0) 0%, rgba(250, 247, 243, 0.1) 30%, rgba(250, 247, 243, 0.62) 48%, rgba(250, 247, 243, 0.78) 60%, rgba(250, 247, 243, 0.78) 100%);
 
   /* 形状 */
   --r-card: 28rpx;
@@ -89,7 +89,7 @@ page {
     --owner-bg: #FFFFFF;
     --owner-ink: #1B2320;
     --danger: #E08A7E;
-    --hero-dim: rgba(20, 40, 34, 0.34);
+    --hero-veil: linear-gradient(180deg, rgba(46, 100, 89, 0.16) 0%, rgba(46, 100, 89, 0.3) 30%, rgba(46, 100, 89, 0.74) 48%, rgba(46, 100, 89, 0.88) 60%, rgba(46, 100, 89, 0.88) 100%);
   }
 }
 
@@ -106,7 +106,7 @@ page {
   --sh-lg: 0 16rpx 44rpx rgba(90, 60, 40, 0.16);
   --owner-bg: rgba(255, 255, 255, 0.94); --owner-ink: #1F2329;
   --danger: #C94A3F;
-  --hero-dim: rgba(250, 247, 243, 0);
+  --hero-veil: linear-gradient(180deg, rgba(250, 247, 243, 0) 0%, rgba(250, 247, 243, 0.1) 30%, rgba(250, 247, 243, 0.62) 48%, rgba(250, 247, 243, 0.78) 60%, rgba(250, 247, 243, 0.78) 100%);
 }
 .theme-dark {
   --pri: #FFFFFF; --pri-d: #E6F1ED; --pri-l: rgba(255, 255, 255, 0.16); --pri-ink: #FFFFFF;
@@ -120,7 +120,7 @@ page {
   --sh-lg: 0 16rpx 44rpx rgba(0, 20, 16, 0.34);
   --owner-bg: #FFFFFF; --owner-ink: #1B2320;
   --danger: #E08A7E;
-  --hero-dim: rgba(20, 40, 34, 0.34);
+  --hero-veil: linear-gradient(180deg, rgba(46, 100, 89, 0.16) 0%, rgba(46, 100, 89, 0.3) 30%, rgba(46, 100, 89, 0.74) 48%, rgba(46, 100, 89, 0.88) 60%, rgba(46, 100, 89, 0.88) 100%);
 }
 
 view, text, input, textarea, button, picker, scroll-view {

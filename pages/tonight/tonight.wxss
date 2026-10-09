@@ -42,36 +42,38 @@
 }
 .hero-q-hl { color: var(--pri-ink); }
 
-/* ---------- 空态：一二 & 布布（还没点菜时的画面） ---------- */
-/* 卡片 = 上方奶油文案区 + 下方完整插画：背景图按宽度铺满、贴底对齐，
-   所以插画不会被裁掉，文字也不会压在人物脸上。 */
+/* ---------- 空态：一二 & 布布插画垫底 ---------- */
+/* 卡片尺寸与文字位置与原来的「今晚还没点菜」完全一致，只是把底色换成插画。
+   注意：插画必须用 <image> 组件 —— 小程序 WXSS 的 background-image
+   不支持本地路径（写了也会被静默忽略，表现就是「图片没出来」）。 */
 .hero {
   position: relative;
-  height: 560rpx;
+  overflow: hidden;
   border: 2rpx solid var(--line);
   border-radius: var(--r-card);
-  overflow: hidden;
-  margin-top: 8rpx;
-  background-color: var(--surf);
-  background-image: url('/assets/hero/couple.jpg');
-  background-size: 100% auto;
-  background-position: center bottom;
-  background-repeat: no-repeat;
+  /* 上内边距 152rpx = 原来「碗图标 96 + 间距 12 + 上内边距 44」，
+     这样标题仍落在原来的位置；下方 44rpx 与原内边距一致。 */
+  padding: 152rpx 28rpx 44rpx;
+  text-align: center;
+  background: var(--surf);
   box-shadow: var(--sh);
 }
-/* 深色主题下压一层墨绿，别让浅蓝插画扎眼（浅色时是透明的） */
-.hero-dim {
+.hero-bg {
   position: absolute;
-  left: 0; right: 0; top: 0; bottom: 0;
-  background: var(--hero-dim);
+  left: 0; top: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
 }
-.hero-tx {
-  position: relative;
-  z-index: 2;
-  padding: 40rpx 30rpx 0;
+/* 文字压图时压一层薄雾，保证两行字在任何颜色上都读得清 */
+.hero-veil {
+  position: absolute;
+  left: 0; top: 0; right: 0; bottom: 0;
+  background: var(--hero-veil);
+  z-index: 1;
 }
-.hero-t { font-size: 38rpx; font-weight: 800; letter-spacing: -0.01em; }
-.hero-s { font-size: 25rpx; color: var(--ink2); margin-top: 10rpx; }
+.hero-t, .hero-s { position: relative; z-index: 2; }
+.hero-t { font-size: 30rpx; font-weight: 700; }
+.hero-s { font-size: 25rpx; color: var(--ink2); margin-top: 8rpx; }
 
 /* 大动作按钮 */
 .big-btn {
