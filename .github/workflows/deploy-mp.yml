@@ -25,6 +25,9 @@ jobs:
         env:
           MP_APPID: ${{ secrets.MP_APPID }}
           MP_KEY_PATH: ${{ github.workspace }}/private.key
+          # 版本号带构建号 + 备注带 commit 短号：后台「版本管理」里能一眼认出哪次是哪次
+          MP_BUILD: ${{ github.run_number }}
+          MP_SHA: ${{ github.sha }}
         run: node scripts/upload.js "${{ inputs.mode }}"
       - name: Upload QR artifact
         if: inputs.mode == 'preview'

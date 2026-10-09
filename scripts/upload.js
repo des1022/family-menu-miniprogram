@@ -56,15 +56,21 @@ async function main() {
     return
   }
 
+  // 版本号：优先用 CI 传进来的构建号（形如 1.0.18），避免每次都叫 1.0.0 分不清哪次是哪次
+  const buildNo = process.env.MP_BUILD || ''
+  const version = /^\d+$/.test(buildNo) ? '1.0.' + buildNo : '1.0.0'
+  const sha = (process.env.MP_SHA || '').slice(0, 7)
+  const desc = '家庭菜单 ' + new Date().toLocaleString('zh-CN') + (sha ? ' · ' + sha : '')
+
   await ci.upload({
     project: project,
-    version: '1.0.0',
-    desc: '家庭菜单 ' + new Date().toLocaleString('zh-CN'),
+    version: version,
+    desc: desc,
     setting: setting,
     robot: 1,
     onProgressUpdate: () => {}
   })
-  console.log('UPLOAD_OK 版本 1.0.0 已上传，请到 mp 后台「版本管理」设为体验版')
+  console.log('UPLOAD_OK 版本 ' + version + ' 已上传，请到 mp 后台「版本管理」设为体验版')
 }
 
 main().catch(err => {
