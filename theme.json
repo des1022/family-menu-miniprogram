@@ -7,7 +7,15 @@
     "tabBgColor": "#FFFFFF",
     "tabBorderStyle": "white",
     "tabFontColor": "#8B8178",
-    "tabSelectedColor": "#D9714E"
+    "tabSelectedColor": "#D9714E",
+    "tabIconTonight": "assets/icons/tab-tonight.png",
+    "tabIconTonightOn": "assets/icons/tab-tonight-p.png",
+    "tabIconDishes": "assets/icons/tab-dishes.png",
+    "tabIconDishesOn": "assets/icons/tab-dishes-p.png",
+    "tabIconCalendar": "assets/icons/tab-calendar.png",
+    "tabIconCalendarOn": "assets/icons/tab-calendar-p.png",
+    "tabIconFamily": "assets/icons/tab-family.png",
+    "tabIconFamilyOn": "assets/icons/tab-family-p.png"
   },
   "dark": {
     "navBgColor": "#37776A",
@@ -17,6 +25,14 @@
     "tabBgColor": "#2F6A5C",
     "tabBorderStyle": "black",
     "tabFontColor": "#A8C7BE",
-    "tabSelectedColor": "#FFFFFF"
+    "tabSelectedColor": "#FFFFFF",
+    "tabIconTonight": "assets/icons/tab-tonight-d.png",
+    "tabIconTonightOn": "assets/icons/tab-tonight-pd.png",
+    "tabIconDishes": "assets/icons/tab-dishes-d.png",
+    "tabIconDishesOn": "assets/icons/tab-dishes-pd.png",
+    "tabIconCalendar": "assets/icons/tab-calendar-d.png",
+    "tabIconCalendarOn": "assets/icons/tab-calendar-pd.png",
+    "tabIconFamily": "assets/icons/tab-family-d.png",
+    "tabIconFamilyOn": "assets/icons/tab-family-pd.png"
   }
 }

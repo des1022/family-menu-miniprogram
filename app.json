@@ -25,19 +25,27 @@
     "list": [
       {
         "pagePath": "pages/tonight/tonight",
-        "text": "今晚"
+        "text": "今晚",
+        "iconPath": "@tabIconTonight",
+        "selectedIconPath": "@tabIconTonightOn"
       },
       {
         "pagePath": "pages/dishes/dishes",
-        "text": "菜库"
+        "text": "菜库",
+        "iconPath": "@tabIconDishes",
+        "selectedIconPath": "@tabIconDishesOn"
       },
       {
         "pagePath": "pages/calendar/calendar",
-        "text": "日历"
+        "text": "日历",
+        "iconPath": "@tabIconCalendar",
+        "selectedIconPath": "@tabIconCalendarOn"
       },
       {
         "pagePath": "pages/family/family",
-        "text": "家庭"
+        "text": "家庭",
+        "iconPath": "@tabIconFamily",
+        "selectedIconPath": "@tabIconFamilyOn"
       }
     ]
   },

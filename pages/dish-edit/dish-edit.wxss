@@ -15,7 +15,7 @@
 /* ===== 图片 ===== */
 .img-wrap {
   position: relative;
-  margin: 0 32rpx 32rpx;
+  margin: 0 32rpx 20rpx;
   height: 340rpx;
   border-radius: 16rpx;
   overflow: hidden;
@@ -50,10 +50,12 @@
 }
 
 .img-note {
+  /* 卡片本身没有内边距（子元素各自留），这里必须自己补左右，
+     否则说明文字会顶到屏幕边缘、溢出卡片圆角（2026-10-09 真机反馈） */
+  margin: 0 32rpx 28rpx;
   font-size: 24rpx;
   color: var(--ink3);
   line-height: 1.65;
-  margin-top: 18rpx;
 }
 
 .img-mask {
