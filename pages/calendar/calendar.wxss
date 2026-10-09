@@ -206,3 +206,78 @@
 }
 
 .arr-actions { flex: 0 0 auto; margin-top: 22rpx; }
+
+/* ---------- 接下来的安排 ---------- */
+.up-i {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  padding: 22rpx 4rpx;
+  border-bottom: 2rpx solid var(--line);
+}
+.up-i:last-child { border-bottom: none; }
+.up-l { flex: 1; min-width: 0; }
+.up-d { font-size: 27rpx; font-weight: 700; }
+.up-n { font-size: 24rpx; color: var(--ink2); margin-top: 6rpx; line-height: 1.5; }
+.up-arw { color: var(--ink3); font-size: 34rpx; line-height: 1; flex: 0 0 auto; }
+.up-tip { font-size: 22rpx; color: var(--ink3); margin: -4rpx 0 8rpx 6rpx; }
+
+/* ---------- 菜品详情（叠在安排弹层之上） ---------- */
+.sheet-mask--top { z-index: 130; }
+.ad-scroll {
+  flex: 1;
+  min-height: 0;
+  max-height: 58vh;
+}
+.ad-hero {
+  width: 100%;
+  height: 260rpx;
+  border-radius: 26rpx;
+  font-size: 64rpx;
+  margin-bottom: 20rpx;
+}
+.ad-tags { display: flex; gap: 10rpx; flex-wrap: wrap; margin-bottom: 22rpx; }
+.ad-sec { margin-bottom: 26rpx; }
+.ad-h {
+  font-size: 23rpx;
+  font-weight: 700;
+  color: var(--ink2);
+  letter-spacing: 0.08em;
+  margin-bottom: 14rpx;
+}
+.ad-h-n { font-weight: 600; color: var(--ink3); margin-left: 8rpx; letter-spacing: 0; }
+.ad-ing { display: flex; flex-wrap: wrap; gap: 12rpx; }
+.ad-ing-i {
+  font-size: 24rpx;
+  font-weight: 600;
+  background: var(--ok-l);
+  color: var(--ok-ink);
+  border-radius: 999rpx;
+  padding: 8rpx 20rpx;
+}
+.ad-tx { font-size: 27rpx; color: var(--ink2); line-height: 1.6; }
+.ad-steps {
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: 22rpx;
+  padding: 6rpx 24rpx;
+}
+.ad-step {
+  display: flex;
+  gap: 18rpx;
+  padding: 18rpx 0;
+  border-bottom: 2rpx solid var(--line);
+}
+.ad-step:last-child { border-bottom: none; }
+.ad-step-n {
+  flex: 0 0 auto;
+  width: 40rpx; height: 40rpx;
+  border-radius: 50%;
+  background: var(--pri-l);
+  color: var(--pri-ink);
+  font-size: 23rpx;
+  font-weight: 700;
+  line-height: 40rpx;
+  text-align: center;
+}
+.ad-step-t { flex: 1; font-size: 28rpx; line-height: 1.62; color: var(--ink); }

@@ -15,14 +15,6 @@
       <view class="calh-a" bindtap="nextMonth">›</view>
     </view>
 
-    <!-- 月概览 -->
-    <view class="calstat" wx:if="{{mealCount}}">
-      <view class="calstat-n">{{mealCount}}</view>
-      <view class="calstat-tx">
-        顿在家吃<text class="calstat-hl" wx:if="{{topName}}"> · 最爱 {{topName}}（{{topNum}} 次）</text>
-      </view>
-    </view>
-
     <!-- 星期表头 -->
     <view class="calgrid">
       <view class="wd" wx:for="{{['一','二','三','四','五','六','日']}}" wx:key="*this">{{item}}</view>
@@ -54,9 +46,31 @@
     </view>
     <view class="cal-hint">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</view>
 
+    <!-- 接下来的安排（提前排好的菜） -->
+    <block wx:if="{{upcoming.length}}">
+      <view class="sec-h"><text class="sec-t">接下来的安排</text><text class="sec-m">{{upcoming.length}} 天</text></view>
+      <view class="card">
+        <view class="up-i" wx:for="{{upcoming}}" wx:key="date" data-date="{{item.date}}" bindtap="onUpTap">
+          <view class="up-l">
+            <view class="up-d">{{item.label}}</view>
+            <view class="up-n">{{item.names}}</view>
+          </view>
+          <text class="up-arw">›</text>
+        </view>
+      </view>
+      <view class="up-tip">点一行就能继续加菜或撤菜</view>
+    </block>
+
     <!-- 本月回顾 -->
     <block wx:if="{{mealCount}}">
       <view class="sec-h"><text class="sec-t">本月回顾</text></view>
+
+      <view class="calstat">
+        <view class="calstat-n">{{mealCount}}</view>
+        <view class="calstat-tx">
+          顿在家吃<text class="calstat-hl" wx:if="{{topName}}"> · 最爱 {{topName}}（{{topNum}} 次）</text>
+        </view>
+      </view>
 
       <view class="card card-pad">
         <view class="rv-t">最常吃的三道</view>
@@ -101,7 +115,7 @@
       <view class="sheet-hd">
         <view>
           <view class="sheet-t">{{arr.title}}</view>
-          <view class="t-micro">已排 {{arr.picked.length}} 道 · 点右边的 ＋ 加进这一天</view>
+          <view class="t-micro">已排 {{arr.picked.length}} 道 · 点菜名看做法，点 ＋ 加进这一天</view>
         </view>
         <view class="sheet-x" bindtap="closeArr">✕</view>
       </view>
@@ -133,13 +147,13 @@
       </view>
 
       <scroll-view class="dt-list" scroll-y>
-        <view class="dt-i" wx:for="{{arr.items}}" wx:key="_id" data-id="{{item._id}}" bindtap="onPlan">
+        <view class="dt-i" wx:for="{{arr.items}}" wx:key="_id" data-id="{{item._id}}" bindtap="onOpenDish">
           <view class="dt-thumb img-ph {{item.ph}}">{{item.initial}}</view>
           <view class="dt-main">
             <view class="dt-nm">{{item.name}}</view>
             <view class="dt-sub">{{item.sub}}</view>
           </view>
-          <view class="ar-btn {{item.on ? 'ar-btn--on' : ''}}">{{item.on ? '✓' : '＋'}}</view>
+          <view class="ar-btn {{item.on ? 'ar-btn--on' : ''}}" catchtap="onPlan" data-id="{{item._id}}">{{item.on ? '✓' : '＋'}}</view>
         </view>
         <view class="ar-empty" wx:if="{{!arr.items.length}}">
           {{arr.keyword ? '没找到这道菜' : '这个筛选下没有菜'}}
@@ -149,6 +163,53 @@
       <view class="btn-row arr-actions">
         <view class="btn btn-ghost" wx:if="{{arr.canReuse}}" bindtap="onReuse">加进今晚</view>
         <view class="btn btn-primary" bindtap="closeArr">完成</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 菜品详情（在安排弹层之上，和菜库里点菜名看到的一样） -->
+  <view class="sheet-mask sheet-mask--top" wx:if="{{arrDetail}}" bindtap="closeDish" catchtouchmove="noop">
+    <view class="sheet" catchtap="noop">
+      <view class="sheet-grab"></view>
+
+      <view class="sheet-hd">
+        <view>
+          <view class="sheet-t">{{arrDetail.name}}</view>
+          <view class="t-micro">{{arrDetail.meta}}</view>
+        </view>
+        <view class="sheet-x" bindtap="closeDish">✕</view>
+      </view>
+
+      <scroll-view class="ad-scroll" scroll-y>
+        <image class="ad-hero dish-dim" wx:if="{{arrDetail.image}}" src="{{arrDetail.image}}" mode="aspectFill"/>
+        <view class="ad-hero img-ph {{arrDetail.ph}}" wx:else>{{arrDetail.initial}}</view>
+        <view class="ad-tags">
+          <text class="tag" wx:if="{{arrDetail.category}}">{{arrDetail.category}}</text>
+          <text class="tag tag--pri" wx:for="{{arrDetail.tagList}}" wx:key="*this">{{item}}</text>
+        </view>
+        <view class="ad-sec" wx:if="{{arrDetail.ingList.length}}">
+          <view class="ad-h">食材</view>
+          <view class="ad-ing">
+            <text class="ad-ing-i" wx:for="{{arrDetail.ingList}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+        <view class="ad-sec" wx:if="{{arrDetail.desc}}">
+          <view class="ad-h">备注</view>
+          <view class="ad-tx">{{arrDetail.desc}}</view>
+        </view>
+        <view class="ad-sec" wx:if="{{arrDetail.stepList.length}}">
+          <view class="ad-h">做法 <text class="ad-h-n">{{arrDetail.stepList.length}} 步</text></view>
+          <view class="ad-steps">
+            <view class="ad-step" wx:for="{{arrDetail.stepList}}" wx:key="index">
+              <text class="ad-step-n">{{index + 1}}</text>
+              <text class="ad-step-t">{{item}}</text>
+            </view>
+          </view>
+        </view>
+      </scroll-view>
+
+      <view class="btn btn-block {{arrDetail.on ? 'btn-plain' : 'btn-primary'}}" bindtap="onDetailToggle">
+        {{arrDetail.on ? '从这一天撤掉' : '加进这一天'}}
       </view>
     </view>
   </view>

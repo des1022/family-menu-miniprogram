@@ -227,7 +227,7 @@
   margin-bottom: 8rpx;
 }
 .cat-side {
-  width: 164rpx;
+  width: 132rpx;
   flex: 0 0 auto;
   /* 页面滚动时分类列吸附在顶部（sticky 的祖先没有 overflow:hidden，安全） */
   position: sticky;
@@ -244,8 +244,8 @@
   align-items: center;
   justify-content: space-between;
   gap: 6rpx;
-  padding: 20rpx 12rpx 20rpx 18rpx;
-  font-size: 25rpx;
+  padding: 18rpx 8rpx 18rpx 14rpx;
+  font-size: 24rpx;
   color: var(--ink2);
 }
 .cat-i-nm {
@@ -255,7 +255,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.cat-i-n { font-size: 20rpx; color: var(--ink3); flex: 0 0 auto; }
+.cat-i-n { font-size: 19rpx; color: var(--ink3); flex: 0 0 auto; }
 .cat-i--on {
   background: var(--surf);
   color: var(--ink);
@@ -276,5 +276,5 @@
 .cat-main {
   flex: 1;
   min-width: 0;
-  padding-left: 20rpx;
+  padding-left: 16rpx;
 }

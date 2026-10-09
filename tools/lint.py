@@ -176,7 +176,11 @@ for p in files("*.wxml"):
     for m in FOR_RE.finditer(text):
         if "wx:for-item" in m.group(0):
             continue
-        body = text[m.end():m.end() + 600]
+        body = text[m.end():m.end() + 900]
+        # 窗口可能正好把一个 {{...}} 截断（会切出半截变量名，造成误报）→ 丢掉未闭合的尾巴
+        cut = body.rfind("{{")
+        if cut > -1 and body.find("}}", cut) == -1:
+            body = body[:cut]
         unknown = sorted(set(ROOT_RE.findall(body)) - known)
         if unknown:
             err(f"wx:for 循环变量名可疑 {p.relative_to(ROOT)}: 正文用到 {unknown}，"

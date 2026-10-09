@@ -1,7 +1,7 @@
 const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
-const { toast, confirm, pad } = require('../../utils/util.js')
+const { toast, confirm, pad, parseTags, parseIngredients, parseSteps } = require('../../utils/util.js')
 
 const WEEK = ['一', '二', '三', '四', '五', '六', '日']
 
@@ -54,6 +54,8 @@ Page({
     today: '',
     cells: [],
     arr: null,
+    arrDetail: null,
+    upcoming: [],
     reuseLoading: false,
     loading: true,
     mealCount: 0,
@@ -104,6 +106,7 @@ Page({
       this._byDate = byDate
       this._lastMap = lastMap
       this.buildCells()
+      this.buildUpcoming()
       await this.ensureDishes()
       this.buildReview()
     } catch (e) {
@@ -230,6 +233,25 @@ Page({
       this._dishMap = {}
       this._dishList = []
     })
+  },
+
+  /** 接下来的安排：未来日期已经排好的菜（几号 · 什么菜） */
+  buildUpcoming() {
+    const today = db.todayStr()
+    const byDate = this._byDate || {}
+    const dates = Object.keys(byDate).filter(d => d > today).sort()
+    this.setData({
+      upcoming: dates.slice(0, 10).map(d => ({
+        date: d,
+        label: this.dateCN(d),
+        names: (byDate[d] || []).map(r => r.dishName || '这道菜').join('、')
+      }))
+    })
+  },
+
+  onUpTap(e) {
+    const date = e.currentTarget.dataset.date
+    if (date) this.openArrange(date)
   },
 
   /* ==================== 某天的一桌菜 / 提前安排 ==================== */
@@ -376,12 +398,48 @@ Page({
     }
   },
 
+  /** 点菜名 → 看这道菜的详情（做法 / 食材），和菜库里看到的一样 */
+  onOpenDish(e) {
+    const id = e.currentTarget.dataset.id
+    const dish = (this._dishList || []).filter(d => d._id === id)[0]
+    if (!dish) return
+    const picked = this._picked || {}
+    this.setData({
+      arrDetail: {
+        _id: dish._id,
+        name: dish.name,
+        image: dish.image || '',
+        initial: initialOf(dish.name),
+        ph: phIdx(dish._id),
+        category: dish.category || '',
+        meta: (dish.category ? dish.category + ' · ' : '') + lastText(this._lastMap || {}, dish._id),
+        tagList: parseTags(dish.tags).slice(0, 4),
+        ingList: parseIngredients(dish.ingredients).slice(0, 12),
+        stepList: parseSteps(dish.steps),
+        desc: dish.desc || '',
+        on: !!picked[dish._id]
+      }
+    })
+  },
+
+  closeDish() {
+    this.setData({ arrDetail: null })
+  },
+
+  async onDetailToggle() {
+    const d = this.data.arrDetail
+    if (!d) return
+    const dish = (this._dishList || []).filter(x => x._id === d._id)[0] || { _id: d._id, name: d.name }
+    await this.togglePlan(dish)
+    this.setData({ 'arrDetail.on': !!(this._picked || {})[d._id] })
+  },
+
   closeArr() {
     const dirty = this._arrDirty
     this._arrDate = null
     this._arrRecords = []
     this._arrDirty = false
-    this.setData({ arr: null })
+    this.setData({ arr: null, arrDetail: null })
     if (dirty) this.loadRecords()
   },
 
