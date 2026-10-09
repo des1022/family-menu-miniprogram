@@ -3,7 +3,7 @@
 
     <view class="hd">
       <view>
-        <view class="t-h1">家庭</view>
+        <view class="t-h1">家庭<text class="ver">v{{ver}}</text></view>
         <view class="t-sub">{{members.length}} 位成员 · 今晚 {{eatCount}} 人在家吃</view>
       </view>
     </view>
@@ -79,7 +79,7 @@
       <view class="row" bindtap="onAbout">
         <view class="row-ic"><image class="row-img" src="{{ico.gear}}"/></view>
         <view class="row-t">家庭菜单 · 体验版</view>
-        <text class="row-v">v1.1.0</text>
+        <text class="row-v">v{{ver}}</text>
       </view>
     </view>
     <view class="about-tx">家里人自己用的小工具。数据存在你自己的微信云开发环境里，不上传任何第三方。</view>

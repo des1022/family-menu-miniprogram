@@ -16,6 +16,8 @@ Page({
   data: {
     themeCls: '',
     ico: {},
+    // 版本标记：真机排查用 —— 一眼看出跑的是哪一版构建
+    ver: '1.1.1',
     members: [],
     eatCount: 0,
     dishCount: 0,
@@ -286,7 +288,7 @@ Page({
       ])
       const payload = {
         app: 'family-menu',
-        version: '1.1.0',
+        version: '1.1.1',
         exportedAt: new Date().toISOString(),
         dishes: dishes,
         records: records,

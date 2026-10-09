@@ -94,3 +94,12 @@
   font-size: 25rpx;
   font-weight: 600;
 }
+
+/* ---------- 标题旁的版本标记（真机排查用） ---------- */
+.ver {
+  font-size: 22rpx;
+  font-weight: 600;
+  color: var(--ink3);
+  margin-left: 12rpx;
+  letter-spacing: 0;
+}
