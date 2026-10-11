@@ -96,7 +96,7 @@
       <view class="g2">
         <view class="dish" wx:for="{{cards}}" wx:key="id" data-id="{{item.dishId}}" bindtap="onOpenDish">
           <image class="dish-img dish-dim" wx:if="{{item.imgSrc && !item.imgFailed}}" src="{{item.imgSrc}}" mode="aspectFill" binderror="onImgError" data-idx="{{index}}"/>
-          <view class="dish-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
+          <view class="dish-img img-ph {{item.ph}}" wx:else>{{item.initial}}<view class="img-bad" wx:if="{{item.imgFailed}}">图读不到</view></view>
           <view class="owner" wx:if="{{item.byName}}">
             <view class="owner-dot" style="background:{{item.byColor}}"></view>
             <text>{{item.byName}}</text>
@@ -176,7 +176,7 @@
       <scroll-view class="hw-scroll" scroll-y>
         <view class="hw-hero">
           <image class="hw-img dish-dim" wx:if="{{how.imgSrc && !how.imgFailed}}" src="{{how.imgSrc}}" mode="aspectFill" binderror="onHowImgError"/>
-          <view class="hw-img img-ph {{how.ph}}" wx:else>{{how.initial}}</view>
+          <view class="hw-img img-ph {{how.ph}}" wx:else>{{how.initial}}<view class="img-bad" wx:if="{{how.imgFailed}}">图读不到</view></view>
         </view>
 
         <view class="hw-tags">
@@ -184,6 +184,10 @@
           <text class="tag tag--pri" wx:for="{{how.tagList}}" wx:key="*this">{{item}}</text>
           <text class="tag" wx:if="{{!how.stepList.length}}">没写做法</text>
           <text class="t-micro hw-by" wx:if="{{how.byName}}">{{how.byName}} 点的</text>
+        </view>
+
+        <view class="hw-warn" wx:if="{{how.imgFailed}}">
+          这张图读不到：只有上传它的那个账号能看到（文件权限是「仅创建者可读写」）。
         </view>
 
         <view class="hw-sec" wx:if="{{how.ingList.length}}">

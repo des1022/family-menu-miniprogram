@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>家庭菜单 · 悬浮 ＋ 与图片状态角标</title>
+<style>
+  :root{
+    --pri:#D9714E; --pri-d:#C4553A; --pri-l:#FBEEE8; --pri-ink:#A8462E;
+    --acc:#E9A323; --ok:#4F9367;
+    --bg:#FAF7F3; --surf:#FFFFFF; --surf2:#F4EFE9; --line:#EFE7DE;
+    --ink:#2A2521; --ink2:#8B8178; --ink3:#B7AEA4;
+    --btn-bg:linear-gradient(135deg,#DE7A56,#C4553A); --btn-ink:#fff;
+    --btn-sh:0 4px 10px rgba(196,85,58,.28);
+    --dlg-bg:#FBEEE8; --dlg-tx:#A8462E;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:28px 26px 34px;background:#E6E0D8;
+       font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+       color:var(--ink);-webkit-font-smoothing:antialiased}
+  h1{font-size:19px;margin:0 0 6px}
+  .sub{font-size:13px;color:#8B8178;margin:0 0 22px;line-height:1.7}
+  .row{display:flex;gap:26px;align-items:flex-start}
+  .col{width:375px;flex:0 0 auto}
+  .cap{font-size:13px;font-weight:700;margin:0 0 8px}
+  .cap span{font-weight:400;color:#8B8178}
+  .frame{
+    width:375px;height:600px;background:var(--bg);border-radius:22px;
+    overflow:hidden;position:relative;box-shadow:0 10px 30px rgba(90,60,40,.18);
+  }
+  .frame.tall{height:660px}
+
+  /* ---- 页头 ---- */
+  .nav{height:44px;display:flex;align-items:center;justify-content:center;
+       font-size:16px;font-weight:600}
+  .pad{padding:0 16px}
+  .hd{display:flex;align-items:flex-end;justify-content:space-between;padding:6px 16px 10px}
+  .hd .t{font-size:25px;font-weight:800;letter-spacing:-.5px}
+  .hd .m{font-size:12px;color:var(--ink2);margin-top:3px}
+  .list-btn{font-size:12px;color:var(--ink2);border:1px solid rgba(139,129,120,.3);
+            border-radius:999px;padding:6px 13px}
+  .search{margin:0 16px 12px;height:36px;border-radius:999px;background:#fff;
+          display:flex;align-items:center;gap:7px;padding:0 14px;
+          font-size:13px;color:var(--ink3);border:1px solid var(--line)}
+
+  /* ---- 左侧分类列 ---- */
+  .split{display:flex;gap:8px;padding:0 16px}
+  .side{width:59px;flex:0 0 auto;background:var(--surf2);border-radius:13px;padding:5px}
+  .si{display:flex;flex-direction:column;align-items:center;padding:8px 3px 7px;
+      border-radius:10px;margin-bottom:3px}
+  .si img{width:22px;height:22px}
+  .si .n{font-size:11px;color:var(--ink2);margin-top:4px}
+  .si .c{font-size:10px;color:var(--ink3);margin-top:1px}
+  .si.on{background:var(--pri)}
+  .si.on .n,.si.on .c{color:#fff}
+
+  /* ---- 网格 ---- */
+  .main{flex:1;min-width:0}
+  .chips{display:flex;gap:7px;margin-bottom:9px}
+  .chip{font-size:12px;padding:6px 12px;border-radius:999px;background:#fff;
+        border:1px solid var(--line);color:var(--ink2)}
+  .chip.on{border-color:var(--pri);color:var(--pri-ink);background:var(--pri-l);font-weight:700}
+  .hint{font-size:11px;color:var(--ink2);margin:0 0 7px 2px}
+  .hint b{color:var(--pri)}
+  .grid{display:flex;flex-wrap:wrap;margin:0 -4.5px}
+  .card{width:calc(50% - 9px);margin:4.5px;background:#fff;border:1px solid var(--line);
+        border-radius:13px;overflow:hidden}
+  .media{position:relative}
+  .img{width:100%;height:110px;font-size:26px;color:#fff;font-weight:700;
+       display:flex;align-items:center;justify-content:center;position:relative}
+  .p1{background:linear-gradient(140deg,#E7A176,#C0613F)}
+  .p3{background:linear-gradient(140deg,#E8C077,#B8873C)}
+  .p4{background:linear-gradient(140deg,#D9A0A0,#A85E5E)}
+  .badge{position:absolute;left:5px;bottom:5px;padding:2px 7px;border-radius:999px;
+         background:rgba(20,12,8,.4);color:#fff;font-size:10px;font-weight:600}
+  .add{position:absolute;right:7px;bottom:7px;width:34px;height:34px;border-radius:50%;
+       background:var(--btn-bg);color:#fff;display:flex;align-items:center;
+       justify-content:center;font-size:18px;font-weight:700;box-shadow:var(--btn-sh)}
+  .body{padding:8px 9px 10px}
+  .nm{font-size:13.5px;font-weight:700}
+  .tg{margin-top:5px}
+  .tag{font-size:10.5px;padding:2px 7px;border-radius:6px;background:var(--surf2);color:var(--ink2)}
+
+  /* ---- 悬浮 ＋ ---- */
+  .fab{position:absolute;right:18px;bottom:85px;width:54px;height:54px;border-radius:50%;
+       background:var(--btn-bg);color:#fff;display:flex;align-items:center;justify-content:center;
+       font-size:26px;font-weight:300;box-shadow:var(--btn-sh);z-index:30;
+       transition:opacity .22s ease,transform .22s ease}
+  .fab.hide{opacity:0;transform:translateY(14px) scale(.86)}
+
+  /* ---- 详情弹层 ---- */
+  .mask{position:absolute;inset:0;background:rgba(30,20,14,.45);display:flex;align-items:flex-end}
+  .sheet{width:100%;background:#fff;border-radius:26px 26px 0 0;padding:10px 18px 18px;
+         max-height:92%;overflow:hidden}
+  .grab{width:36px;height:4px;border-radius:2px;background:var(--line);margin:0 auto 12px}
+  .hero{position:relative;margin-bottom:11px}
+  .hero .img{height:150px;border-radius:13px;font-size:32px}
+  .dname{font-size:18px;font-weight:700;margin-bottom:7px}
+  .tags{display:flex;gap:6px;margin-bottom:11px}
+  .warn{margin-bottom:11px;padding:9px 11px;border-radius:9px;background:var(--dlg-bg);
+        color:var(--dlg-tx);font-size:12px;line-height:1.6}
+  .dsec{}
+  .dh{font-size:12px;color:var(--ink2);font-weight:700;margin-bottom:6px}
+  .ing{display:flex;gap:6px;flex-wrap:wrap}
+  .ing i{font-style:normal;font-size:11px;padding:3px 8px;border-radius:6px;
+         background:var(--surf2);color:var(--ink2)}
+
+  .legend{margin-top:26px;font-size:13px;line-height:1.9;color:#3A332C;max-width:1180px}
+  .legend b{color:#1E1913}
+  .legend code{background:#fff;border:1px solid var(--line);border-radius:5px;padding:1px 5px;font-size:12px}
+</style>
+</head>
+<body>
+
+<h1>菜库：悬浮 ＋ 收起 · 图片状态角标</h1>
+<p class="sub">按真机尺寸 1:1 渲染（375px 宽，1rpx = 0.5px）。左二帧对比滚动前后的悬浮按钮，右一帧是详情弹层。</p>
+
+<div class="row">
+
+  <!-- ① 滚动前 -->
+  <div class="col">
+    <p class="cap">① 现在：往下滚时悬浮 ＋ <span>压在卡片自己的 ＋ 上</span></p>
+    <div class="frame">
+      <div class="nav">菜库</div>
+      <div class="hd">
+        <div><div class="t">菜库</div><div class="m">13 道 · 上架 4 道</div></div>
+        <div class="list-btn">列表</div>
+      </div>
+      <div class="search">🔍&nbsp; 搜索菜名 / 食材</div>
+      <div class="split">
+        <div class="side">
+          <div class="si"><img src="../../assets/icons/cat-all.png"><div class="n">全部</div><div class="c">13</div></div>
+          <div class="si"><img src="../../assets/icons/cat-hot.png"><div class="n">热菜</div><div class="c">5</div></div>
+          <div class="si on"><img src="../../assets/icons/cat-veg-w.png"><div class="n">素菜</div><div class="c">4</div></div>
+          <div class="si"><img src="../../assets/icons/cat-soup.png"><div class="n">汤羹</div><div class="c">2</div></div>
+          <div class="si"><img src="../../assets/icons/cat-staple.png"><div class="n">主食</div><div class="c">2</div></div>
+          <div class="si"><img src="../../assets/icons/cat-drink.png"><div class="n">酒水饮料</div><div class="c">0</div></div>
+          <div class="si"><img src="../../assets/icons/cat-snack.png"><div class="n">小吃类</div><div class="c">0</div></div>
+        </div>
+        <div class="main">
+          <div class="chips">
+            <div class="chip on">★ 常吃</div><div class="chip">本周没吃</div><div class="chip">清除 ✕</div>
+          </div>
+          <div class="hint">点卡片右下角的 <b>＋</b> 就加进今晚 · 点卡片本身看做法</div>
+          <div class="grid">
+            <div class="card"><div class="media"><div class="img p4">清<span class="badge">图读不到</span></div><div class="add">＋</div></div>
+              <div class="body"><div class="nm">清炒/蒜蓉菜心</div><div class="tg"><span class="tag">素菜</span></div></div></div>
+            <div class="card"><div class="media"><div class="img p3">酸<span class="badge">图读不到</span></div><div class="add">＋</div></div>
+              <div class="body"><div class="nm">酸辣土豆丝</div><div class="tg"><span class="tag">素菜</span></div></div></div>
+            <div class="card"><div class="media"><div class="img p3">清</div><div class="add">＋</div></div>
+              <div class="body"><div class="nm">清炒/蒜蓉空心菜</div><div class="tg"><span class="tag">素菜</span></div></div></div>
+            <div class="card"><div class="media"><div class="img p1">蒜<span class="badge">图读不到</span></div><div class="add">＋</div></div>
+              <div class="body"><div class="nm">蒜蓉南瓜苗</div><div class="tg"><span class="tag">素菜</span></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="fab">＋</div>
+    </div>
+    <p class="sub" style="margin-top:8px">两个加号叠在同一个角落，看着乱、还容易点错。</p>
+  </div>
+
+  <!-- ② 滚动后 -->
+  <div class="col">
+    <p class="cap">② 改后：向下滚动，悬浮 ＋ <span>自动收起</span></p>
+    <div class="frame">
+      <div class="nav">菜库</div>
+      <div class="hd">
+        <div><div class="t">菜库</div><div class="m">13 道 · 上架 4 道</div></div>
+        <div class="list-btn">列表</div>
+      </div>
+      <div class="search">🔍&nbsp; 搜索菜名 / 食材</div>
+      <div class="split">
+        <div class="side">
+          <div class="si"><img src="../../assets/icons/cat-all.png"><div class="n">全部</div><div class="c">13</div></div>
+          <div class="si"><img src="../../assets/icons/cat-hot.png"><div class="n">热菜</div><div class="c">5</div></div>
+          <div class="si on"><img src="../../assets/icons/cat-veg-w.png"><div class="n">素菜</div><div class="c">4</div></div>
+          <div class="si"><img src="../../assets/icons/cat-soup.png"><div class="n">汤羹</div><div class="c">2</div></div>
+          <div class="si"><img src="../../assets/icons/cat-staple.png"><div class="n">主食</div><div class="c">2</div></div>
+          <div class="si"><img src="../../assets/icons/cat-drink.png"><div class="n">酒水饮料</div><div class="c">0</div></div>
+          <div class="si"><img src="../../assets/icons/cat-snack.png"><div class="n">小吃类</div><div class="c">0</div></div>
+        </div>
+        <div class="main">
+          <div class="chips">
+            <div class="chip on">★ 常吃</div><div class="chip">本周没吃</div><div class="chip">清除 ✕</div>
+          </div>
+          <div class="hint">点卡片右下角的 <b>＋</b> 就加进今晚 · 点卡片本身看做法</div>
+          <div class="grid">
+            <div class="card"><div class="media"><div class="img p4">清<span class="badge">图读不到</span></div><div class="add">＋</div></div>
+              <div class="body"><div class="nm">清炒/蒜蓉菜心</div><div class="tg"><span class="tag">素菜</span></div></div></div>
+            <div class="card"><div class="media"><div class="img p3">酸<span class="badge">图读不到</span></div><div class="add">＋</div></div>
+              <div class="body"><div class="nm">酸辣土豆丝</div><div class="tg"><span class="tag">素菜</span></div></div></div>
+            <div class="card"><div class="media"><div class="img p3">清</div><div class="add">＋</div></div>
+              <div class="body"><div class="nm">清炒/蒜蓉空心菜</div><div class="tg"><span class="tag">素菜</span></div></div></div>
+            <div class="card"><div class="media"><div class="img p1">蒜<span class="badge">图读不到</span></div><div class="add">＋</div></div>
+              <div class="body"><div class="nm">蒜蓉南瓜苗</div><div class="tg"><span class="tag">素菜</span></div></div></div>
+          </div>
+        </div>
+      </div>
+      <div class="fab hide">＋</div>
+    </div>
+    <p class="sub" style="margin-top:8px">往上滑、或回到顶部附近，它再淡入回来。</p>
+  </div>
+
+  <!-- ③ 详情弹层 -->
+  <div class="col">
+    <p class="cap">③ 点图读不到的菜：<span>弹层里直接说清原因</span></p>
+    <div class="frame tall">
+      <div class="nav">菜库</div>
+      <div class="hd">
+        <div><div class="t">菜库</div><div class="m">13 道 · 上架 4 道</div></div>
+        <div class="list-btn">列表</div>
+      </div>
+      <div class="search">🔍&nbsp; 搜索菜名 / 食材</div>
+      <div class="split">
+        <div class="side">
+          <div class="si"><img src="../../assets/icons/cat-all.png"><div class="n">全部</div><div class="c">13</div></div>
+          <div class="si"><img src="../../assets/icons/cat-hot.png"><div class="n">热菜</div><div class="c">5</div></div>
+          <div class="si on"><img src="../../assets/icons/cat-veg-w.png"><div class="n">素菜</div><div class="c">4</div></div>
+          <div class="si"><img src="../../assets/icons/cat-soup.png"><div class="n">汤羹</div><div class="c">2</div></div>
+          <div class="si"><img src="../../assets/icons/cat-staple.png"><div class="n">主食</div><div class="c">2</div></div>
+          <div class="si"><img src="../../assets/icons/cat-drink.png"><div class="n">酒水饮料</div><div class="c">0</div></div>
+          <div class="si"><img src="../../assets/icons/cat-snack.png"><div class="n">小吃类</div><div class="c">0</div></div>
+        </div>
+        <div class="main">
+          <div class="chips">
+            <div class="chip on">★ 常吃</div><div class="chip">本周没吃</div><div class="chip">清除 ✕</div>
+          </div>
+          <div class="hint">点卡片右下角的 <b>＋</b> 就加进今晚 · 点卡片本身看做法</div>
+          <div class="grid">
+            <div class="card"><div class="media"><div class="img p4">清<span class="badge">图读不到</span></div><div class="add">＋</div></div>
+              <div class="body"><div class="nm">清炒/蒜蓉菜心</div><div class="tg"><span class="tag">素菜</span></div></div></div>
+            <div class="card"><div class="media"><div class="img p3">酸<span class="badge">图读不到</span></div><div class="add">＋</div></div>
+              <div class="body"><div class="nm">酸辣土豆丝</div><div class="tg"><span class="tag">素菜</span></div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="mask">
+        <div class="sheet">
+          <div class="grab"></div>
+          <div class="hero">
+            <div class="img p4">清<span class="badge">图读不到</span></div>
+          </div>
+          <div class="dname">清炒/蒜蓉菜心</div>
+          <div class="tags"><span class="tag">素菜</span><span class="tag">家常</span><span class="tag">半小时</span></div>
+          <div class="warn">这张图读不到：只有上传它的那个账号能看到（文件权限是「仅创建者可读写」）。让 TA 重新保存一次这道菜，或去云开发控制台把存储权限改成「所有用户可读」。</div>
+          <div class="dsec">
+            <div class="dh">食材</div>
+            <div class="ing"><i>菜心</i><i>蒜</i><i>盐</i><i>油</i></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="sub" style="margin-top:8px">没配图的菜不带角标 —— 一眼分得清「没传」和「读不到」。</p>
+  </div>
+
+</div>
+
+<div class="legend">
+  <b>·</b> 悬浮 ＋ 的规矩：往下滚就收起（<code>opacity:0 + translateY + scale</code>，0.22s），往上滚或回到顶部 80px 以内再淡入；位移不足 5px 不处理，避免手指微抖来回闪。<br>
+  <b>·</b> 角标只在<b>真的加载失败</b>时出现，所以「本来就没配图」的菜不会被误伤。<br>
+  <b>·</b> 详情弹层里的说明只在失败时出现，正常看图不会看到这段字。
+</div>
+
+</body>
+</html>

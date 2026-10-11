@@ -364,6 +364,15 @@
   max-height: 56vh;
 }
 .hw-hero { margin-bottom: 20rpx; }
+.hw-warn {
+  margin-bottom: 20rpx;
+  padding: 18rpx 22rpx;
+  border-radius: 18rpx;
+  background: var(--dlg-bg);
+  color: var(--dlg-tx);
+  font-size: 24rpx;
+  line-height: 1.6;
+}
 .hw-img {
   width: 100%;
   height: 300rpx;

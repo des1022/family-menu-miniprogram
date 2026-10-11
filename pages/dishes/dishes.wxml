@@ -65,7 +65,7 @@
       <view class="card-dish" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="onOpenDetail" hover-class="card-dish--hover">
         <view class="cd-media">
           <image class="cd-img dish-dim" wx:if="{{item.imgSrc && !item.imgFailed}}" src="{{item.imgSrc}}" mode="aspectFill" binderror="onImgError" data-idx="{{index}}"/>
-          <view class="cd-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
+          <view class="cd-img img-ph {{item.ph}}" wx:else>{{item.initial}}<view class="img-bad" wx:if="{{item.imgFailed}}">图读不到</view></view>
           <view class="cd-fav" wx:if="{{item.favorite === 1}}">★</view>
           <view class="cd-on" wx:if="{{item.onTonight}}">已在今晚</view>
           <!-- 直接点菜：网格卡上最显眼的一个动作，不用再进弹层找 -->
@@ -120,7 +120,7 @@
   </view>
 
   <!-- 悬浮：添加菜品 -->
-  <view class="fab" bindtap="goAdd">＋</view>
+  <view class="fab {{fabHidden ? 'fab--hide' : ''}}" bindtap="goAdd">＋</view>
 
   <!-- 详情弹层 -->
   <view class="sheet-mask" wx:if="{{detail}}" bindtap="closeDetail" catchtouchmove="noop">
@@ -130,7 +130,7 @@
       <scroll-view class="dt-scroll" scroll-y>
         <view class="dt-hero">
           <image class="dt-img dish-dim" wx:if="{{detail.imgSrc && !detail.imgFailed}}" src="{{detail.imgSrc}}" mode="aspectFill" binderror="onDetailImgError"/>
-          <view class="dt-img img-ph {{detail.ph}}" wx:else>{{detail.initial}}</view>
+          <view class="dt-img img-ph {{detail.ph}}" wx:else>{{detail.initial}}<view class="img-bad" wx:if="{{detail.imgFailed}}">图读不到</view></view>
           <view class="dt-fav {{detail.favorite === 1 ? 'dt-fav--on' : ''}}" catchtap="onToggleFav">{{detail.favorite === 1 ? '★' : '☆'}}</view>
         </view>
         <view class="dt-nm">{{detail.name}}</view>
@@ -138,6 +138,9 @@
           <text class="tag" wx:if="{{detail.category}}">{{detail.category}}</text>
           <text class="tag tag--pri" wx:for="{{detail.tagList}}" wx:key="*this">{{item}}</text>
           <text class="t-micro" wx:if="{{detail.lastText}}">{{detail.lastText}}</text>
+        </view>
+        <view class="dt-warn" wx:if="{{detail.imgFailed}}">
+          这张图读不到：只有上传它的那个账号能看到（文件权限是「仅创建者可读写」）。让 TA 重新保存一次这道菜，或去云开发控制台把存储权限改成「所有用户可读」。
         </view>
         <view class="dt-sec" wx:if="{{detail.ingredients}}">
           <view class="dt-h">食材</view>

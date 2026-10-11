@@ -274,12 +274,29 @@ view, text, input, textarea, button, picker, scroll-view {
 
 /* ==================== 无图占位色块 ==================== */
 .img-ph {
+  position: relative;   /* 让「图读不到」角标能贴在占位块左下角 */
   display: flex;
   align-items: center;
   justify-content: center;
   color: #fff;
   font-weight: 700;
   background: linear-gradient(140deg, #E7A176, #C0613F);
+}
+
+/* 图片加载失败时的角标。
+   作用是把「本来就没配图」和「配了但读不到」区分开 —— 这两种在界面上
+   都是首字占位块，不标出来根本分不清（2026-10-11 排查了半天就卡在这）。 */
+.img-bad {
+  position: absolute;
+  left: 10rpx;
+  bottom: 10rpx;
+  padding: 4rpx 14rpx;
+  border-radius: 999rpx;
+  background: rgba(20, 12, 8, 0.4);
+  color: #FFFFFF;
+  font-size: 20rpx;
+  font-weight: 600;
+  line-height: 1.5;
 }
 .img-ph--2 { background: linear-gradient(140deg, #BFCB93, #6E8B4E); }
 .img-ph--3 { background: linear-gradient(140deg, #E8C077, #B8873C); }

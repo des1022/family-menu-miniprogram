@@ -98,12 +98,32 @@ Page({
     showCount: 0,
     list: [],
     loading: true,
-    detail: null
+    detail: null,
+    fabHidden: false   // 向下滚动时收起右下的悬浮 ＋，别压住卡片自己的 ＋
   },
 
   onShow() {
-    this.setData({ themeCls: theme.className(), ico: this.buildIco() })
+    this._lastTop = undefined   // 回到本页时按「可见」开始算
+    this.setData({ themeCls: theme.className(), ico: this.buildIco(), fabHidden: false })
     this.loadAll().then(() => this.checkFocus())
+  },
+
+  /**
+   * 滚动时收起右下角的悬浮 ＋。
+   *
+   * 它固定在屏幕右下角，而卡片自己的 ＋ 也在右下角，滚到下面两张必然叠在一起
+   * （2026-10-11 截到过两个加号压一处的样子），既难看也容易点错。
+   * 规矩：往下滚就收起来，往上滚、或者回到顶部附近再出来。
+   * 位移不到 5px 不处理，免得手指微抖就来回闪。
+   */
+  onPageScroll(e) {
+    const top = e.scrollTop || 0
+    if (this._lastTop === undefined) { this._lastTop = top; return }
+    const delta = top - this._lastTop
+    if (Math.abs(delta) < 5) return
+    this._lastTop = top
+    const hide = delta > 0 && top > 80
+    if (hide !== this.data.fabHidden) this.setData({ fabHidden: hide })
   },
 
   buildIco() {
@@ -424,6 +444,7 @@ Page({
   },
 
   goAdd() {
+    if (this.data.fabHidden) return   // 已经收起了，别被幽灵点击带走
     wx.navigateTo({ url: '/pages/dish-edit/dish-edit' })
   },
 
