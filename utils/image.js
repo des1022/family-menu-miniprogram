@@ -140,6 +140,29 @@ async function compressImage(src) {
 }
 
 /**
+ * 按文件头判断真实图片类型。
+ *
+ * 原来 cloudPath 一律写死 `.jpg`，但压缩后未必真是 jpg（原图是 png 时
+ * wx.compressImage / 画布都可能原样返回 png）——扩展名和内容不符的话，
+ * CDN 回来的 Content-Type 会对不上，图就有可能加载不出来。
+ * @returns {'jpg'|'png'|'gif'|'webp'}
+ */
+function extOf(filePath) {
+  try {
+    // 不传 encoding 时 readFileSync 返回 ArrayBuffer
+    const buf = wx.getFileSystemManager().readFileSync(filePath)
+    const b = new Uint8Array(buf)
+    if (b[0] === 0xFF && b[1] === 0xD8) return 'jpg'
+    if (b[0] === 0x89 && b[1] === 0x50) return 'png'
+    if (b[0] === 0x47 && b[1] === 0x49) return 'gif'
+    if (b[8] === 0x57 && b[9] === 0x45) return 'webp'
+  } catch (e) {
+    console.warn('[image] 读文件头失败，按 jpg 处理', e)
+  }
+  return 'jpg'
+}
+
+/**
  * 上传菜品图片到云存储
  * @param {string} filePath 本地临时路径
  * @returns {Promise<string>} 云文件 ID（cloud://...）
@@ -148,7 +171,8 @@ async function uploadDishImage(filePath) {
   const { initCloud } = require('./cloud.js')
   initCloud()
   const compressed = await compressImage(filePath)
-  const cloudPath = `${config.DISH_IMAGE_DIR}${Date.now()}-${randomStr(8)}.jpg`
+  const ext = extOf(compressed)
+  const cloudPath = `${config.DISH_IMAGE_DIR}${Date.now()}-${randomStr(8)}.${ext}`
   const res = await wx.cloud.uploadFile({ cloudPath, filePath: compressed })
   return res.fileID
 }
@@ -177,9 +201,34 @@ function chooseImage(count = 1) {
   })
 }
 
+/**
+ * 用云文件 ID 换一条临时链接。
+ *
+ * 场景：`<image src="cloud://...">` 是官方支持的，但它遵循云存储的权限配置；
+ * 有些情况下 fileID 直连读不到（文件级权限不是「所有用户可读」等），
+ * 这时用临时链接往往还能拿到 —— 所以图片加载失败时再试一次这条路。
+ * @returns {Promise<string>} 失败返回空串
+ */
+async function tempUrlOf(fileID) {
+  if (!fileID || String(fileID).indexOf('cloud://') !== 0) return ''
+  try {
+    const { initCloud } = require('./cloud.js')
+    initCloud()
+    const res = await wx.cloud.getTempFileURL({ fileList: [fileID] })
+    const f = (res.fileList || [])[0]
+    if (f && f.tempFileURL) return f.tempFileURL
+    console.warn('[image] 临时链接为空', f && f.errMsg)
+    return ''
+  } catch (e) {
+    console.warn('[image] 取临时链接失败', e)
+    return ''
+  }
+}
+
 module.exports = {
   compressImage,
   uploadDishImage,
   deleteDishImage,
-  chooseImage
+  chooseImage,
+  tempUrlOf
 }

@@ -3,6 +3,7 @@ const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const { SAMPLE_DISHES } = require('../../utils/samples.js')
 const { toast, confirm, alert, errText, parseSteps, parseIngredients, parseTags } = require('../../utils/util.js')
+const { tempUrlOf } = require('../../utils/image.js')
 
 const WEEK = ['日', '一', '二', '三', '四', '五', '六']
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
@@ -284,7 +285,10 @@ Page({
         byColor: r.byColor || '#D9714E',
         initial: initialOf(r.dishName || (dish ? dish.name : '')),
         ph: phOf(r.dishId),
-        hasSteps: !!(dish && parseSteps(dish.steps).length)
+        hasSteps: !!(dish && parseSteps(dish.steps).length),
+        imgSrc: r.dishImage || (dish ? dish.image : '') || '',
+        imgRetried: false,
+        imgFailed: false
       }
     })
     this.setData({ cards: cards, today: today })
@@ -412,6 +416,39 @@ Page({
     }
   },
 
+  /** 图片加载失败 → 退回首字色块（别人账号传的图可能读不到，别留一片空白） */
+  async onImgError(e) {
+    const idx = Number(e.currentTarget.dataset.idx)
+    if (isNaN(idx)) return
+    const card = (this.data.cards || [])[idx]
+    if (!card) return
+    console.warn('[tonight] 图片加载失败', idx, e.detail && e.detail.errMsg)
+    if (!card.imgRetried && card.image) {
+      this.setData({ ['cards[' + idx + '].imgRetried']: true })
+      const url = await tempUrlOf(card.image)
+      if (url) {
+        this.setData({ ['cards[' + idx + '].imgSrc']: url })
+        return
+      }
+    }
+    this.setData({ ['cards[' + idx + '].imgFailed']: true })
+  },
+
+  async onHowImgError() {
+    const h = this.data.how
+    if (!h) return
+    console.warn('[tonight] 详情图加载失败')
+    if (!h.imgRetried && h.image) {
+      this.setData({ 'how.imgRetried': true })
+      const url = await tempUrlOf(h.image)
+      if (url) {
+        this.setData({ 'how.imgSrc': url })
+        return
+      }
+    }
+    this.setData({ 'how.imgFailed': true })
+  },
+
   /* ============ 菜品详情（就地弹出，不再跳去菜库） ============ */
 
   /**
@@ -442,6 +479,9 @@ Page({
         dishId: dishId,
         name: name,
         image: (dish && dish.image) || (card && card.image) || '',
+        imgSrc: (dish && dish.image) || (card && card.image) || '',
+        imgRetried: false,
+        imgFailed: false,
         initial: initialOf(name),
         ph: phOf(dishId),
         category: (dish && dish.category) || (card && card.category) || '',

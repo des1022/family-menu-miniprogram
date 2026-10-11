@@ -64,7 +64,7 @@
     <view class="grid" wx:if="{{layout === 0}}">
       <view class="card-dish" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="onOpenDetail" hover-class="card-dish--hover">
         <view class="cd-media">
-          <image class="cd-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+          <image class="cd-img dish-dim" wx:if="{{item.imgSrc && !item.imgFailed}}" src="{{item.imgSrc}}" mode="aspectFill" binderror="onImgError" data-idx="{{index}}"/>
           <view class="cd-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
           <view class="cd-fav" wx:if="{{item.favorite === 1}}">★</view>
           <view class="cd-on" wx:if="{{item.onTonight}}">已在今晚</view>
@@ -88,7 +88,7 @@
     <!-- 列表视图 -->
     <view class="list" wx:if="{{layout === 1}}">
       <view class="row-dish" wx:for="{{list}}" wx:key="_id" data-id="{{item._id}}" bindtap="onOpenDetail" hover-class="row-dish--hover">
-        <image class="rd-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+        <image class="rd-img dish-dim" wx:if="{{item.imgSrc && !item.imgFailed}}" src="{{item.imgSrc}}" mode="aspectFill" binderror="onImgError" data-idx="{{index}}"/>
         <view class="rd-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
         <view class="rd-main">
           <view class="rd-nm">
@@ -129,7 +129,7 @@
 
       <scroll-view class="dt-scroll" scroll-y>
         <view class="dt-hero">
-          <image class="dt-img dish-dim" wx:if="{{detail.image}}" src="{{detail.image}}" mode="aspectFill"/>
+          <image class="dt-img dish-dim" wx:if="{{detail.imgSrc && !detail.imgFailed}}" src="{{detail.imgSrc}}" mode="aspectFill" binderror="onDetailImgError"/>
           <view class="dt-img img-ph {{detail.ph}}" wx:else>{{detail.initial}}</view>
           <view class="dt-fav {{detail.favorite === 1 ? 'dt-fav--on' : ''}}" catchtap="onToggleFav">{{detail.favorite === 1 ? '★' : '☆'}}</view>
         </view>

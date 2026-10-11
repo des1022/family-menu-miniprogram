@@ -2,6 +2,7 @@ const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const { toast, confirm, parseTags, parseIngredients, parseSteps } = require('../../utils/util.js')
+const { tempUrlOf } = require('../../utils/image.js')
 
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
 const FOCUS_KEY = 'fm_focus_dish'
@@ -14,7 +15,9 @@ const CAT_ICON_EXACT = {
   '汤羹': 'soup', '汤': 'soup',
   '主食': 'staple', '饭面': 'staple',
   '凉菜': 'cold', '凉拌': 'cold',
-  '水产': 'fish', '海鲜': 'fish'
+  '水产': 'fish', '海鲜': 'fish',
+  '酒水饮料': 'drink', '酒水': 'drink', '饮料': 'drink', '饮品': 'drink',
+  '小吃类': 'snack', '小吃': 'snack', '零食': 'snack'
 }
 
 /** 分类名 -> 图标键。精确命中优先，否则按关键词猜，最后兜底「盘子」 */
@@ -28,6 +31,9 @@ function catIconKey(name) {
   if (/主食|饭|面|粥|馍|粉/.test(n)) return 'staple'
   if (/水产|海鲜|鱼|虾|蟹|贝/.test(n)) return 'fish'
   if (/素|青|蔬|菜/.test(n)) return 'veg'
+  // 这两个必须放在「素|菜」之后：像「菜心」这种名字不该被当成小吃
+  if (/酒|饮料|饮品|奶茶|咖啡|汽水|可乐|果汁/.test(n)) return 'drink'
+  if (/小吃|零食|点心|甜品|糕点|串|卤味/.test(n)) return 'snack'
   return 'def'
 }
 
@@ -41,6 +47,8 @@ const CAT_ICONS = {
   staple: { icon: '/assets/icons/cat-staple.png', iconW: '/assets/icons/cat-staple-w.png' },
   cold: { icon: '/assets/icons/cat-cold.png', iconW: '/assets/icons/cat-cold-w.png' },
   fish: { icon: '/assets/icons/cat-fish.png', iconW: '/assets/icons/cat-fish-w.png' },
+  drink: { icon: '/assets/icons/cat-drink.png', iconW: '/assets/icons/cat-drink-w.png' },
+  snack: { icon: '/assets/icons/cat-snack.png', iconW: '/assets/icons/cat-snack-w.png' },
   def: { icon: '/assets/icons/cat-def.png', iconW: '/assets/icons/cat-def-w.png' }
 }
 
@@ -275,7 +283,10 @@ Page({
       initial: initialOf(d.name),
       ph: phOf(d._id),
       onTonight: !!tonight[d._id],
-      tip: freq[d._id] ? '近一月 ' + freq[d._id] + ' 次' : ''
+      tip: freq[d._id] ? '近一月 ' + freq[d._id] + ' 次' : '',
+      imgSrc: d.image || '',    // 实际喂给 <image> 的地址（失败后会换成临时链接）
+      imgRetried: false,
+      imgFailed: false
     }))
 
     this.setData({ list: decorated, showCount: decorated.length })
@@ -283,6 +294,45 @@ Page({
   },
 
   /* ==================== 详情弹层 ==================== */
+
+  /**
+   * 菜品图片加载失败 → 退回「首字色块」占位。
+   * 云文件是「谁上传谁可读」的时候，别人账号上传的图会静默失败，
+   * 不处理就是一块空白，看不出是坏了还是没图。
+   */
+  async onImgError(e) {
+    const idx = Number(e.currentTarget.dataset.idx)
+    if (isNaN(idx)) return
+    const item = (this.data.list || [])[idx]
+    if (!item) return
+    console.warn('[dishes] 图片加载失败', idx, e.detail && e.detail.errMsg)
+    // 第一步：换临时链接再试一次（fileID 直连读不到时，临时链接可能还拿得到）
+    if (!item.imgRetried && item.image) {
+      this.setData({ ['list[' + idx + '].imgRetried']: true })
+      const url = await tempUrlOf(item.image)
+      if (url) {
+        this.setData({ ['list[' + idx + '].imgSrc']: url })
+        return
+      }
+    }
+    // 第二步：还是不行就退回首字色块，别留一片空白
+    this.setData({ ['list[' + idx + '].imgFailed']: true })
+  },
+
+  async onDetailImgError() {
+    const d = this.data.detail
+    if (!d) return
+    console.warn('[dishes] 详情图加载失败')
+    if (!d.imgRetried && d.image) {
+      this.setData({ 'detail.imgRetried': true })
+      const url = await tempUrlOf(d.image)
+      if (url) {
+        this.setData({ 'detail.imgSrc': url })
+        return
+      }
+    }
+    this.setData({ 'detail.imgFailed': true })
+  },
 
   onOpenDetail(e) {
     const id = e.currentTarget.dataset.id
@@ -297,6 +347,9 @@ Page({
         _id: dish._id,
         name: dish.name,
         image: dish.image || '',
+        imgSrc: dish.image || '',
+        imgRetried: false,
+        imgFailed: false,
         category: dish.category || '',
         desc: dish.desc || '',
         ingredients: dish.ingredients || '',

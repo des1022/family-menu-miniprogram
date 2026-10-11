@@ -1,16 +1,22 @@
 <view class="page">
-  <!-- 新增分类 -->
+  <!-- 新增 / 改名 -->
   <view class="card">
     <view class="add-row">
       <input
         class="add-input"
         value="{{newName}}"
         maxlength="8"
-        placeholder="输入新分类，如：热菜 / 汤羹"
+        placeholder="{{editingId ? '输入新的分类名' : '输入新分类，如：热菜 / 汤羹'}}"
         placeholder-class="ph"
+        focus="{{editingFocus}}"
         bindinput="onInput"
+        bindblur="onInputFocusBlur"
       />
-      <view class="add-btn" bindtap="onAdd">添加</view>
+      <view class="add-btn" bindtap="onSubmit">{{editingId ? '保存' : '添加'}}</view>
+    </view>
+    <view class="edit-bar" wx:if="{{editingId}}">
+      <text class="edit-bar-t">正在改「{{editingOld}}」的名字 · 这个分类下的菜会一起改</text>
+      <text class="edit-bar-x" bindtap="onCancelEdit">取消</text>
     </view>
   </view>
 
@@ -22,18 +28,26 @@
         <text class="cat-name">{{item.name}}</text>
         <text class="cat-count">{{item.count}} 道菜</text>
       </view>
-      <view
-        class="cat-del"
-        data-id="{{item._id}}"
-        data-name="{{item.name}}"
-        bindtap="onDelete"
-      >删除</view>
+      <view class="cat-ops">
+        <view
+          class="cat-btn cat-btn--edit"
+          data-id="{{item._id}}"
+          data-name="{{item.name}}"
+          catchtap="onEdit"
+        >编辑</view>
+        <view
+          class="cat-btn cat-btn--del"
+          data-id="{{item._id}}"
+          data-name="{{item.name}}"
+          catchtap="onDelete"
+        >删除</view>
+      </view>
     </view>
   </view>
 
   <empty wx:if="{{!categories.length}}" text="还没有分类" sub="先添加几个分类，方便家人筛选" />
 
-  <view class="tip">提示：删除分类时，若该分类下还有菜品，会先让你把菜品转移到其他分类。</view>
+  <view class="tip">提示：① 改名会把这个分类下的菜一起改成新名字。② 删除分类时，若该分类下还有菜品，会先让你把菜品转移到其他分类。</view>
 
   <!-- 统一确认弹窗：utils/util.js 的 confirm()/alert() 会自动找到它 -->
   <ui-dialog id="uiDialog"/>

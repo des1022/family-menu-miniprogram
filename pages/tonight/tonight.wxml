@@ -95,7 +95,7 @@
 
       <view class="g2">
         <view class="dish" wx:for="{{cards}}" wx:key="id" data-id="{{item.dishId}}" bindtap="onOpenDish">
-          <image class="dish-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+          <image class="dish-img dish-dim" wx:if="{{item.imgSrc && !item.imgFailed}}" src="{{item.imgSrc}}" mode="aspectFill" binderror="onImgError" data-idx="{{index}}"/>
           <view class="dish-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
           <view class="owner" wx:if="{{item.byName}}">
             <view class="owner-dot" style="background:{{item.byColor}}"></view>
@@ -175,7 +175,7 @@
 
       <scroll-view class="hw-scroll" scroll-y>
         <view class="hw-hero">
-          <image class="hw-img dish-dim" wx:if="{{how.image}}" src="{{how.image}}" mode="aspectFill"/>
+          <image class="hw-img dish-dim" wx:if="{{how.imgSrc && !how.imgFailed}}" src="{{how.imgSrc}}" mode="aspectFill" binderror="onHowImgError"/>
           <view class="hw-img img-ph {{how.ph}}" wx:else>{{how.initial}}</view>
         </view>
 

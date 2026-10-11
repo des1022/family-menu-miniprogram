@@ -16,7 +16,10 @@ Page({
   data: {
     categories: [],
     newName: '',
-    loading: false
+    loading: false,
+    editingId: '',      // 正在改名的分类 _id（空 = 新增模式）
+    editingOld: '',     // 改名前的老名字，用来把名下的菜一起改过来
+    editingFocus: false // 点「编辑」后把光标送进输入框
   },
 
   onLoad() {
@@ -47,12 +50,55 @@ Page({
     this.setData({ newName: e.detail.value })
   },
 
-  async onAdd() {
+  /** 点某行的「编辑」：把名字填进上面的输入框，按钮变成「保存」 */
+  onEdit(e) {
+    const { id, name } = e.currentTarget.dataset
+    this.setData({ editingId: id, editingOld: name, newName: name, editingFocus: true })
+    wx.pageScrollTo({ scrollTop: 0, duration: 200 })
+  },
+
+  onCancelEdit() {
+    this.setData({ editingId: '', editingOld: '', newName: '', editingFocus: false })
+  },
+
+  onInputFocusBlur() {
+    // focus 只用于「点编辑时把光标送进去」，用一次就要复位，否则下次点编辑不再触发
+    this.setData({ editingFocus: false })
+  },
+
+  /** 新增 / 改名 共用一个提交入口 */
+  async onSubmit() {
     const name = (this.data.newName || '').trim()
-    if (!name) return toast('请输入分类名称')
-    if (this.data.categories.some(c => c.name === name)) {
+    const editingId = this.data.editingId
+    if (!name) return toast(editingId ? '请输入新的分类名' : '请输入分类名称')
+    if (this.data.categories.some(c => c.name === name && c._id !== editingId)) {
       return toast('该分类已存在')
     }
+
+    // ---- 改名：分类文档 + 名下所有菜的 category 一起改 ----
+    if (editingId) {
+      const old = this.data.editingOld
+      if (old === name) {
+        this.onCancelEdit()
+        return toast('名字没变')
+      }
+      wx.showLoading({ title: '改名中', mask: true })
+      try {
+        await db.updateCategory(editingId, { name: name })
+        const moved = await db.moveDishesCategory(old, name)
+        wx.hideLoading()
+        this.setData({ editingId: '', editingOld: '', newName: '', editingFocus: false })
+        toast(moved ? '已改名，' + moved + ' 道菜跟着改了' : '已改名')
+        this.load()
+      } catch (err) {
+        wx.hideLoading()
+        console.error('[category] 改名失败', err)
+        toast('改名失败')
+      }
+      return
+    }
+
+    // ---- 新增 ----
     try {
       await db.addCategory(name, this.data.categories.length)
       this.setData({ newName: '' })
