@@ -4,10 +4,10 @@ on:
   workflow_dispatch:
     inputs:
       mode:
-        description: 'preview=生成预览二维码 / upload=上传版本(设体验版用)'
-        default: 'preview'
+        description: 'preview=只出预览二维码 / upload=只上传版本 / both=二维码+上传（同一次构建，版本号一致）'
+        default: 'both'
         type: choice
-        options: [preview, upload]
+        options: [preview, upload, both]
 
 jobs:
   deploy:
@@ -21,6 +21,13 @@ jobs:
         run: npm install miniprogram-ci --no-fund --no-audit --registry=https://registry.npmmirror.com
       - name: Write upload key
         run: printf '%s' "${{ secrets.MP_PRIVATE_KEY }}" > private.key
+      - name: Stamp build version
+        # 把本次构建号写进 utils/version.js：应用内显示的版本 = 后台上传的版本号，
+        # 两边不可能再分叉（以前手机 v1.1.2 / 后台 1.0.57）
+        env:
+          MP_BUILD: ${{ github.run_number }}
+          MP_SHA: ${{ github.sha }}
+        run: node scripts/stamp-version.js
       - name: Deploy
         env:
           MP_APPID: ${{ secrets.MP_APPID }}
@@ -30,7 +37,7 @@ jobs:
           MP_SHA: ${{ github.sha }}
         run: node scripts/upload.js "${{ inputs.mode }}"
       - name: Upload QR artifact
-        if: inputs.mode == 'preview'
+        if: inputs.mode == 'preview' || inputs.mode == 'both'
         uses: actions/upload-artifact@v4
         with:
           name: preview-qr

@@ -1,6 +1,7 @@
 const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
+const build = require('../../utils/version.js')
 const { toast, confirm, alert, errText } = require('../../utils/util.js')
 
 function initialOf(name) {
@@ -16,8 +17,9 @@ Page({
   data: {
     themeCls: '',
     ico: {},
-    // 版本标记：真机排查用 —— 一眼看出跑的是哪一版构建
-    ver: '1.1.2',
+    // 版本标记：真机排查用 —— 一眼看出跑的是哪一版构建。
+    // 取自 utils/version.js（CI 每次构建写入），和后台上传的版本号是同一个数
+    ver: build.version,
     members: [],
     eatCount: 0,
     dishCount: 0,
@@ -311,7 +313,7 @@ Page({
       ])
       const payload = {
         app: 'family-menu',
-        version: '1.1.2',
+        version: build.version,
         exportedAt: new Date().toISOString(),
         dishes: dishes,
         records: records,

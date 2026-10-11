@@ -7,10 +7,15 @@
  *
  * preview：生成预览二维码图片（开发者/体验成员可扫，二维码短效，适合当场验证）
  * upload ：上传代码到微信后台版本管理（之后在网页后台点「设为体验版」，家人长期扫码用）
+ * both   ：一次构建同时做上面两件事 —— 二维码和后台版本号是同一个数，对得上
+ *
+ * 版本号从 utils/version.js 读（CI 先跑 scripts/stamp-version.js 生成），
+ * 所以「应用内显示的版本」和「后台上传的版本号」永远一致。
  */
 const fs = require('fs')
 const path = require('path')
 const ci = require('miniprogram-ci')
+const buildInfo = require('../utils/version.js')
 
 const WORKSPACE = path.resolve(__dirname, '..')
 const QR_OUT = process.env.QR_OUT || path.join(WORKSPACE, 'preview-qr.png')
@@ -42,24 +47,28 @@ async function main() {
   const mode = process.argv[2] || 'preview'
   const setting = { es6: true, es7: true, minified: true, autoPrefixWXSS: true }
 
-  if (mode === 'preview') {
+  // 版本号从 utils/version.js 读（CI 先跑 scripts/stamp-version.js 生成），
+  // 保证「应用内显示的版本」和「上传到后台的版本号」是同一个数。
+  // 没跑 stamp 时退回老逻辑，避免本地手跑出个空版本号。
+  const version = buildInfo.build
+    ? buildInfo.version
+    : (/^\d+$/.test(process.env.MP_BUILD || '') ? '1.0.' + process.env.MP_BUILD : '1.0.0')
+  const sha = (process.env.MP_SHA || '').slice(0, 7)
+
+  if (mode === 'preview' || mode === 'both') {
     await ci.preview({
       project: project,
-      desc: '家庭菜单 ' + new Date().toLocaleString('zh-CN'),
+      desc: '家庭菜单 ' + version + ' · ' + new Date().toLocaleString('zh-CN') + (sha ? ' · ' + sha : ''),
       setting: setting,
       qrcodeFormat: 'image',
       qrcodeOutputDest: QR_OUT,
       robot: 1,
       onProgressUpdate: () => {}
     })
-    console.log('PREVIEW_OK qr=' + QR_OUT)
-    return
+    console.log('PREVIEW_OK version=' + version + ' qr=' + QR_OUT)
+    if (mode === 'preview') return
   }
 
-  // 版本号：优先用 CI 传进来的构建号（形如 1.0.18），避免每次都叫 1.0.0 分不清哪次是哪次
-  const buildNo = process.env.MP_BUILD || ''
-  const version = /^\d+$/.test(buildNo) ? '1.0.' + buildNo : '1.0.0'
-  const sha = (process.env.MP_SHA || '').slice(0, 7)
   const desc = '家庭菜单 ' + new Date().toLocaleString('zh-CN') + (sha ? ' · ' + sha : '')
 
   await ci.upload({
