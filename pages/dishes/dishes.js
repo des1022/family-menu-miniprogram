@@ -2,7 +2,7 @@ const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const { toast, confirm, parseTags, parseIngredients, parseSteps } = require('../../utils/util.js')
-const { resolveCloudImages } = require('../../utils/image.js')
+const { resolveCloudImages, cachedImgUrl, attachImgUrls } = require('../../utils/image.js')
 
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
 const FOCUS_KEY = 'fm_focus_dish'
@@ -182,6 +182,10 @@ Page({
       const catNames = Array.from(new Set(cats.map(c => c.name).concat(fromDishes)))
       this._cats = catNames
 
+      // 先把所有菜品图的链接换好（进缓存），这样下面渲染的首帧拿到的就是网址，
+      // 不会「先显示占位块、再闪一下变成图」。换不到也无妨，渲染时会退回原始 fileID。
+      await attachImgUrls(onShelf)
+
       this.setData({ allCount: dishes.length, catNames: catNames })
       this.buildCatList()
       this.buildChips()
@@ -304,38 +308,13 @@ Page({
       ph: phOf(d._id),
       onTonight: !!tonight[d._id],
       tip: freq[d._id] ? '近一月 ' + freq[d._id] + ' 次' : '',
-      imgSrc: d.image || '',    // 实际喂给 <image> 的地址（失败后会换成临时链接）
+      imgSrc: cachedImgUrl(d.image) || d.image || '',   // 已换好的临时链接（loadAll 里统一换过）
       imgRetried: false,
       imgFailed: false
     }))
 
     this.setData({ list: decorated, showCount: decorated.length })
     this._listRaw = list
-    this.fillImgUrls(decorated)
-  },
-
-  /**
-   * 把列表/弹层里的云存储 fileID 批量换成临时链接。
-   * 换不到就保持原样（传图的人自己照样看得见），不会比之前更差。
-   */
-  async fillImgUrls(list) {
-    const urls = await resolveCloudImages((list || []).map(it => it && it.image))
-    const keys = Object.keys(urls)
-    if (!keys.length) return
-    this._imgUrls = this._imgUrls || {}
-    keys.forEach(k => { this._imgUrls[k] = urls[k] })
-
-    const patch = {}
-    ;(this.data.list || []).forEach((it, i) => {
-      const u = it.image ? this._imgUrls[it.image] : ''
-      if (u && u !== it.imgSrc) patch['list[' + i + '].imgSrc'] = u
-    })
-    const d = this.data.detail
-    if (d && d.image) {
-      const u = this._imgUrls[d.image]
-      if (u && u !== d.imgSrc) patch['detail.imgSrc'] = u
-    }
-    if (Object.keys(patch).length) this.setData(patch)
   },
 
   /* ==================== 详情弹层 ==================== */
@@ -354,7 +333,7 @@ Page({
     // 第一步：换临时链接再试一次（fileID 直连读不到时，临时链接可能还拿得到）
     if (!item.imgRetried && item.image) {
       this.setData({ ['list[' + idx + '].imgRetried']: true })
-      const urls = await resolveCloudImages([item.image])
+      const urls = await resolveCloudImages([item.image], true)
       const url = urls[item.image]
       if (url) {
         this.setData({ ['list[' + idx + '].imgSrc']: url })
@@ -371,7 +350,7 @@ Page({
     console.warn('[dishes] 详情图加载失败')
     if (!d.imgRetried && d.image) {
       this.setData({ 'detail.imgRetried': true })
-      const urls = await resolveCloudImages([d.image])
+      const urls = await resolveCloudImages([d.image], true)
       const url = urls[d.image]
       if (url) {
         this.setData({ 'detail.imgSrc': url })
@@ -389,8 +368,8 @@ Page({
 
   openDetail(dish) {
     const tonight = this._tonight || {}
-    // 已经换过链接就直接用（进页面时批量换过，点开弹层不用再等一次）
-    const imgUrl = (this._imgUrls && this._imgUrls[dish.image]) || dish.image || ''
+    // 进页面时已批量换过（结果在 utils/image.js 的缓存里），点开弹层不用再等一次
+    const imgUrl = cachedImgUrl(dish.image) || dish.image || ''
     this.setData({
       detail: {
         _id: dish._id,

@@ -8,7 +8,7 @@
     </view>
 
     <view class="hero" bindtap="onChooseImage">
-      <image class="hero-img dish-dim" wx:if="{{form.image}}" src="{{form.image}}" mode="aspectFill"/>
+      <image class="hero-img dish-dim" wx:if="{{form.imgSrc}}" src="{{form.imgSrc}}" mode="aspectFill"/>
       <block wx:else>
         <view class="hero-line"></view>
         <view class="hg-ring">＋</view>

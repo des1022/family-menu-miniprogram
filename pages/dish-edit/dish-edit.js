@@ -1,4 +1,5 @@
 const config = require('../../utils/config.js')
+const { resolveCloudImages, cachedImgUrl } = require('../../utils/image.js')
 const db = require('../../utils/db.js')
 const { chooseImage, uploadDishImage, deleteDishImage } = require('../../utils/image.js')
 const { toast, showLoading, hideLoading, parseTags, parseIngredients } = require('../../utils/util.js')
@@ -104,6 +105,8 @@ Page({
     try {
       const list = await db.getAllDishes()
       const dish = list.find(item => item._id === id)
+      // 先把图片链接换进缓存，下面渲染首帧就能拿到网址，不会「占位块闪一下变成图」
+      if (dish) await resolveCloudImages([dish.image])
       if (!dish) {
         toast('菜品不存在')
         return
@@ -113,6 +116,8 @@ Page({
           name: dish.name || '',
           category: dish.category || '',
           image: dish.image || '',
+          // 只用于显示：别人传的图客户端读不到，得先换成临时链接（保存时仍然存 image）
+          imgSrc: cachedImgUrl(dish.image) || dish.image || '',
           price: dish.price ? String(dish.price) : '',
           desc: dish.desc || '',
           ingredients: dish.ingredients || '',
@@ -191,7 +196,7 @@ Page({
       if (!files || !files.length) return
       showLoading('上传中')
       const fileID = await uploadDishImage(files[0])
-      this.setData({ 'form.image': fileID })
+      this.setData({ 'form.image': fileID, 'form.imgSrc': fileID })
       hideLoading()
       toast('图片已上传')
     } catch (e) {

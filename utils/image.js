@@ -242,12 +242,25 @@ async function tempUrlOf(fileID) {
  * @param {string[]} fileIDs
  * @returns {Promise<Object>} { [fileID]: url }
  */
-async function resolveCloudImages(fileIDs) {
+// 临时链接约 2 小时有效，缓存留点余量。缓存放在模块作用域，
+// 所以同一个进程里「菜库 → 今晚 → 日历」之间是共享的，来回切页面不用重复问云函数。
+const URL_TTL = 90 * 60 * 1000
+const urlCache = {}
+
+async function resolveCloudImages(fileIDs, force) {
   const uniq = []
+  const now = Date.now()
+  const out = {}
+  const need = []
   ;(fileIDs || []).forEach(id => {
-    if (typeof id === 'string' && id.indexOf('cloud://') === 0 && uniq.indexOf(id) < 0) uniq.push(id)
+    if (typeof id !== 'string' || id.indexOf('cloud://') !== 0) return
+    if (uniq.indexOf(id) >= 0) return
+    uniq.push(id)
+    const hit = urlCache[id]
+    if (!force && hit && now - hit.at < URL_TTL) out[id] = hit.url
+    else need.push(id)
   })
-  if (!uniq.length) return {}
+  if (!need.length) return out
 
   const { initCloud } = require('./cloud.js')
   initCloud()
@@ -255,15 +268,46 @@ async function resolveCloudImages(fileIDs) {
   try {
     const res = await wx.cloud.callFunction({
       name: 'img-url',
-      data: { fileIDs: uniq.slice(0, 50) }
+      data: { fileIDs: need.slice(0, 50) }
     })
     const urls = (res && res.result && res.result.urls) || {}
     if (!Object.keys(urls).length) console.warn('[image] 云函数没换到链接', res && res.result)
-    return urls
+    Object.keys(urls).forEach(k => {
+      urlCache[k] = { url: urls[k], at: Date.now() }
+      out[k] = urls[k]
+    })
+    return out
   } catch (e) {
     console.warn('[image] 云函数换链接失败（云函数没部署时会走到这里）', e)
-    return {}
+    return out
   }
+}
+
+/** 同步读缓存（没换过或已过期返回空串）。用于「进页面时已批量换过、点开详情直接拿」。 */
+function cachedImgUrl(fileID) {
+  const hit = fileID && urlCache[fileID]
+  if (!hit) return ''
+  if (Date.now() - hit.at >= URL_TTL) return ''
+  return hit.url
+}
+
+/**
+ * 给一批「带 image 字段」的数据补上 imgSrc（可直接喂给 <image> 的地址），原地改。
+ *
+ * **必须在 setData 之前调**：否则第一帧喂给 <image> 的是读不到的 fileID（占位块），
+ * 等云函数回来再换成网址 —— 用户看到的就是「空白闪一下变成图」。
+ * 换不到就退回原始 fileID（传图的人自己仍然看得见），不会更差。
+ */
+async function attachImgUrls(items) {
+  const list = items || []
+  const urls = await resolveCloudImages(list.map(it => it && it.image))
+  let changed = false
+  list.forEach(it => {
+    if (!it || !it.image) return
+    const u = urls[it.image] || it.image
+    if (u && u !== it.imgSrc) { it.imgSrc = u; changed = true }
+  })
+  return changed
 }
 
 module.exports = {
@@ -272,5 +316,7 @@ module.exports = {
   deleteDishImage,
   chooseImage,
   tempUrlOf,
-  resolveCloudImages
+  resolveCloudImages,
+  cachedImgUrl,
+  attachImgUrls
 }

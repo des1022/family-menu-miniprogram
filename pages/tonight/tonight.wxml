@@ -149,7 +149,7 @@
           bindtap="onQuickAdd"
           hover-class="mini--hover"
         >
-          <image class="mini-img" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+          <image class="mini-img" wx:if="{{item.imgSrc}}" src="{{item.imgSrc}}" mode="aspectFill" binderror="onMiniImgError" data-list="recent" data-idx="{{index}}"/>
           <view class="mini-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
           <view class="mini-nm ellipsis">{{item.name}}</view>
           <view class="mini-sub ellipsis">{{item.onTonight ? '已在今晚' : item.freqText}}</view>
@@ -280,7 +280,7 @@
 
       <scroll-view class="dec-list" scroll-y>
         <view class="dec-pick" wx:for="{{dec.picks}}" wx:key="_id">
-          <image class="dp-img dish-dim" wx:if="{{item.image}}" src="{{item.image}}" mode="aspectFill"/>
+          <image class="dp-img dish-dim" wx:if="{{item.imgSrc}}" src="{{item.imgSrc}}" mode="aspectFill" binderror="onMiniImgError" data-list="picks" data-idx="{{index}}"/>
           <view class="dp-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
           <view class="dp-main">
             <view class="dp-nm">{{item.name}}</view>

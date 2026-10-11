@@ -1,4 +1,5 @@
 const config = require('../../utils/config.js')
+const { resolveCloudImages } = require('../../utils/image.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const { toast, confirm, pad, parseTags, parseIngredients, parseSteps } = require('../../utils/util.js')
@@ -400,16 +401,19 @@ Page({
   },
 
   /** 点菜名 → 看这道菜的详情（做法 / 食材），和菜库里看到的一样 */
-  onOpenDish(e) {
+  async onOpenDish(e) {
     const id = e.currentTarget.dataset.id
     const dish = (this._dishList || []).filter(d => d._id === id)[0]
     if (!dish) return
     const picked = this._picked || {}
+    // 先换好图片链接再弹层：这个弹层是点一下立刻出现，不能先给占位再跳图
+    const imgUrl = (await resolveCloudImages([dish.image]))[dish.image] || dish.image || ''
     this.setData({
       arrDetail: {
         _id: dish._id,
         name: dish.name,
         image: dish.image || '',
+        imgSrc: imgUrl,
         initial: initialOf(dish.name),
         ph: phIdx(dish._id),
         category: dish.category || '',

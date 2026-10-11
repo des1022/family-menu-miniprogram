@@ -184,7 +184,7 @@
       </view>
 
       <scroll-view class="ad-scroll" scroll-y>
-        <image class="ad-hero dish-dim" wx:if="{{arrDetail.image}}" src="{{arrDetail.image}}" mode="aspectFill"/>
+        <image class="ad-hero dish-dim" wx:if="{{arrDetail.imgSrc}}" src="{{arrDetail.imgSrc}}" mode="aspectFill"/>
         <view class="ad-hero img-ph {{arrDetail.ph}}" wx:else>{{arrDetail.initial}}</view>
         <view class="ad-tags">
           <text class="tag" wx:if="{{arrDetail.category}}">{{arrDetail.category}}</text>
