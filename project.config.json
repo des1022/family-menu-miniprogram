@@ -1,7 +1,20 @@
 {
   "description": "家庭菜单：多人实时同步的家庭点菜/菜单日历小程序",
   "packOptions": {
-    "ignore": [],
+    "ignore": [
+      {
+        "type": "folder",
+        "value": "docs"
+      },
+      {
+        "type": "folder",
+        "value": "tools"
+      },
+      {
+        "type": "folder",
+        "value": "scripts"
+      }
+    ],
     "include": []
   },
   "setting": {
