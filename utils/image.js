@@ -225,10 +225,52 @@ async function tempUrlOf(fileID) {
   }
 }
 
+/**
+ * 批量把云存储 fileID 换成可以直接显示的临时链接。
+ *
+ * 为什么必须绕云函数：这个环境的存储桶权限是「仅创建者及管理员可读写」，
+ * 而这里的「管理员」指的是**云后台 / 服务端**，不是小程序里的某个用户
+ * （官方原文：「云后台和服务端始终有所有文件读写权限，安全规则的配置仅对
+ * 客户端（小程序端、Web 等）发起的请求有效」）。所以 A 账号传的菜图，
+ * B 账号在客户端既读不到 fileID、也拿不到 getTempFileURL —— 上面那个
+ * tempUrlOf 在本环境里其实是换不到的。
+ * 云函数跑在服务端、有管理员权限，让它去换才拿得到（见 cloudfunctions/img-url）。
+ *
+ * 容错：任何一步失败都返回空对象，调用方退回原始 fileID（也就是老行为），
+ * 不会因为云函数没部署就把图片全弄没。
+ *
+ * @param {string[]} fileIDs
+ * @returns {Promise<Object>} { [fileID]: url }
+ */
+async function resolveCloudImages(fileIDs) {
+  const uniq = []
+  ;(fileIDs || []).forEach(id => {
+    if (typeof id === 'string' && id.indexOf('cloud://') === 0 && uniq.indexOf(id) < 0) uniq.push(id)
+  })
+  if (!uniq.length) return {}
+
+  const { initCloud } = require('./cloud.js')
+  initCloud()
+
+  try {
+    const res = await wx.cloud.callFunction({
+      name: 'img-url',
+      data: { fileIDs: uniq.slice(0, 50) }
+    })
+    const urls = (res && res.result && res.result.urls) || {}
+    if (!Object.keys(urls).length) console.warn('[image] 云函数没换到链接', res && res.result)
+    return urls
+  } catch (e) {
+    console.warn('[image] 云函数换链接失败（云函数没部署时会走到这里）', e)
+    return {}
+  }
+}
+
 module.exports = {
   compressImage,
   uploadDishImage,
   deleteDishImage,
   chooseImage,
-  tempUrlOf
+  tempUrlOf,
+  resolveCloudImages
 }

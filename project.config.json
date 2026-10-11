@@ -13,6 +13,10 @@
       {
         "type": "folder",
         "value": "scripts"
+      },
+      {
+        "type": "folder",
+        "value": "cloudfunctions"
       }
     ],
     "include": []
@@ -53,5 +57,6 @@
   "projectname": "family-menu-miniprogram",
   "simulatorType": "wechat",
   "simulatorPluginLibVersion": {},
-  "condition": {}
+  "condition": {},
+  "cloudfunctionRoot": "cloudfunctions/"
 }

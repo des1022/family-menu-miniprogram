@@ -41,7 +41,7 @@ async function main() {
     type: 'miniProgram',
     projectPath: WORKSPACE,
     privateKeyPath: KEY_PATH,
-    ignores: ['node_modules/**/*', 'scripts/**/*']
+    ignores: ['node_modules/**/*', 'scripts/**/*', 'cloudfunctions/**/*']
   })
 
   const mode = process.argv[2] || 'preview'

@@ -2,7 +2,7 @@ const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const { toast, confirm, parseTags, parseIngredients, parseSteps } = require('../../utils/util.js')
-const { tempUrlOf } = require('../../utils/image.js')
+const { resolveCloudImages } = require('../../utils/image.js')
 
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
 const FOCUS_KEY = 'fm_focus_dish'
@@ -311,6 +311,31 @@ Page({
 
     this.setData({ list: decorated, showCount: decorated.length })
     this._listRaw = list
+    this.fillImgUrls(decorated)
+  },
+
+  /**
+   * 把列表/弹层里的云存储 fileID 批量换成临时链接。
+   * 换不到就保持原样（传图的人自己照样看得见），不会比之前更差。
+   */
+  async fillImgUrls(list) {
+    const urls = await resolveCloudImages((list || []).map(it => it && it.image))
+    const keys = Object.keys(urls)
+    if (!keys.length) return
+    this._imgUrls = this._imgUrls || {}
+    keys.forEach(k => { this._imgUrls[k] = urls[k] })
+
+    const patch = {}
+    ;(this.data.list || []).forEach((it, i) => {
+      const u = it.image ? this._imgUrls[it.image] : ''
+      if (u && u !== it.imgSrc) patch['list[' + i + '].imgSrc'] = u
+    })
+    const d = this.data.detail
+    if (d && d.image) {
+      const u = this._imgUrls[d.image]
+      if (u && u !== d.imgSrc) patch['detail.imgSrc'] = u
+    }
+    if (Object.keys(patch).length) this.setData(patch)
   },
 
   /* ==================== 详情弹层 ==================== */
@@ -329,7 +354,8 @@ Page({
     // 第一步：换临时链接再试一次（fileID 直连读不到时，临时链接可能还拿得到）
     if (!item.imgRetried && item.image) {
       this.setData({ ['list[' + idx + '].imgRetried']: true })
-      const url = await tempUrlOf(item.image)
+      const urls = await resolveCloudImages([item.image])
+      const url = urls[item.image]
       if (url) {
         this.setData({ ['list[' + idx + '].imgSrc']: url })
         return
@@ -345,7 +371,8 @@ Page({
     console.warn('[dishes] 详情图加载失败')
     if (!d.imgRetried && d.image) {
       this.setData({ 'detail.imgRetried': true })
-      const url = await tempUrlOf(d.image)
+      const urls = await resolveCloudImages([d.image])
+      const url = urls[d.image]
       if (url) {
         this.setData({ 'detail.imgSrc': url })
         return
@@ -362,12 +389,14 @@ Page({
 
   openDetail(dish) {
     const tonight = this._tonight || {}
+    // 已经换过链接就直接用（进页面时批量换过，点开弹层不用再等一次）
+    const imgUrl = (this._imgUrls && this._imgUrls[dish.image]) || dish.image || ''
     this.setData({
       detail: {
         _id: dish._id,
         name: dish.name,
         image: dish.image || '',
-        imgSrc: dish.image || '',
+        imgSrc: imgUrl,
         imgRetried: false,
         imgFailed: false,
         category: dish.category || '',

@@ -3,7 +3,7 @@ const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const { SAMPLE_DISHES } = require('../../utils/samples.js')
 const { toast, confirm, alert, errText, parseSteps, parseIngredients, parseTags } = require('../../utils/util.js')
-const { tempUrlOf } = require('../../utils/image.js')
+const { resolveCloudImages } = require('../../utils/image.js')
 
 const WEEK = ['日', '一', '二', '三', '四', '五', '六']
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
@@ -292,6 +292,7 @@ Page({
       }
     })
     this.setData({ cards: cards, today: today })
+    this.fillImgUrls(cards)
     this.buildSuggest(cards)
     this.buildIngredients(records || [])
     // 「最近家里常吃」两种状态都显示，所以要跟着今晚的桌一起刷新（标记哪几道已在桌上）
@@ -425,7 +426,8 @@ Page({
     console.warn('[tonight] 图片加载失败', idx, e.detail && e.detail.errMsg)
     if (!card.imgRetried && card.image) {
       this.setData({ ['cards[' + idx + '].imgRetried']: true })
-      const url = await tempUrlOf(card.image)
+      const urls = await resolveCloudImages([card.image])
+      const url = urls[card.image]
       if (url) {
         this.setData({ ['cards[' + idx + '].imgSrc']: url })
         return
@@ -440,13 +442,35 @@ Page({
     console.warn('[tonight] 详情图加载失败')
     if (!h.imgRetried && h.image) {
       this.setData({ 'how.imgRetried': true })
-      const url = await tempUrlOf(h.image)
+      const urls = await resolveCloudImages([h.image])
+      const url = urls[h.image]
       if (url) {
         this.setData({ 'how.imgSrc': url })
         return
       }
     }
     this.setData({ 'how.imgFailed': true })
+  },
+
+  /** 把今晚桌上的卡片图的 fileID 批量换成临时链接（同菜库页那套） */
+  async fillImgUrls(cards) {
+    const urls = await resolveCloudImages((cards || []).map(c => c && c.image))
+    const keys = Object.keys(urls)
+    if (!keys.length) return
+    this._imgUrls = this._imgUrls || {}
+    keys.forEach(k => { this._imgUrls[k] = urls[k] })
+
+    const patch = {}
+    ;(this.data.cards || []).forEach((it, i) => {
+      const u = it.image ? this._imgUrls[it.image] : ''
+      if (u && u !== it.imgSrc) patch['cards[' + i + '].imgSrc'] = u
+    })
+    const h = this.data.how
+    if (h && h.image) {
+      const u = this._imgUrls[h.image]
+      if (u && u !== h.imgSrc) patch['how.imgSrc'] = u
+    }
+    if (Object.keys(patch).length) this.setData(patch)
   },
 
   /* ============ 菜品详情（就地弹出，不再跳去菜库） ============ */
@@ -473,13 +497,15 @@ Page({
     const card = (this.data.cards || []).filter(c => c.dishId === dishId)[0] || null
     if (!dish && !card) return
     const name = (dish && dish.name) || (card && card.name) || ''
+    const fileID = (dish && dish.image) || (card && card.image) || ''
+    const imgUrl = (this._imgUrls && this._imgUrls[fileID]) || fileID
     this.setData({
       how: {
         recordId: card ? card.id : '',
         dishId: dishId,
         name: name,
-        image: (dish && dish.image) || (card && card.image) || '',
-        imgSrc: (dish && dish.image) || (card && card.image) || '',
+        image: fileID,
+        imgSrc: imgUrl,
         imgRetried: false,
         imgFailed: false,
         initial: initialOf(name),

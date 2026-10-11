@@ -1,0 +1,9 @@
+{
+  "name": "img-url",
+  "version": "1.0.0",
+  "description": "把云存储 fileID 换成可显示的临时链接（服务端有管理员权限，绕开私有的存储桶权限）",
+  "main": "index.js",
+  "dependencies": {
+    "wx-server-sdk": "~2.6.3"
+  }
+}
