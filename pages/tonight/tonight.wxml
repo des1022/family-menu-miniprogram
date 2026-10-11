@@ -187,7 +187,7 @@
         </view>
 
         <view class="hw-warn" wx:if="{{how.imgFailed}}">
-          这张图读不到：只有上传它的那个账号能看到（文件权限是「仅创建者可读写」）。
+          这张图读不到：云存储权限设成了「仅创建者及管理员可读写」，只有传图的那个人能看到。
         </view>
 
         <view class="hw-sec" wx:if="{{how.ingList.length}}">
