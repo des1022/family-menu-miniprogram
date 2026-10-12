@@ -19,7 +19,12 @@ module.exports = {
     MY_OPENID: 'fm_my_openid',    // 我的 openid（从自己建的成员文档上读回来，用于换客户端后找回身份）
     THEME: 'fm_theme_mode',       // 0 跟随系统 / 1 浅色 / 2 深色
     GUIDE_SHOWN: 'fm_guide_shown',
-    NICKNAME: 'fm_nickname'       // 兼容旧版本，读一次后迁移到成员表
+    NICKNAME: 'fm_nickname',      // 兼容旧版本，读一次后迁移到成员表
+
+    // 「今晚 → 菜库」的交接用键。tabBar 页面带不了 url 参数（switchTab 会忽略 query），
+    // 所以先把「要看哪道菜 / 要筛哪一类」写进本地缓存，菜库页 onShow 读一次就清掉。
+    FOCUS_DISH: 'fm_focus_dish',
+    FOCUS_CAT: 'fm_focus_cat'
   },
 
   // 菜品上架状态

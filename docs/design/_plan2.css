@@ -1,4 +1,7 @@
 /* 方案图共享样式 —— 数值照抄 app.wxss / 各页 wxss（1rpx = 0.5px） */
+/* 真机上 app.wxss 给 view/text 定了 box-sizing:border-box，方案图也得跟上：
+   否则「宽度 = 50% 的卡片 + 1px 边框」会比真机宽 2px，两列就挤成一行一列。 */
+*, *::before, *::after { box-sizing: border-box; }
 :root{
   --pri:#D9714E; --pri-d:#C4553A; --pri-l:#FBEEE8; --pri-ink:#A8462E;
   --acc:#E9A323; --acc-l:#FCF3DF; --acc-ink:#8E5F0C;
@@ -10,6 +13,7 @@
   --sh:0 2px 7px rgba(170,130,100,.08);
   --danger:#C94A3F; --danger-l:#FBEBE9;
   --owner-bg:rgba(255,255,255,.94);
+  --cat-on-bg:#D9714E; --cat-on-ink:#FFFFFF;
 }
 body{margin:0;padding:24px 22px 36px;background:#E6E0D8;color:#2A2521;
   font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
@@ -41,7 +45,10 @@ h2{font-size:14px;margin:24px 0 11px;font-weight:700}
 .chip{display:inline-flex;align-items:center;justify-content:center;padding:6px 13px;border-radius:999px;
   font-size:13px;font-weight:600;background:var(--surf);color:var(--ink2);border:1px solid var(--line);white-space:nowrap}
 .chip.on{background:var(--pri);color:var(--btn-ink);border-color:var(--pri)}
-.chip--home{background:var(--ok-l);color:var(--ok-ink);border-color:var(--ok);font-weight:700}
+/* 「N 人（今天在家的）」选中态。最初画成绿色，实现时改成琥珀：
+   绿色在深色主题下是「纯白底 + 深绿字」，压在一起看不清（app.wxss 里 --ok 在深色下是 #FFFFFF）。
+   真机还额外给未选中的它加了虚线边框（暗示「自动算的，不是手填的」）。 */
+.chip--home{background:var(--acc-l);color:var(--acc-ink);border-color:var(--acc);font-weight:700}
 .tag{display:inline-block;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600;
   background:var(--surf2);color:var(--ink2)}
 .tag--pri{background:var(--pri-l);color:var(--pri-ink)}
@@ -117,3 +124,48 @@ h2{font-size:14px;margin:24px 0 11px;font-weight:700}
   color:var(--danger);font-size:11.5px;line-height:1.55;font-weight:600;
   box-shadow:inset 0 0 0 1px rgba(201,74,63,.3)}
 .note{font-size:11px;color:#8B8178;margin:9px 2px 0;line-height:1.65}
+
+/* ---------- 菜库页（版式照真机：左分类列 + 右上筛选 chip + 网格卡） ---------- */
+.hd{display:flex;align-items:flex-start;justify-content:space-between;padding:12px 2px 10px}
+.t-h1{font-size:17px;font-weight:700}
+.t-sub{font-size:11.5px;color:var(--ink2);margin-top:2px}
+.layout-btn{padding:5px 12px;border-radius:999px;background:var(--surf);border:1px solid var(--line);
+  font-size:12px;font-weight:600;color:var(--ink2)}
+.searchbar{display:flex;align-items:center;gap:8px;background:var(--surf);border:1px solid var(--line);
+  border-radius:999px;padding:9px 13px;box-shadow:var(--sh)}
+.sb-ico{width:17px;height:17px;opacity:.72}
+.sb-ph{color:var(--ink3);font-size:14px}
+.chips{display:flex;gap:7px;align-items:center;padding:13px 0 11px;white-space:nowrap}
+.chip--accstar{background:var(--acc-l);color:var(--acc-ink);border-color:var(--acc)}
+.chip--clear{background:transparent;color:var(--ink3);border-style:dashed}
+.cat-split{display:flex;align-items:flex-start;margin-bottom:4px}
+.cat-side{flex:0 0 auto;width:59px;background:var(--surf2);border-radius:11px;padding:4px}
+.cat-i{display:flex;flex-direction:column;align-items:center;padding:6.5px 2px 5.5px;
+  border-radius:8px;margin-bottom:2.5px}
+.cat-i:last-child{margin-bottom:0}
+.cat-i-ic{width:22px;height:22px}
+.cat-i-nm{margin-top:3px;font-size:10.5px;color:var(--ink2);max-width:100%;overflow:hidden;
+  text-overflow:ellipsis;white-space:nowrap}
+.cat-i-n{font-size:8.5px;color:var(--ink3);margin-top:.5px}
+.cat-i--on{background:var(--cat-on-bg)}
+.cat-i--on .cat-i-nm{color:var(--cat-on-ink);font-weight:700}
+.cat-i--on .cat-i-n{color:var(--cat-on-ink);opacity:.74}
+.cat-main{flex:1;min-width:0;padding-left:8px}
+.grid{display:flex;flex-wrap:wrap;margin:0 -4.5px}
+.card-dish{position:relative;width:calc(50% - 9px);margin:4.5px;background:var(--surf);
+  border:1px solid var(--line);border-radius:13px;overflow:hidden;box-shadow:var(--sh)}
+.cd-media{position:relative}
+.cd-img{width:100%;height:110px;font-size:26px;font-weight:700;color:#fff;display:flex;
+  align-items:center;justify-content:center;background:linear-gradient(140deg,#E7A176,#C0613F)}
+.cd-fav{position:absolute;left:7px;top:7px;width:22px;height:22px;border-radius:50%;
+  background:var(--owner-bg);color:var(--acc);display:flex;align-items:center;justify-content:center;
+  font-size:13px}
+.cd-add{position:absolute;right:7px;bottom:7px;width:34px;height:34px;border-radius:50%;
+  background:var(--btn-bg);color:var(--btn-ink);display:flex;align-items:center;justify-content:center;
+  font-size:18px;font-weight:700;box-shadow:var(--btn-sh)}
+.cd-add--on{background:var(--ok);color:#fff}
+.cd-body{padding:8px 9px 10px}
+.cd-nm{font-size:13.5px;font-weight:700}
+.cd-tg{display:flex;gap:4px;margin-top:5px;flex-wrap:wrap}
+.pick-hint{font-size:11.5px;color:var(--ink2);margin:-3px 0 7px 2px}
+.pick-hint b{color:var(--pri-ink)}

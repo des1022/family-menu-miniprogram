@@ -103,7 +103,7 @@
           <div class="dc-ic dc-ic--ok"><img class="dc-img" src="../../assets/icons/dec-size.png"></div>
           <div class="dc-lb">人数</div>
           <div class="dc-chips">
-            <span class="chip chip--home on" style="background:var(--ok);color:#fff;border-color:var(--ok)">2 人（今天在家的）</span>
+            <span class="chip chip--home">2 人（今天在家的）</span>
             <span class="chip">3-4 人</span>
             <span class="chip">5 人以上</span>
           </div>
@@ -158,6 +158,12 @@
     程序已经在算这个数了（今晚页右上角、家庭页标题都在显示）。
     改动只是<b>把这个数接到决策器的人数行</b>，多一个「今天在家的」选项并默认选中它。
     <br><span style="color:#8B8178">改动量：小（一处默认值 + 一行文案）。</span>
+    <br><br><b>实现时改了两个地方：</b>
+    <br>① 这档的颜色用<b>琥珀</b>而不是绿色 —— 深色主题下 --ok 是纯白、--ok-ink 是深绿，
+    「白底 + 深绿字」压在一起看不清（附：未选中时它带虚线边框，暗示「是自动算的，不是手填的」）。
+    <br>② 人数现在<b>真的管菜量</b>：以前只有「随便配」才用它，选「2荤1素1汤」就恒定 4 道。
+    现在超了就按 汤 → 多出来的荤 → 素 的顺序砍（荤、素各留一道），
+    所以 2 人时那张 4 道的桌子会变成 3 道。
   </div>
 </div>
 

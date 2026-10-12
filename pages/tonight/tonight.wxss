@@ -215,6 +215,10 @@
 }
 .sug-tx { flex: 1; font-size: 25rpx; font-weight: 700; color: var(--acc-ink); line-height: 1.5; }
 .sug-hint { display: block; font-size: 22rpx; font-weight: 500; opacity: 0.82; }
+/* 建议里的菜名：点一下直接打开这道菜的详情 → 用点线表示「可以点」。
+   不给它加底色：这一条本身是琥珀底，深浅两套主题下加底色都容易糊。 */
+.sug-nm { border-bottom: 2rpx dotted currentColor; }
+.sug-sep { opacity: 0.6; }
 .sug-go {
   flex: 0 0 auto;
   background: var(--acc);
@@ -310,6 +314,21 @@
   font-size: 25rpx; font-weight: 600; color: var(--ink2);
 }
 .dc-chips { display: flex; flex-wrap: wrap; gap: 12rpx; flex: 1; }
+
+/**
+ * 人数档里的「N 人（今天在家的）」。
+ * 它跟其余几档性质不同：不是手填的，是从家人在「家庭」页的开关自动算出来的，
+ * 所以未选中时用虚线边框暗示一下；选中时用琥珀色和别的档（选中＝主色实心）区分开。
+ * 颜色特意没用 --ok：深色主题下 --ok 是纯白、--ok-ink 是深绿，凑一起白字压白底看不清。
+ */
+.chip--home { border-style: dashed; }
+.chip--home.chip--on {
+  background: var(--acc-l);
+  color: var(--acc-ink);
+  border-color: var(--acc);
+  border-style: solid;
+  font-weight: 700;
+}
 /* flex:0 0 auto 很关键 —— 不加的话 scroll-view 默认 flex-shrink:1，
    在只有 max-height 的父容器里会被内容撑高，把底部按钮挤出去 */
 .dec-list {

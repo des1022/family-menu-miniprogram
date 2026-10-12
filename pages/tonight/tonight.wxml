@@ -114,8 +114,11 @@
       </view>
 
       <view class="sug" wx:if="{{suggest}}">
-        <view class="sug-tx">{{suggest.text}}<text class="sug-hint">{{suggest.hint}}</text></view>
-        <view class="sug-go" bindtap="onSugTap">去看看</view>
+        <view class="sug-tx">{{suggest.text}}
+          <view class="sug-hint" wx:if="{{suggest.names.length}}">你菜库里的：<block wx:for="{{suggest.names}}" wx:key="_id"><text class="sug-sep" wx:if="{{index > 0}}"> · </text><text class="sug-nm" data-id="{{item._id}}" catchtap="onSugDish">{{item.name}}</text></block></view>
+          <view class="sug-hint" wx:else>{{suggest.empty}}</view>
+        </view>
+        <view class="sug-go" bindtap="onSugTap">{{suggest.go}}</view>
       </view>
 
       <view class="row-card" bindtap="onOpenShopping">
@@ -257,7 +260,7 @@
           <view class="dc-lb">人数</view>
           <view class="dc-chips">
             <view
-              class="chip {{dec.size === item.key ? 'chip--on' : ''}}"
+              class="chip {{dec.size === item.key ? 'chip--on' : ''}} {{item.home ? 'chip--home' : ''}}"
               wx:for="{{sizes}}"
               wx:key="key"
               data-field="size"

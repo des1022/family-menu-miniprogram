@@ -63,6 +63,58 @@ const SIZES = [
   { key: 's3', label: '5 人以上', total: 5 }
 ]
 
+/** 「今天在家吃 N 人」→ 这一桌做几道菜 */
+function homeTotal(n) {
+  if (n <= 1) return 2
+  if (n <= 2) return 3
+  if (n <= 4) return 4
+  return 5
+}
+
+/**
+ * 决策器的人数档。
+ *
+ * 家里每个人都有「今晚在不在家吃」的开关，`db.countEatTonight()` 早就把这个数算出来了
+ * （今晚页右上角、家庭页标题都在显示），但决策器里还要**再手选一遍** 1-2 / 3-4 / 5 人以上 ——
+ * 同一件事填两遍，还可能互相打脸（2 人吃饭却按 3-4 人配了一桌）。
+ * 现在把那个数直接接成第一档并默认选中；没人开过这个开关（=0）时就不凭空编一个「0 人」，
+ * 还是老三档。
+ */
+function sizeOptions(eatCount) {
+  const list = []
+  const n = Number(eatCount) || 0
+  if (n > 0) list.push({ key: 'home', home: true, label: n + ' 人（今天在家的）', total: homeTotal(n) })
+  return list.concat(SIZES)
+}
+
+/**
+ * 按人数上限砍菜。
+ *
+ * 以前 `total` 只在「随便配」时才用得上，选「2荤1素1汤」这类固定搭配就恒定 4 道 ——
+ * 也就是说「人数」其实没管住菜量。现在它真的管：超出就砍。
+ * 砍的顺序是 汤 → 多出来的荤 → 素（两个人吃 2 荤 1 素，比 1 荤 1 素 1 汤更实在），
+ * 而且荤、素各自至少留一道，不会砍成一桌全荤。
+ */
+function trimToSize(items, total) {
+  const out = items.slice()
+  // 传进来的可能是「已经装饰过」的菜（只有 category，没有 tags），所以优先用它自带的 role
+  const roleOfItem = d => d.role || roleOf(d)
+  const sameRole = (arr, role) => arr.filter(d => roleOfItem(d) === role).length
+  const rank = d => (roleOfItem(d) === 'soup' ? 0 : roleOfItem(d) === 'main' ? 1 : 2)
+  while (out.length > total) {
+    let idx = -1
+    for (let i = 0; i < out.length; i++) {
+      const r = roleOfItem(out[i])
+      // 汤随便砍；荤、素要各留一道
+      if ((r === 'main' || r === 'veg') && sameRole(out, r) <= 1) continue
+      if (idx === -1 || rank(out[i]) < rank(out[idx])) idx = i
+    }
+    if (idx === -1) break
+    out.splice(idx, 1)
+  }
+  return out
+}
+
 const TASTES = [
   { key: 't0', label: '随便', keys: [] },
   { key: 't1', label: '清淡', keys: ['清爽', '清淡', '凉拌', '清蒸', '不辣', '汤'] },
@@ -80,6 +132,11 @@ function roleOf(dish) {
 
 const ROLE_LABEL = { main: '硬菜', veg: '素菜', soup: '汤' }
 const ROLE_ORDER = ['main', 'veg', 'soup']
+
+// 「这一桌缺什么」用的两个判断（只看分类，和 roleOf 的宽松判断分开：
+// 桌上有没有青菜看的是这道菜本身，不是它的名字里带了「汤」字）
+const VEG_RE = /素|青菜|蔬|凉拌/
+const SOUP_RE = /汤|羹/
 
 /** 距离上次做这道菜多少天 */
 function daysAgoText(dateStr) {
@@ -341,20 +398,69 @@ Page({
     this.setData({ recent: recent })
   },
 
+  /**
+   * 「这一桌还缺个青菜 / 少个汤」。
+   *
+   * 以前这里的两句提示没问题，但后面挂的菜名是**写死在代码里**的
+   * （'蒜蓉小青菜 · 凉拌黄瓜 · 醋溜土豆丝'）—— 菜库里有没有这几道全靠运气，
+   * 而且点「去看看」只是跳到菜库、不带任何筛选，等于让用户自己再找一遍。
+   *
+   * 现在：菜名从**用户自己的上架菜**里按同一类挑 3 道（久没做过的排前面，和决策器一个规矩），
+   * 名字点一下直接打开那道菜的详情；右边按钮带分类筛选跳菜库。菜库里这一类还没有菜时，
+   * 就说实话（「还没上架素菜，先加一道」），不摆一串不存在的菜名。
+   */
   buildSuggest(cards) {
     if (!cards.length) {
       this.setData({ suggest: null })
       return
     }
-    const hasVeg = cards.some(c => /素|青菜|蔬|凉拌/.test(c.category || ''))
-    const hasSoup = cards.some(c => /汤|羹/.test(c.category || ''))
+    const hasVeg = cards.some(c => VEG_RE.test(c.category || ''))
+    const hasSoup = cards.some(c => SOUP_RE.test(c.category || ''))
+    let role = ''
+    let text = ''
     if (!hasVeg) {
-      this.setData({ suggest: { text: '这一桌还缺个青菜', hint: '蒜蓉小青菜 · 凉拌黄瓜 · 醋溜土豆丝' } })
+      role = 'veg'
+      text = '这一桌还缺个青菜'
     } else if (!hasSoup) {
-      this.setData({ suggest: { text: '再配个汤更完整', hint: '紫菜蛋花汤 · 冬瓜排骨汤' } })
-    } else {
-      this.setData({ suggest: null })
+      role = 'soup'
+      text = '再配个汤更完整'
     }
+    if (!role) {
+      this.setData({ suggest: null })
+      return
+    }
+
+    const picks = this.pickByRole(role, 3)
+    const cat = picks.length ? (picks[0].category || '') : ''
+    this.setData({
+      suggest: {
+        role: role,
+        text: text,
+        names: picks.map(d => ({ _id: d._id, name: d.name })),
+        empty: role === 'veg' ? '菜库里还没上架素菜，先去加一道' : '菜库里还没上架汤，先去加一道',
+        cat: cat,
+        go: cat ? '去挑一道' : '去菜库'
+      }
+    })
+  },
+
+  /**
+   * 从菜库里按「荤 / 素 / 汤」挑几道（久没做过的排前面）。
+   * 只看上架的菜，且跳过今晚已经在桌上的，免得推荐一道桌上已有的。
+   */
+  pickByRole(role, n) {
+    const last = this._lastMap || {}
+    const onIds = {}
+    ;(this.data.cards || []).forEach(c => { onIds[c.dishId] = true })
+    return (this.data.allDishes || [])
+      .filter(d => !onIds[d._id] && roleOf(d) === role)
+      .sort((a, b) => {
+        const la = last[a._id] || ''
+        const lb = last[b._id] || ''
+        if (la === lb) return 0
+        return la < lb ? -1 : 1
+      })
+      .slice(0, n)
   },
 
   buildIngredients(records) {
@@ -556,7 +662,18 @@ Page({
     })
   },
 
+  /** 建议条右边的按钮：跳菜库，并带上「要挑的那一类」的筛选 */
   onSugTap() {
+    const s = this.data.suggest
+    if (s && s.cat) wx.setStorageSync(config.KEYS.FOCUS_CAT, s.cat)
+    wx.switchTab({ url: '/pages/dishes/dishes' })
+  },
+
+  /** 点建议里的某个菜名：跳菜库并直接打开这道菜的详情（tabBar 页面只能靠本地缓存交接） */
+  onSugDish(e) {
+    const id = e.currentTarget.dataset.id
+    if (!id) return
+    wx.setStorageSync(config.KEYS.FOCUS_DISH, id)
     wx.switchTab({ url: '/pages/dishes/dishes' })
   },
 
@@ -574,7 +691,14 @@ Page({
       }
       return
     }
-    this.setData({ 'dec.open': true }, () => this.rollAll())
+    const sizes = sizeOptions(this.data.eatCount)
+    // 第一档就是「N 人（今天在家的）」，每次打开都重新按开关算一遍并选中它；
+    // 想按别的份量做，旁边两个档还在，点一下就行。
+    this.setData({
+      sizes: sizes,
+      'dec.size': sizes[0].home ? 'home' : this.data.dec.size,
+      'dec.open': true
+    }, () => this.rollAll())
   },
 
   closeDec() {
@@ -592,7 +716,9 @@ Page({
   /** 按当前参数重新凑一桌 */
   async rollAll() {
     const mix = MIXES.filter(m => m.key === this.data.dec.mix)[0] || MIXES[0]
-    const size = SIZES.filter(s => s.key === this.data.dec.size)[0] || SIZES[1]
+    const sizes = this.data.sizes || SIZES
+    const size = sizes.filter(s => s.key === this.data.dec.size)[0]
+      || sizes.filter(s => s.key === 's2')[0] || sizes[sizes.length - 1]
     const taste = TASTES.filter(t => t.key === this.data.dec.taste)[0] || TASTES[0]
     const total = size.total
 
@@ -629,8 +755,11 @@ Page({
       picks.push(this.decoratePick(d))
     }
 
-    await attachImgUrls(picks)
-    this.setData({ 'dec.picks': picks })
+    // 人数管菜量：搭配要的比人数多就按人数砍（见 trimToSize 的说明）
+    const final = picks.length > total ? trimToSize(picks, total) : picks
+
+    await attachImgUrls(final)
+    this.setData({ 'dec.picks': final })
   },
 
   /** 从候选池挑一道：先按口味收窄，再让久没做过的排前面，最后在靠前的里随机 */
@@ -666,6 +795,7 @@ Page({
       name: d.name,
       image: d.image || '',
       category: d.category || '',
+      role: roleOf(d),
       roleLabel: ROLE_LABEL[roleOf(d)],
       initial: initialOf(d.name),
       ph: phOf(d._id),

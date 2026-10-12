@@ -5,7 +5,6 @@ const { toast, confirm, parseTags, parseIngredients, parseSteps } = require('../
 const { resolveCloudImages, cachedImgUrl, attachImgUrls } = require('../../utils/image.js')
 
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
-const FOCUS_KEY = 'fm_focus_dish'
 
 /* ==================== 分类图标 ==================== */
 
@@ -105,7 +104,10 @@ Page({
   onShow() {
     this._lastTop = undefined   // 回到本页时按「可见」开始算
     this.setData({ themeCls: theme.className(), ico: this.buildIco(), fabHidden: false })
-    this.loadAll().then(() => this.checkFocus())
+    this.loadAll().then(() => {
+      this.checkFocus()
+      this.checkFocusCat()
+    })
   },
 
   /**
@@ -137,11 +139,26 @@ Page({
 
   /** 从「今晚」点某道菜跳过来时，直接打开它的弹层 */
   checkFocus() {
-    const id = wx.getStorageSync(FOCUS_KEY)
+    const id = wx.getStorageSync(config.KEYS.FOCUS_DISH)
     if (!id) return
-    wx.removeStorageSync(FOCUS_KEY)
+    wx.removeStorageSync(config.KEYS.FOCUS_DISH)
     const dish = (this._all || []).filter(d => d._id === id)[0]
     if (dish) this.openDetail(dish)
+  },
+
+  /**
+   * 从今晚页「这一桌还缺个青菜」那条建议跳过来时，直接筛到那一类。
+   *
+   * switchTab 带不了 url 参数，所以由今晚页把分类名写进本地缓存，这里读一次就清掉。
+   * 菜库里根本没有这一类（比如一道素菜都还没上架）就不筛 —— 硬筛会得到一屏空白，
+   * 比不筛更让人发慌。
+   */
+  checkFocusCat() {
+    const name = wx.getStorageSync(config.KEYS.FOCUS_CAT)
+    if (!name) return
+    wx.removeStorageSync(config.KEYS.FOCUS_CAT)
+    if ((this._cats || []).indexOf(name) === -1) return
+    this.setData({ activeCat: name, activeKey: name, hasFilter: true }, () => this.filterList())
   },
 
   async loadAll() {
