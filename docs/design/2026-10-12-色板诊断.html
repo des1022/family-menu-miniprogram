@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>色板诊断 · 家庭菜单</title>
+<style>
+:root{
+  --pri:#D9714E; --pri-d:#C4553A; --pri-l:#FBEEE8; --pri-ink:#A8462E;
+  --acc:#E9A323; --acc-l:#FCF3DF; --acc-ink:#8E5F0C;
+  --ok:#4F9367; --ok-l:#E9F3ED; --ok-ink:#3E7A55;
+  --bg:#FAF7F3; --surf:#FFFFFF; --surf2:#F4EFE9; --line:#EFE7DE;
+  --ink:#2A2521; --ink2:#8B8178; --ink3:#B7AEA4;
+  --danger:#C94A3F;
+  --sh:0 2px 7px rgba(170,130,100,.08);
+}
+body{margin:0;padding:26px 24px 40px;background:#E6E0D8;color:#2A2521;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+h1{font-size:20px;margin:0 0 6px;font-weight:700}
+.sub{font-size:13px;color:#6B635B;margin:0 0 22px;line-height:1.7}
+h2{font-size:15px;margin:30px 0 12px;font-weight:700;display:flex;align-items:center;gap:9px}
+h2 .n{width:22px;height:22px;border-radius:7px;background:#D9714E;color:#fff;font-size:12px;
+  display:flex;align-items:center;justify-content:center;font-weight:800}
+h2 .s{font-weight:400;font-size:12.5px;color:#8B8178}
+.card{background:#FFFFFF;border:1px solid #EFE7DE;border-radius:14px;box-shadow:var(--sh);
+  padding:16px 18px;margin-bottom:14px}
+
+/* 色卡 */
+.sw{display:flex;flex-wrap:wrap;gap:10px}
+.swi{width:118px;border-radius:11px;overflow:hidden;border:1px solid #EFE7DE;background:#fff}
+.swi .c{height:54px}
+.swi .t{padding:7px 9px}
+.swi .nm{font-size:11px;font-weight:700;line-height:1.35}
+.swi .hx{font-size:10px;color:#8B8178;margin-top:2px;font-family:ui-monospace,Menlo,monospace}
+.swi .hsl{font-size:9.5px;color:#B7AEA4;margin-top:1px;font-family:ui-monospace,Menlo,monospace}
+
+/* 问题演示 */
+.pb{display:flex;gap:12px;flex-wrap:wrap}
+.pbi{flex:1;min-width:220px;border:1px dashed #E3D6C8;border-radius:12px;padding:12px}
+.pbi .cap{font-size:11px;color:#8B8178;margin-bottom:9px;font-weight:600}
+.chipline{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:600;
+  padding:9px 12px;border-radius:10px;margin-bottom:7px}
+.chipline:last-child{margin-bottom:0}
+.btnrow{display:flex;gap:10px}
+.demo-btn{flex:1;text-align:center;padding:11px 0;border-radius:999px;font-size:13px;font-weight:700}
+
+/* 深色演示 */
+.darkbox{background:#37776A;border-radius:12px;padding:13px 14px;color:#F0F7F4}
+.darkbox .lbl{font-size:10.5px;color:#A0C3B9;margin-bottom:9px}
+.dtile{width:38px;height:38px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:800;flex:0 0 auto}
+.darkrow{display:flex;gap:10px;align-items:center}
+
+/* 表 */
+table{border-collapse:collapse;width:100%;font-size:12px}
+th,td{border:1px solid #EFE7DE;padding:8px 10px;text-align:left;vertical-align:top}
+th{background:#FAF7F3;font-weight:700;font-size:11.5px;color:#6B635B}
+td .dot{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:6px;
+  vertical-align:-1px}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:11px}
+.arrow{color:#B7AEA4;padding:0 4px}
+.bad{color:#C94A3F;font-weight:700}
+.okk{color:#3E7A55;font-weight:700}
+.note{font-size:11.5px;color:#8B8178;line-height:1.7;margin:10px 0 0}
+.rule{background:#FAF7F3;border-radius:11px;padding:13px 15px;font-size:12.5px;line-height:1.8}
+.rule b{color:#A8462E}
+</style>
+</head>
+<body>
+
+<h1>色板诊断 · 家庭菜单</h1>
+<p class="sub">
+  把 <code>app.wxss</code> 里 37 个设计变量逐个数出来、算出色相 / 饱和度 / 明度，
+  再看每个页面实际用了哪几种底色块。<b>结论：色板本身不难看，但「谁能用、用在哪」没有规则</b> ——
+  三个暖色角色挨太近，同一个页面里又同时铺开四五种浅底，所以显得糊。
+</p>
+
+<h2><span class="n">1</span>现状色板<span class="s">括号里是 H 色相 / S 饱和度 / L 明度</span></h2>
+<div class="card">
+  <div class="sw">
+    <div class="swi"><div class="c" style="background:#D9714E"></div>
+      <div class="t"><div class="nm">主操作 · 选中</div><div class="hx">#D9714E</div>
+      <div class="hsl">H15 S65 L58</div></div></div>
+    <div class="swi"><div class="c" style="background:#E9A323"></div>
+      <div class="t"><div class="nm">次强调</div><div class="hx">#E9A323</div>
+      <div class="hsl">H39 S82 L53</div></div></div>
+    <div class="swi"><div class="c" style="background:#C94A3F"></div>
+      <div class="t"><div class="nm">危险</div><div class="hx">#C94A3F</div>
+      <div class="hsl">H5 S56 L52</div></div></div>
+    <div class="swi"><div class="c" style="background:#4F9367"></div>
+      <div class="t"><div class="nm">成功 / 完成</div><div class="hx">#4F9367</div>
+      <div class="hsl">H141 S30 L44</div></div></div>
+    <div class="swi"><div class="c" style="background:#FBEEE8"></div>
+      <div class="t"><div class="nm">主色浅底</div><div class="hx">#FBEEE8</div>
+      <div class="hsl">H19 S70 L95</div></div></div>
+    <div class="swi"><div class="c" style="background:#FCF3DF"></div>
+      <div class="t"><div class="nm">强调浅底</div><div class="hx">#FCF3DF</div>
+      <div class="hsl">H41 S83 L93</div></div></div>
+    <div class="swi"><div class="c" style="background:#E9F3ED"></div>
+      <div class="t"><div class="nm">成功浅底</div><div class="hx">#E9F3ED</div>
+      <div class="hsl">H144 S29 L93</div></div></div>
+    <div class="swi"><div class="c" style="background:#F4EFE9"></div>
+      <div class="t"><div class="nm">中性浅底</div><div class="hx">#F4EFE9</div>
+      <div class="hsl">H33 S33 L94</div></div></div>
+  </div>
+  <p class="note">
+    暖色（橙）+ 暖色（黄）+ 绿，整体是「暖厨房」的调性，方向没问题。
+    问题出在下面三处具体距离上。
+  </p>
+</div>
+
+<h2><span class="n">2</span>三个能指认的问题</h2>
+
+<div class="pb">
+  <div class="pbi">
+    <div class="cap">① 两个浅底几乎分不出（明度只差 2%）</div>
+    <div class="chipline" style="background:#FBEEE8;color:#A8462E">
+      <span>有记录</span><span style="margin-left:auto;font-weight:400;font-size:11px">pri-l · L95</span>
+    </div>
+    <div class="chipline" style="background:#FCF3DF;color:#8E5F0C">
+      <span>小建议</span><span style="margin-left:auto;font-weight:400;font-size:11px">acc-l · L93</span>
+    </div>
+    <p class="note" style="margin-top:9px">
+      并排看才勉强分出「一个偏粉、一个偏黄」。这两个色<b>同为 L93–95 的极浅底</b>，
+      在白卡上基本是「两片几乎一样的米色」。日历页里它们同时出现在一屏。
+    </p>
+  </div>
+
+  <div class="pbi">
+    <div class="cap">② 危险色和主色只差 10° 色相</div>
+    <div class="btnrow" style="margin-bottom:9px">
+      <div class="demo-btn" style="background:linear-gradient(135deg,#DE7A56,#C4553A);color:#fff">保存</div>
+      <div class="demo-btn" style="background:#C94A3F;color:#fff">删除</div>
+    </div>
+    <p class="note">
+      左边是主按钮渐变（#DE7A56→#C4553A，H≈15°），右边是危险色（#C94A3F，H5°）。
+      <b>在手机上两块都会被读成「橙红」，靠颜色根本分不出哪个会删东西。</b>
+      现在管理页是靠「删除只用红字、不填底」来区分的 —— 那是对的，应该推广成规则。
+    </p>
+  </div>
+
+  <div class="pbi">
+    <div class="cap">③ 深色下主色会变成白色（已踩坑 3 次）</div>
+    <div class="darkbox">
+      <div class="lbl">深色主题（.theme-dark）</div>
+      <div class="darkrow">
+        <div class="dtile" style="background:#FFFFFF;color:#2A5F54">15</div>
+        <div class="dtile" style="background:rgba(255,255,255,.16);color:#FFFFFF">1</div>
+        <div class="dtile" style="background:rgba(210,112,63,.26);color:#F8DAC8">18</div>
+        <div style="font-size:11.5px;color:#C6DCD5;line-height:1.5;margin-left:4px">
+          ① <b>--pri</b> 变成纯白<br>
+          ② <b>--pri-l</b> 变成半透明白 + <b>--pri-ink</b> 白 → <b>白字压白底，看不见</b><br>
+          ③ 只能手工改暖色（--acc-l / --acc-ink）才救回来
+        </div>
+      </div>
+    </div>
+    <p class="note">
+      这是<b>同一个坑踩了三次</b>的地方：菜品管理的「编辑」按钮、日历的日期胶囊、
+      以及今天的「有记录」格。根因是「浅底 + 深字」这对变量在深色下被整体反转成
+      「白底 + 白字」，任何依赖它的组件都要单独兜一次。
+    </p>
+  </div>
+</div>
+
+<h2><span class="n">3</span>底色块「同时开几盏灯」的问题</h2>
+<div class="card">
+  <table>
+    <tr><th>页面</th><th>同时用到的语义底色</th><th>种数</th></tr>
+    <tr><td>今晚</td><td>主浅 ×4 · 强调浅 ×4 · 成功浅 ×2 · 弹层浅 ×1 · 中性浅 ×1</td><td class="bad">5 种</td></tr>
+    <tr><td>日历</td><td>主浅 ×4 · 强调浅 ×5 · 成功浅 ×1 · 中性 ×7 · 主实 ×3 · 强调实 ×2</td><td class="bad">6 种</td></tr>
+    <tr><td>菜品管理</td><td>主浅 ×2 · 强调浅 ×2 · 成功浅 ×1 · 中性 ×9 · 主实 ×3</td><td class="bad">5 种</td></tr>
+    <tr><td>菜品编辑</td><td>主浅 ×2 · 强调浅 ×1 · 成功浅 ×2 · 中性 ×6</td><td>4 种</td></tr>
+    <tr><td>菜库</td><td>主浅 ×1 · 强调浅 ×1 · 成功浅 ×1 · 中性 ×6 · 弹层浅 ×1</td><td>4 种</td></tr>
+    <tr><td>采购清单</td><td>主浅 ×1 · 中性 ×4 · 成功实 ×1</td><td class="okk">2 种</td></tr>
+    <tr><td>家庭 / 分类 / 海报</td><td>主浅 · 中性</td><td class="okk">2 种</td></tr>
+  </table>
+  <p class="note">
+    一屏里同时「亮」起四五种浅色底，就像房间里同时开了四五盏不同颜色的灯 ——
+    每盏都不难看，但叠在一起就分不清哪个是重点。<b>采购清单 / 家庭页那种「2 种」的克制，
+    才是目标状态。</b>
+  </p>
+</div>
+
+<h2><span class="n">4</span>建议：先定规则，再动颜色</h2>
+<div class="card">
+  <table>
+    <tr><th style="width:130px">颜色</th><th>只允许用于</th><th>不要用于</th></tr>
+    <tr>
+      <td><span class="dot" style="background:#D9714E"></span>主色 / 主色浅底</td>
+      <td>主操作按钮、当前选中项、今天、需要「点它」的东西</td>
+      <td>纯装饰色块、区块图标</td>
+    </tr>
+    <tr>
+      <td><span class="dot" style="background:#E9A323"></span>强调 / 强调浅底</td>
+      <td><b>只给「时间与记录」</b>：有记录的日子、本月回顾的数据、名次</td>
+      <td>状态、按钮、区块图标</td>
+    </tr>
+    <tr>
+      <td><span class="dot" style="background:#4F9367"></span>成功 / 成功浅底</td>
+      <td><b>只给「已完成」</b>：已上架、已买、已确认、已认领</td>
+      <td>当装饰色；「食材清单」这种区块图标改用中性色</td>
+    </tr>
+    <tr>
+      <td><span class="dot" style="background:#C94A3F"></span>危险</td>
+      <td><b>只给破坏性动作，且只用文字色（不填底）</b></td>
+      <td>任何填充色块</td>
+    </tr>
+    <tr>
+      <td><span class="dot" style="background:#F4EFE9"></span>中性浅底</td>
+      <td>一切容器、分区、提示条、未选中状态</td>
+      <td>—</td>
+    </tr>
+  </table>
+  <p class="note">
+    <b>规则先行的话，颜色本身可以一个都不改</b>，画面立刻会安静下来 ——
+    因为现在的「花」主要来自滥用（三色循环当装饰），不是色值本身。
+  </p>
+</div>
+
+<div class="rule" style="margin-top:14px">
+  <b>另外两处小调整（可选，改了就更好）</b><br>
+  1 · <b>危险色往红/深走一点</b>：
+  <span class="mono">#C94A3F</span> <span class="arrow">→</span> <span class="mono">#B03A34</span>
+  （H5 L52 → H4 L46），和主色橙红拉开明度层次。<br>
+  2 · <b>两个浅底拉开</b>：强调浅底
+  <span class="mono">#FCF3DF</span> <span class="arrow">→</span> <span class="mono">#F8E8BC</span>，
+  让它从「几乎一样的米色」变成明确的奶油黄（L93 → L86）。<br>
+  3 · <b>加一组「跨主题恒暖」变量</b>（如 <span class="mono">--warm / --warm-l / --warm-ink</span>），
+  专门给「不管深浅主题都要是暖色」的组件用 —— 从此不用每处手工兜深色。
+</div>
+
+</body>
+</html>
