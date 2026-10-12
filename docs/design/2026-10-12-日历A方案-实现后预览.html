@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>日历 A 方案 · 实现后预览（月历 / 安排 / 回顾）</title>
+<link rel="stylesheet" href="_ui-plan.css">
+<style>
+/* =========================================================================
+   「接到代码里之后长什么样」—— 数值全部取自改后的 pages/calendar/calendar.wxss
+   （1rpx = 0.5px），逐项翻译，不是凭感觉画的。
+   本轮三处改动：① 月历卡内图例瘦身 + 提示收进卡内
+                ② 「接下来的安排」日期做成胶囊
+                ③ 「本月回顾」头部换成暖色横幅（上一轮已做）
+   ========================================================================= */
+
+/* 页头 */
+.hd{display:flex;align-items:flex-start;justify-content:space-between;padding:4px 2px 11px}
+.t-h1{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.t-sub{font-size:13px;color:var(--ink2);margin-top:2px}
+.fbody{padding:0 14px 18px}
+
+/* ---------- 月历卡（方案 B 格子块 + 本轮图例瘦身 / 提示收进卡内） ---------- */
+.cal-card{background:var(--surf);border:1px solid var(--line);border-radius:14px;
+  box-shadow:var(--sh);padding:9px 8px 6px}
+.calh{display:flex;align-items:center;justify-content:space-between;padding:1px 2px 7px}
+.calh-a{width:28px;height:28px;border-radius:50%;background:var(--surf2);color:var(--ink2);
+  display:flex;align-items:center;justify-content:center;font-size:18px}
+.calh-m{font-size:16px;font-weight:700}
+.calgrid{display:flex;flex-wrap:wrap}
+.wd{width:14.28%;text-align:center;font-size:11px;color:var(--ink3);font-weight:600;padding-bottom:5px}
+.cell{width:14.28%;padding:2px}
+.cell--blank{visibility:hidden}
+.tile{height:48px;border-radius:8px;background:var(--surf2);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2.5px}
+.cell-d{font-size:13.5px;font-weight:600;color:var(--ink2);line-height:1.2}
+.tile--rec{background:var(--acc-l)}
+.tile--rec .cell-d{color:var(--acc-ink);font-weight:700}
+.tile--today{background:var(--pri)}
+.tile--today .cell-d{color:var(--btn-ink);font-weight:800}
+.cell-dots{display:flex;gap:2.5px;height:6px;align-items:center}
+.dot{width:6px;height:6px;border-radius:50%}
+.tile--today .dot{outline:1px solid rgba(255,255,255,.7)}
+/* 图例：本轮去掉了「点的颜色 = 当天菜的配色」那句长解释 */
+.cal-legend{display:flex;align-items:center;gap:12px;justify-content:center;
+  margin-top:7px;padding-top:8px;border-top:1px solid var(--line)}
+.lg{font-size:10.5px;color:var(--ink2);display:flex;align-items:center;gap:4px}
+.lg-dot{width:7px;height:7px;border-radius:50%}
+.lg-dot--rec{background:var(--acc)}
+.lg-dot--today{background:var(--pri)}
+/* 提示：原来在卡外、暖黄底；现在卡内、浅灰底 */
+.cal-tip{margin-top:7px;padding:6px 9px;border-radius:9px;background:var(--surf2);
+  font-size:10.5px;color:var(--ink2);line-height:1.5}
+
+/* ---------- 区块标题 ---------- */
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin:13px 2px 8px}
+.sec-t{font-size:15px;font-weight:700}
+.sec-m{font-size:12px;color:var(--pri-ink);font-weight:600}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh)}
+.pad{padding:13px 14px}
+
+/* ---------- 接下来的安排（本轮：日期做成胶囊） ---------- */
+.up-i{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.up-i:last-child{border-bottom:none}
+.up-clip{width:42px;height:42px;flex:0 0 auto;border-radius:12px;background:var(--pri-l);
+  color:var(--pri-ink);display:flex;flex-direction:column;align-items:center;justify-content:center}
+/* 深色下 --pri-l 是半透明白、--pri-ink 是白 —— 看不清，所以换暖色 */
+.dark .up-clip{background:var(--acc-l);color:var(--acc-ink)}
+.up-day{font-size:16px;font-weight:800;line-height:1}
+.up-wk{font-size:9.5px;margin-top:2px}
+.up-n{flex:1;min-width:0;font-size:13.5px;font-weight:600;line-height:1.4}
+.up-c{flex:0 0 auto;font-size:11px;font-weight:600;color:var(--ink2)}
+.up-arw{color:var(--ink3);font-size:17px;line-height:1;flex:0 0 auto}
+.up-tip{font-size:11px;color:var(--ink3);margin:7px 0 0 3px}
+
+/* ---------- 本月回顾：头部＝暖色横幅（上一轮） ---------- */
+.statbar{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:var(--btn-bg);color:var(--btn-ink);border-radius:12px;padding:14px 15px;
+  margin-bottom:13px;box-shadow:0 4px 10px rgba(196,85,58,.22)}
+.dark .statbar{box-shadow:var(--sh)}
+.statbar-l{display:flex;align-items:baseline;gap:6px;min-width:0}
+.statbar-n{font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1}
+.statbar-u{font-size:12px;opacity:.9}
+.statbar-r{flex:0 0 auto;text-align:right;font-size:10.5px;opacity:.85;line-height:1.45}
+.statbar-fav{display:block;max-width:150px;margin-top:1px;font-size:14px;font-weight:700;
+  opacity:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+/* ---------- 下面三块：保持线上现状，一个字没动 ---------- */
+.rv-t{font-size:13px;font-weight:700;margin-bottom:10px}
+.rv-tx{font-size:13px;color:var(--ink2);line-height:1.7}
+.rk{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.rk:last-child{margin-bottom:0}
+.rk-n{width:22px;height:22px;border-radius:7px;flex:0 0 auto;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:800;background:var(--surf2);color:var(--ink2)}
+.rk-n--1{background:var(--acc);color:#fff}
+.rk-n--2{background:var(--acc-l);color:var(--acc-ink)}
+.rk-n--3{background:var(--pri-l);color:var(--pri-ink)}
+.rk-main{flex:1;min-width:0}
+.rk-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.rk-nm{font-size:13.5px;font-weight:700}
+.rk-cnt{font-size:11.5px;color:var(--ink2);font-weight:600}
+.rank-bar{height:7px;border-radius:999px;background:var(--surf2);overflow:hidden}
+.rank-fill{height:100%;border-radius:999px;background:var(--btn-bg)}
+.cat{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.cat:last-child{margin-bottom:0}
+.cat-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.cat-nm{font-size:12.5px;width:54px;flex:0 0 auto}
+.cat-bar{flex:1;height:7px;border-radius:999px;background:var(--surf2);overflow:hidden}
+.cat-fill{height:100%;border-radius:999px}
+.cat-pct{font-size:11.5px;color:var(--ink2);width:37px;text-align:right;font-weight:600}
+.rv-tip{background:var(--acc-l);border-color:var(--acc)}
+.rv-tip .rv-tx{color:var(--acc-ink);font-weight:600}
+.note{font-size:11px;color:var(--ink3);margin:9px 2px 0;line-height:1.6}
+</style>
+</head>
+<body>
+
+<h1>日历 A 方案 · 实现后预览（月历 / 安排 / 回顾）</h1>
+<p class="lead">
+  上次我理解偏了，只做了「回顾横幅」一处。这一版把那份设计稿里的<b>三处</b>都接进代码了：<br>
+  ① 月历卡里<b>图例瘦身</b>（去掉那句「点的颜色 = 当天菜的配色」）；<br>
+  ② <b>操作提示收进月历卡内</b>（原来是卡外一条暖黄底，看着像两件事）；<br>
+  ③ 「接下来的安排」<b>日期做成胶囊</b>（<b>15 / 周四</b>），菜名和「N 道」挪到右边；<br>
+  ④ 「本月回顾」头部＝<b>暖色横幅</b>（上一轮已做，这里一并放进来看整体）。<br>
+  下面两帧的数值全部照抄改后的 <code>calendar.wxss</code>（1rpx = 0.5px）。
+</p>
+
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">改后 · 浅色 <em>· 线上会长成的样子</em></p>
+    <div class="frame"><div class="nav">日历</div><div class="fbody">
+      <div class="hd">
+        <div><div class="t-h1">日历</div><div class="t-sub">这一个月的餐桌</div></div>
+      </div>
+
+      <div class="cal-card">
+        <div class="calh"><div class="calh-a">‹</div><div class="calh-m">2026 年 10 月</div><div class="calh-a">›</div></div>
+        <div class="calgrid" data-cal></div>
+        <div class="cal-legend">
+          <span class="lg"><i class="lg-dot lg-dot--rec"></i>有记录</span>
+          <span class="lg"><i class="lg-dot lg-dot--today"></i>今天</span>
+        </div>
+        <div class="cal-tip">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</div>
+      </div>
+
+      <div class="sec-h"><span class="sec-t">接下来的安排</span><span class="sec-m">2 天</span></div>
+      <div class="card">
+        <div class="up-i">
+          <div class="up-clip"><span class="up-day">15</span><span class="up-wk">周四</span></div>
+          <span class="up-n">蒜蓉南瓜苗、酸辣土豆丝</span>
+          <span class="up-c">2 道</span>
+          <span class="up-arw">›</span>
+        </div>
+        <div class="up-i">
+          <div class="up-clip"><span class="up-day">18</span><span class="up-wk">周日</span></div>
+          <span class="up-n">紫菜蛋花汤、清炒时蔬、红烧排骨</span>
+          <span class="up-c">3 道</span>
+          <span class="up-arw">›</span>
+        </div>
+      </div>
+      <div class="up-tip">点一行就能继续加菜或撤菜</div>
+
+      <div class="sec-h"><span class="sec-t">本月回顾</span></div>
+      <div class="statbar">
+        <div class="statbar-l"><span class="statbar-n">23</span><span class="statbar-u">顿在家吃</span></div>
+        <div class="statbar-r">最爱<span class="statbar-fav">紫菜蛋花汤 · 5 次</span></div>
+      </div>
+
+      <div class="card pad">
+        <div class="rv-t">最常吃的三道</div>
+        <div class="rk">
+          <div class="rk-n rk-n--1">1</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">紫菜蛋花汤</span><span class="rk-cnt">5 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:100%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--2">2</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">清炒时蔬</span><span class="rk-cnt">4 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:80%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--3">3</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">红烧排骨</span><span class="rk-cnt">3 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:60%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad" style="margin-top:13px">
+        <div class="rv-t">分类占比</div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#D9714E"></span><span class="cat-nm">素菜</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:42%;background:#D9714E"></div></div>
+          <span class="cat-pct">42%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#E7A176"></span><span class="cat-nm">汤羹</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:28%;background:#E7A176"></div></div>
+          <span class="cat-pct">28%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#4F9367"></span><span class="cat-nm">荤菜</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:20%;background:#4F9367"></div></div>
+          <span class="cat-pct">20%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#8E9BC4"></span><span class="cat-nm">主食</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:10%;background:#8E9BC4"></div></div>
+          <span class="cat-pct">10%</span>
+        </div>
+      </div>
+
+      <div class="card pad rv-tip" style="margin-top:13px">
+        <div class="rv-t">小建议</div>
+        <div class="rv-tx">这个月素菜偏多，下周可以加两道荤菜换换口味。</div>
+      </div>
+    </div></div>
+    <p class="note">三处改动都在这一屏里：月历卡（图例只剩两项、提示在卡内）／
+      安排行（15、18 两个日期胶囊）／回顾头部（暖橙横幅）。</p>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 · 强制深色 <em>· 只有一个地方需要单独兜</em></p>
+    <div class="frame dark"><div class="nav">日历</div><div class="fbody">
+      <div class="hd">
+        <div><div class="t-h1">日历</div><div class="t-sub">这一个月的餐桌</div></div>
+      </div>
+
+      <div class="cal-card">
+        <div class="calh"><div class="calh-a">‹</div><div class="calh-m">2026 年 10 月</div><div class="calh-a">›</div></div>
+        <div class="calgrid" data-cal></div>
+        <div class="cal-legend">
+          <span class="lg"><i class="lg-dot lg-dot--rec"></i>有记录</span>
+          <span class="lg"><i class="lg-dot lg-dot--today"></i>今天</span>
+        </div>
+        <div class="cal-tip">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</div>
+      </div>
+
+      <div class="sec-h"><span class="sec-t">接下来的安排</span><span class="sec-m">2 天</span></div>
+      <div class="card">
+        <div class="up-i">
+          <div class="up-clip"><span class="up-day">15</span><span class="up-wk">周四</span></div>
+          <span class="up-n">蒜蓉南瓜苗、酸辣土豆丝</span>
+          <span class="up-c">2 道</span>
+          <span class="up-arw">›</span>
+        </div>
+        <div class="up-i">
+          <div class="up-clip"><span class="up-day">18</span><span class="up-wk">周日</span></div>
+          <span class="up-n">紫菜蛋花汤、清炒时蔬、红烧排骨</span>
+          <span class="up-c">3 道</span>
+          <span class="up-arw">›</span>
+        </div>
+      </div>
+      <div class="up-tip">点一行就能继续加菜或撤菜</div>
+
+      <div class="sec-h"><span class="sec-t">本月回顾</span></div>
+      <div class="statbar">
+        <div class="statbar-l"><span class="statbar-n">23</span><span class="statbar-u">顿在家吃</span></div>
+        <div class="statbar-r">最爱<span class="statbar-fav">紫菜蛋花汤 · 5 次</span></div>
+      </div>
+
+      <div class="card pad">
+        <div class="rv-t">最常吃的三道</div>
+        <div class="rk">
+          <div class="rk-n rk-n--1">1</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">紫菜蛋花汤</span><span class="rk-cnt">5 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:100%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--2">2</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">清炒时蔬</span><span class="rk-cnt">4 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:80%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--3">3</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">红烧排骨</span><span class="rk-cnt">3 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:60%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad" style="margin-top:13px">
+        <div class="rv-t">分类占比</div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#D9714E"></span><span class="cat-nm">素菜</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:42%;background:#D9714E"></div></div>
+          <span class="cat-pct">42%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#E7A176"></span><span class="cat-nm">汤羹</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:28%;background:#E7A176"></div></div>
+          <span class="cat-pct">28%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#4F9367"></span><span class="cat-nm">荤菜</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:20%;background:#4F9367"></div></div>
+          <span class="cat-pct">20%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#8E9BC4"></span><span class="cat-nm">主食</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:10%;background:#8E9BC4"></div></div>
+          <span class="cat-pct">10%</span>
+        </div>
+      </div>
+
+      <div class="card pad rv-tip" style="margin-top:13px">
+        <div class="rv-t">小建议</div>
+        <div class="rv-tx">这个月素菜偏多，下周可以加两道荤菜换换口味。</div>
+      </div>
+    </div></div>
+    <p class="note">深色下唯一需要手工兜的是<b>日期胶囊</b>：<code>--pri-l</code>（半透明白）+
+      <code>--pri-ink</code>（白）会变成白字压白底，所以换成暖色（<code>--acc-l</code> /
+      <code>--acc-ink</code>）。横幅不用兜，它直接用主按钮变量。</p>
+  </div>
+
+</div>
+
+<script>
+// 2026-10：10/1 是周四（周一开头，前 3 格空），今天 12 号，有记录 5/6/8/9/11/15/18/21
+(function () {
+  var rec = { 5: 1, 6: 1, 8: 1, 9: 1, 11: 1, 15: 1, 18: 1, 21: 1 };
+  var DOT = ['#D9714E', '#E9A323', '#4F9367'];
+  document.querySelectorAll('[data-cal]').forEach(function (box) {
+    ['一', '二', '三', '四', '五', '六', '日'].forEach(function (w) {
+      var d = document.createElement('div');
+      d.className = 'wd'; d.textContent = w; box.appendChild(d);
+    });
+    for (var i = 0; i < 3; i++) {
+      var b = document.createElement('div');
+      b.className = 'cell cell--blank'; box.appendChild(b);
+    }
+    for (var n = 1; n <= 31; n++) {
+      var cell = document.createElement('div');
+      cell.className = 'cell';
+      var cls = 'tile' + (rec[n] ? ' tile--rec' : '') + (n === 12 ? ' tile--today' : '');
+      var dots = '';
+      if (rec[n]) {
+        var count = (n % 3) + 1;
+        for (var k = 0; k < count; k++) {
+          dots += '<span class="dot" style="background:' + DOT[(n + k) % 3] + '"></span>';
+        }
+      }
+      cell.innerHTML = '<div class="' + cls + '"><div class="cell-d">' + n + '</div>' +
+        (dots ? '<div class="cell-dots">' + dots + '</div>' : '') + '</div>';
+      box.appendChild(cell);
+    }
+    var rest = (3 + 31) % 7;
+    for (var j = 0; j < (7 - rest) % 7; j++) {
+      var e = document.createElement('div');
+      e.className = 'cell cell--blank'; box.appendChild(e);
+    }
+  });
+})();
+</script>
+
+</body>
+</html>

@@ -45,23 +45,23 @@
       <view class="cal-legend">
         <text class="lg"><text class="lg-dot lg-dot--rec"></text>有记录</text>
         <text class="lg"><text class="lg-dot lg-dot--today"></text>今天</text>
-        <text class="lg-t">点的颜色 = 当天菜的配色</text>
       </view>
+
+      <!-- 操作提示收进卡内（原来在卡外，看着和月历是两件事）；图例里那句长解释去掉了 -->
+      <view class="cal-tip">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</view>
     </view>
-    <view class="cal-hint">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</view>
 
     <!-- 接下来的安排（提前排好的菜） -->
     <block wx:if="{{upcoming.length}}">
       <view class="sec-h"><text class="sec-t">接下来的安排</text><text class="sec-m">{{upcoming.length}} 天</text></view>
       <view class="card">
         <view class="up-i" wx:for="{{upcoming}}" wx:key="date" data-date="{{item.date}}" bindtap="onUpTap">
-          <view class="up-l">
-            <view class="up-hd">
-              <text class="up-d">{{item.label}}</text>
-              <text class="up-c">{{item.count}} 道</text>
-            </view>
-            <view class="up-n">{{item.names}}</view>
+          <view class="up-clip">
+            <text class="up-day">{{item.day}}</text>
+            <text class="up-wk">{{item.wk}}</text>
           </view>
+          <text class="up-n">{{item.names}}</text>
+          <text class="up-c">{{item.count}} 道</text>
           <text class="up-arw">›</text>
         </view>
       </view>

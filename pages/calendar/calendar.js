@@ -245,6 +245,9 @@ Page({
       upcoming: dates.slice(0, 10).map(d => ({
         date: d,
         label: this.dateCN(d),
+        // 日期胶囊要拆成「15」+「周四」两行显示
+        day: Number(String(d).split('-')[2]),
+        wk: '周' + this.weekCN(d),
         count: (byDate[d] || []).length,
         names: (byDate[d] || []).map(r => r.dishName || '这道菜').join('、')
       }))
@@ -258,14 +261,16 @@ Page({
 
   /* ==================== 某天的一桌菜 / 提前安排 ==================== */
 
-  /** 日期中文写法：10月15日 周三 */
+  /** 星期几（单个汉字：一/二/…/日） */
+  weekCN(date) {
+    const p = String(date).split('-')
+    return '日一二三四五六'.charAt(new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2])).getDay())
+  },
+
+  /** 日期中文写法：10月15日 周四 */
   dateCN(date) {
     const p = String(date).split('-')
-    const y = Number(p[0])
-    const m = Number(p[1])
-    const d = Number(p[2])
-    const w = '日一二三四五六'.charAt(new Date(y, m - 1, d).getDay())
-    return m + '月' + d + '日 周' + w
+    return Number(p[1]) + '月' + Number(p[2]) + '日 周' + this.weekCN(date)
   },
 
   /** 点任意日期（含未来）→ 打开「安排这一天」的弹层 */

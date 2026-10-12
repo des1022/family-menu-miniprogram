@@ -140,7 +140,7 @@
 .lg-dot--rec { background: var(--acc); }
 .lg-dot--today { background: var(--pri); }
 .theme-dark .lg-dot--today { background: #FFFFFF; }
-.lg-t { font-size: 21rpx; color: var(--ink3); }
+
 
 /* ---------- 本月回顾 ---------- */
 .rv-t { font-size: 26rpx; font-weight: 700; margin-bottom: 20rpx; }
@@ -191,14 +191,17 @@
 .dt-nm { font-size: 29rpx; font-weight: 700; }
 .dt-sub { font-size: 23rpx; color: var(--ink2); margin-top: 6rpx; }
 
-/* ---------- 日历页：操作提示 ---------- */
-.cal-hint {
-  font-size: 23rpx;
-  color: var(--acc-ink);
-  background: var(--acc-l);
-  border-radius: 16rpx;
-  padding: 14rpx 20rpx;
-  margin-top: 16rpx;
+/* ---------- 日历页：操作提示（已收进月历卡内） ---------- */
+/* 原来它在卡外、用暖黄底（--acc-l），看着像和月历并列的另一件事；
+   现在挪进卡内、改成浅灰底 + 次要色文字，安静地做一句注解。 */
+.cal-tip {
+  margin-top: 14rpx;
+  padding: 12rpx 18rpx;
+  border-radius: 18rpx;
+  background: var(--surf2);
+  font-size: 21rpx;
+  color: var(--ink2);
+  line-height: 1.5;
 }
 
 /* ---------- 「安排这一天」弹层 ---------- */
@@ -282,30 +285,41 @@
 .up-i {
   display: flex;
   align-items: center;
-  gap: 16rpx;
-  padding: 26rpx 28rpx;
+  gap: 20rpx;
+  padding: 20rpx 24rpx;
   border-bottom: 2rpx solid var(--line);
 }
 .up-i:last-child { border-bottom: none; }
-.up-l { flex: 1; min-width: 0; }
-.up-hd { display: flex; align-items: baseline; }
-.up-d {
-  font-size: 28rpx;
-  font-weight: 700;
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+/* 日期做成胶囊：上面「15」大数字、下面「周四」小字。
+   原来日期是一整行文字（「10月15日 周四」）+ 菜名另起一行，扫起来要读字；
+   现在日期成了一个方块，一竖排看下去就是「哪天、周几」，不用读。 */
+.up-clip {
+  width: 84rpx;
+  height: 84rpx;
+  flex: 0 0 auto;
+  border-radius: 24rpx;
+  background: var(--pri-l);
+  color: var(--pri-ink);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
+/* 深色下 --pri-l 是半透明白、--pri-ink 是白色 —— 白字压白底看不清，
+   所以换暖色（柿橙底 + 暖白字），和管理页的「编辑」按钮同一套处理 */
+.theme-dark .up-clip { background: var(--acc-l); color: var(--acc-ink); }
+@media (prefers-color-scheme: dark) {
+  .up-clip { background: var(--acc-l); color: var(--acc-ink); }
+}
+.up-day { font-size: 32rpx; font-weight: 800; line-height: 1; }
+.up-wk { font-size: 19rpx; margin-top: 4rpx; }
+.up-n { flex: 1; min-width: 0; font-size: 27rpx; font-weight: 600; line-height: 1.4; }
 .up-c {
   flex: 0 0 auto;
-  margin-left: 12rpx;
-  font-size: 23rpx;
+  font-size: 22rpx;
   font-weight: 600;
   color: var(--ink2);
 }
-.up-n { font-size: 24rpx; color: var(--ink2); margin-top: 10rpx; line-height: 1.6; }
 .up-arw { color: var(--ink3); font-size: 34rpx; line-height: 1; flex: 0 0 auto; }
 .up-tip { font-size: 22rpx; color: var(--ink3); margin: 14rpx 0 0 6rpx; }
 
