@@ -58,11 +58,19 @@
   font-size: 24rpx; font-weight: 700; color: var(--ink2);
   letter-spacing: 0.06em;
 }
+/* 分组前的小图标：蔬菜 / 肉蛋 / 水产 / 调味 / 主食 / 其他（复用菜库那套的配色） */
+.ghd-ic { width: 36rpx; height: 36rpx; flex: 0 0 auto; }
+.ghd-nm { flex: 0 0 auto; }
 .gcnt {
   font-size: 21rpx; font-weight: 700;
   color: var(--pri-ink); background: var(--pri-l);
   border-radius: 999rpx; padding: 2rpx 14rpx;
   letter-spacing: 0;
+}
+/* 深色里 --pri-l 是 16% 的白、--pri-ink 是纯白 → 白字压浅白看不清，换暖色兜底 */
+.theme-dark .gcnt { background: var(--acc-l); color: var(--acc-ink); }
+@media (prefers-color-scheme: dark) {
+  .gcnt { background: var(--acc-l); color: var(--acc-ink); }
 }
 .grow {
   display: flex;

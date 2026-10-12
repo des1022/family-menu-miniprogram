@@ -1,6 +1,7 @@
 const config = require('./config.js')
 const { db, fetchAll } = require('./cloud.js')
 const { pad } = require('./util.js')
+const { resolveCloudImages } = require('./image.js')
 
 /**
  * 海报生成（Canvas 2D，1080 宽竖版，四模板）
@@ -34,19 +35,15 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath()
 }
 
-/** 批量换取云文件临时链接 */
+/** 批量换取云文件临时链接
+ *
+ * ⚠️ 这里以前是页面端直接 `wx.cloud.getTempFileURL` —— 但云存储桶是私有的，
+ * 「管理员权限」只对云后台/服务端生效，客户端换链接会被权限拦掉。
+ * 表现就是海报里别人的菜图读不到，只剩一个大大的首字色块（2026-10-12 截图看到）。
+ * 必须和全站一样走云函数 img-url：见 utils/image.js 的 resolveCloudImages。
+ */
 async function tempUrls(fileIds) {
-  const ids = fileIds.filter(Boolean)
-  if (!ids.length) return {}
-  const out = {}
-  for (let i = 0; i < ids.length; i += 50) {
-    const chunk = ids.slice(i, i + 50)
-    const res = await wx.cloud.getTempFileURL({ fileList: chunk })
-    ;(res.fileList || []).forEach(f => {
-      if (f.fileID) out[f.fileID] = f.tempFileURL
-    })
-  }
-  return out
+  return resolveCloudImages(fileIds.filter(Boolean))
 }
 
 /** 加载一张网络图为 Image 对象（失败返回 null） */

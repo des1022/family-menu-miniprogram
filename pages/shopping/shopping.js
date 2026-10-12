@@ -104,6 +104,7 @@ Page({
       .filter(g => map[g] && map[g].length)
       .map(g => ({
         name: g,
+        icon: shop.groupIcon(g),
         items: map[g]
           .slice()
           .sort((a, b) => (Number(a.done) - Number(b.done)))
@@ -121,6 +122,7 @@ Page({
     if (this.data.showStaples && staples.length) {
       groups.push({
         name: '常备调料',
+        icon: shop.groupIcon('常备调料'),
         items: staples
           .slice()
           .sort((a, b) => (Number(a.done) - Number(b.done)))

@@ -20,7 +20,11 @@
 
     <!-- 分组列表 -->
     <view class="gcard" wx:for="{{groups}}" wx:key="name" wx:for-item="grp">
-      <view class="ghd">{{grp.name}}<text class="gcnt">{{grp.items.length}} 项</text></view>
+      <view class="ghd">
+        <image class="ghd-ic" src="{{grp.icon}}" mode="aspectFit"/>
+        <text class="ghd-nm">{{grp.name}}</text>
+        <text class="gcnt">{{grp.items.length}} 项</text>
+      </view>
       <view
         class="grow {{item.done ? 'grow--done' : ''}}"
         wx:for="{{grp.items}}"

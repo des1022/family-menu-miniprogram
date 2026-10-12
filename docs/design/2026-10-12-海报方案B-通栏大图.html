@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>海报方案 B · 通栏大图</title>
+<link rel="stylesheet" href="_poster.css">
+<style>
+/* ---- 方案 B：一道菜一张通栏大图，菜名压在图上（canvas 里就是 drawImage + 渐变遮罩 + fillText）---- */
+.b { background: #FFF7EC; }
+.b-hd { padding: 96px 76px 0; }
+.b-title { font-size: 76px; font-weight: 800; color: #4A2B18; letter-spacing: 1px; }
+.b-meta { display: flex; align-items: center; gap: 20px; margin-top: 26px; }
+.b-date { font-size: 34px; color: #8A5A33; }
+.b-dot { width: 8px; height: 8px; border-radius: 50%; background: #E8A33D; }
+.b-sub { font-size: 32px; color: #8A5A33; opacity: .8; }
+.b-rule { height: 6px; width: 120px; border-radius: 3px; background: #E8592F; margin: 34px 76px 0; }
+.b-list { padding: 48px 76px 0; }
+.b-card { position: relative; width: 928px; height: 560px; border-radius: 36px; overflow: hidden; margin-bottom: 36px; }
+.b-veil {
+  position: absolute; left: 0; right: 0; bottom: 0; height: 300px;
+  background: linear-gradient(180deg, rgba(40, 20, 10, 0) 0%, rgba(40, 20, 10, .34) 46%, rgba(40, 20, 10, .62) 100%);
+}
+.b-nm { position: absolute; left: 44px; bottom: 46px; font-size: 56px; font-weight: 800; color: #FFF; letter-spacing: 1px; }
+.b-idx {
+  position: absolute; left: 44px; top: 40px; font-size: 28px; font-weight: 700; color: #4A2B18;
+  background: rgba(255, 247, 236, .92); border-radius: 999px; padding: 10px 26px; letter-spacing: 2px;
+}
+.b-num {
+  position: absolute; right: 40px; bottom: 52px; font-size: 32px; font-weight: 800; color: #FFF;
+  border: 3px solid rgba(255, 255, 255, .75); border-radius: 999px; padding: 6px 24px;
+}
+.b-ft { text-align: center; padding: 40px 0 90px; }
+.b-ft-line { width: 160px; height: 8px; border-radius: 4px; background: #E8A33D; margin: 0 auto 52px; }
+.b-ft-tx { font-size: 46px; color: #4A2B18; }
+.b-ft-mi { font-size: 28px; color: #8A5A33; opacity: .85; margin-top: 28px; }
+</style>
+</head>
+<body>
+
+<div class="poster b">
+  <div class="b-hd">
+    <div class="b-title">今天的家庭菜单</div>
+    <div class="b-meta">
+      <span class="b-date">2026年10月12日</span>
+      <span class="b-dot"></span>
+      <span class="b-sub">3 道菜 · 2 人在家吃</span>
+    </div>
+  </div>
+  <div class="b-rule"></div>
+
+  <div class="b-list">
+    <div class="b-card">
+      <div class="ph" style="width:100%;height:100%">菜品照片</div>
+      <div class="b-veil"></div>
+      <div class="b-idx">第一道</div>
+      <div class="b-nm">红烧排骨</div>
+    </div>
+    <div class="b-card">
+      <div class="ph" style="width:100%;height:100%">菜品照片</div>
+      <div class="b-veil"></div>
+      <div class="b-idx">第二道</div>
+      <div class="b-nm">青椒肉丝</div>
+    </div>
+    <div class="b-card">
+      <div class="ph" style="width:100%;height:100%">菜品照片</div>
+      <div class="b-veil"></div>
+      <div class="b-idx">汤</div>
+      <div class="b-nm">紫菜蛋花汤</div>
+      <div class="b-num">×2</div>
+    </div>
+  </div>
+
+  <div class="b-ft">
+    <div class="b-ft-line"></div>
+    <div class="b-ft-tx">今晚吃这些，幸福！</div>
+    <div class="b-ft-mi">— 家庭菜单 · 一家人就要整整齐齐吃饭 —</div>
+  </div>
+</div>
+
+<div class="cap">
+  <div class="t">方案 B · 通栏大图 <em>（最像「餐厅/杂志」，照片好看时最出彩）</em></div>
+  每道菜 <b>一整张 928×560 大图</b>，菜名用白色 56px 压在图片左下角，图上盖一层由透明到深色的
+  渐变（canvas 用 <b>createLinearGradient</b> 就能画），左上角一个小胶囊写「第一道 / 汤」，
+  右上角不够位置时份数挪到右下角。<br>
+  顶部改成<b>左对齐</b>：大标题 + 一行「日期 · 3 道菜 · 2 人在家吃」+ 一短条砖红线，
+  比现在居中的「标题 / 日期 / 短线」三段式更有版式感。<br>
+  <em>适合：1～4 道菜（超过 4 道会很长，图片要自动缩到 380 高）。实现改动量：中（要写渐变遮罩 + 左对齐版式）。</em>
+</div>
+
+</body>
+</html>

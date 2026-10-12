@@ -59,4 +59,26 @@ function groupIndex(group) {
   return i === -1 ? GROUPS.length : i
 }
 
-module.exports = { GROUPS, groupOf, isStaple, groupIndex }
+/**
+ * 分组图标。
+ *
+ * 写完整路径字面量（不是拼字符串）—— tools/lint.py 会检查 /assets/icons/ 下的图是否真的存在，
+ * 拼接出来的它查不到。前四个直接复用菜库那套分类图标（蔬菜 / 水产 / 主食 / 其他），
+ * 「肉蛋」和「调味」是这次新画的（shop-meat / shop-season），颜色和那套对齐：
+ * 肉蛋用和 cat-hot 同一个陶土红（都是「荤」的意思），调味用 sec-tag 那个深琥珀。
+ */
+const GROUP_ICONS = {
+  '蔬菜': '/assets/icons/cat-veg.png',
+  '肉蛋': '/assets/icons/shop-meat.png',
+  '水产': '/assets/icons/cat-fish.png',
+  '调味': '/assets/icons/shop-season.png',
+  '主食': '/assets/icons/cat-staple.png',
+  '其他': '/assets/icons/cat-def.png',
+  '常备调料': '/assets/icons/shop-season.png'
+}
+
+function groupIcon(group) {
+  return GROUP_ICONS[group] || GROUP_ICONS['其他']
+}
+
+module.exports = { GROUPS, groupOf, isStaple, groupIndex, groupIcon }

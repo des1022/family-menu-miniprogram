@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>海报方案 A · 大图双列</title>
+<link rel="stylesheet" href="_poster.css">
+<style>
+/* ---- 海报本体（1080 宽，数值就是 canvas 里要画的数）---- */
+.a { background: #FFF7EC; padding-bottom: 300px; }
+.a-band { height: 20px; background: #E8592F; }
+.a-hd { text-align: center; }
+.a-title { font-size: 72px; font-weight: 800; color: #4A2B18; padding-top: 92px; letter-spacing: 2px; }
+.a-date { font-size: 36px; color: #8A5A33; margin-top: 22px; }
+.a-sub { font-size: 30px; color: #8A5A33; opacity: .78; margin-top: 16px; letter-spacing: 1px; }
+.a-line { width: 120px; height: 8px; border-radius: 4px; background: #E8A33D; margin: 30px auto 0; }
+.a-grid { display: flex; flex-wrap: wrap; margin: 76px 64px 0; }
+.a-cell { width: 448px; margin-bottom: 78px; }
+.a-cell:nth-child(odd) { margin-right: 56px; }
+.a-img { width: 380px; height: 380px; border-radius: 40px; margin: 0 auto; position: relative; }
+.a-badge {
+  position: absolute; right: 26px; top: 26px; width: 96px; height: 96px; border-radius: 50%;
+  background: #E8592F; color: #FFF; font-size: 44px; font-weight: 800;
+  display: flex; align-items: center; justify-content: center;
+}
+.a-nm { font-size: 44px; font-weight: 800; color: #4A2B18; text-align: center; margin-top: 40px; }
+.a-ft { text-align: center; }
+.a-ft-line { width: 160px; height: 8px; border-radius: 4px; background: #E8A33D; margin: 0 auto; }
+.a-ft-tx { font-size: 46px; color: #4A2B18; margin-top: 56px; }
+.a-ft-mi { font-size: 28px; color: #8A5A33; opacity: .85; margin-top: 30px; }
+</style>
+</head>
+<body>
+
+<div class="poster a">
+  <div class="a-band"></div>
+  <div class="a-hd">
+    <div class="a-title">今天的家庭菜单</div>
+    <div class="a-date">2026年10月12日</div>
+    <div class="a-sub">4 道菜 · 今晚 2 人在家吃</div>
+    <div class="a-line"></div>
+  </div>
+
+  <div class="a-grid">
+    <div class="a-cell">
+      <div class="a-img ph">菜品照片</div>
+      <div class="a-nm">红烧排骨</div>
+    </div>
+    <div class="a-cell">
+      <div class="a-img ph">菜品照片</div>
+      <div class="a-nm">青椒肉丝</div>
+    </div>
+    <div class="a-cell">
+      <div class="a-img ph" style="position:relative">菜品照片<div class="a-badge">×2</div></div>
+      <div class="a-nm">蒜蓉油麦菜</div>
+    </div>
+    <div class="a-cell">
+      <div class="a-img ph">菜品照片</div>
+      <div class="a-nm">紫菜蛋花汤</div>
+    </div>
+  </div>
+
+  <div class="a-ft">
+    <div class="a-ft-line"></div>
+    <div class="a-ft-tx">今晚吃这些，幸福！</div>
+    <div class="a-ft-mi">— 家庭菜单 · 一家人就要整整齐齐吃饭 —</div>
+  </div>
+</div>
+
+<div class="cap">
+  <div class="t">方案 A · 大图双列 <em>（最接近现在这版，改动最小）</em></div>
+  在现有骨架上做四件事：① 菜图从 320 放大到 <b>380</b>、圆角 26 → <b>40</b>；② 标题 82 → <b>72</b>，
+  日期 44 → <b>36</b>，并把金色短线抬到日期下面（现在它离得太远，像断了一截）；
+  ③ 日期下面加一行 <b>「4 道菜 · 今晚 2 人在家吃」</b>（数据都现成：records.length + countEatTonight）；
+  ④ 底部三件套收紧，署名小字往上提，不留一大块空白。<br>
+  <em>适合：2～8 道菜（双列，8 道以上自动缩小）。实现改动量：小（只调数值 + 一行副信息）。</em>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>海报方案 D · 菜单纸卡</title>
+<link rel="stylesheet" href="_poster.css">
+<style>
+/* ---- 方案 D：像一张印好的菜单卡，行式清单，信息最全 ---- */
+.d { background: #FFFBF3; padding: 40px; }
+.d-in {
+  border: 4px solid rgba(232, 163, 61, .55); border-radius: 8px; padding: 54px 46px 60px;
+  position: relative;
+}
+.d-in2 { border: 2px solid rgba(232, 163, 61, .32); border-radius: 4px; padding: 62px 52px 70px; }
+.d-cap { text-align: center; font-size: 30px; letter-spacing: 14px; color: #B0813E; font-weight: 700; }
+.d-title { text-align: center; font-size: 70px; font-weight: 800; color: #4A2B18; margin-top: 26px; letter-spacing: 2px; }
+.d-date { text-align: center; font-size: 32px; color: #8A5A33; margin-top: 18px; }
+.d-rule { display: flex; align-items: center; gap: 18px; justify-content: center; margin: 34px 0 12px; }
+.d-rule i { width: 120px; height: 2px; background: rgba(176, 129, 62, .5); }
+.d-rule b { width: 12px; height: 12px; border-radius: 50%; background: #E8592F; }
+.d-row { display: flex; align-items: center; gap: 30px; padding: 30px 0; }
+.d-row + .d-row { border-top: 2px dotted rgba(176, 129, 62, .45); }
+.d-img { width: 120px; height: 120px; border-radius: 18px; flex: 0 0 auto; font-size: 22px; letter-spacing: 2px; }
+.d-nm { font-size: 48px; font-weight: 800; color: #4A2B18; }
+.d-tag { font-size: 26px; color: #B0813E; margin-top: 6px; letter-spacing: 1px; }
+.d-num { margin-left: auto; font-size: 34px; font-weight: 800; color: #E8592F; }
+.d-ft { text-align: center; margin-top: 44px; }
+.d-ft-tx { font-size: 44px; color: #4A2B18; }
+.d-ft-mi { font-size: 27px; color: #8A5A33; opacity: .85; margin-top: 24px; }
+.d-meta {
+  display: inline-block; margin-top: 26px; font-size: 27px; color: #B0813E; font-weight: 700;
+  border: 2px solid rgba(232, 163, 61, .55); border-radius: 999px; padding: 8px 28px;
+}
+</style>
+</head>
+<body>
+
+<div class="poster d">
+  <div class="d-in"><div class="d-in2">
+    <div class="d-cap">今 日 菜 单</div>
+    <div class="d-title">今天的家庭菜单</div>
+    <div class="d-date">2026年10月12日</div>
+    <div class="d-rule"><i></i><b></b><i></i></div>
+
+    <div class="d-row">
+      <div class="d-img ph">照片</div>
+      <div>
+        <div class="d-nm">红烧排骨</div>
+        <div class="d-tag">硬菜 · 弟弟点的</div>
+      </div>
+      <div class="d-num">×1</div>
+    </div>
+    <div class="d-row">
+      <div class="d-img ph">照片</div>
+      <div>
+        <div class="d-nm">青椒肉丝</div>
+        <div class="d-tag">小炒 · 妈妈点的</div>
+      </div>
+      <div class="d-num">×1</div>
+    </div>
+    <div class="d-row">
+      <div class="d-img ph">照片</div>
+      <div>
+        <div class="d-nm">蒜蓉油麦菜</div>
+        <div class="d-tag">素菜 · 我点的</div>
+      </div>
+      <div class="d-num">×2</div>
+    </div>
+    <div class="d-row">
+      <div class="d-img ph">照片</div>
+      <div>
+        <div class="d-nm">紫菜蛋花汤</div>
+        <div class="d-tag">汤羹 · 我点的</div>
+      </div>
+      <div class="d-num">×1</div>
+    </div>
+
+    <div class="d-ft">
+      <div class="d-ft-tx">今晚吃这些，幸福！</div>
+      <div class="d-meta">4 道菜 · 1 荤 1 小炒 1 素 1 汤 · 2 人在家吃</div>
+      <div class="d-ft-mi">— 家庭菜单 · 一家人就要整整齐齐吃饭 —</div>
+    </div>
+  </div></div>
+</div>
+
+<div class="cap">
+  <div class="t">方案 D · 菜单纸卡 <em>（信息最全，最耐看；菜多时也不乱）</em></div>
+  米白纸底 + 双层金色细边框，中间一列<b>行式清单</b>：左边 120 圆角小图，右边菜名 +
+  灰色小字（硬菜/小炒/素菜/汤，顺手把「谁点的」也带出来 —— 记录里本来就有 byName 和分类），
+  行间用<b>虚线</b>分隔（canvas 用 <b>setLineDash</b> 画）。底部一行胶囊写全统计。<br>
+  <em>适合：3～10 道菜（行高固定，菜多只会更长，排版不会崩）。实现改动量：中（虚线、双层边框、行式布局）。</em>
+</div>
+
+</body>
+</html>

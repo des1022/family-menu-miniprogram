@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>海报方案 C · 圆盘餐桌</title>
+<link rel="stylesheet" href="_poster.css">
+<style>
+/* ---- 方案 C：圆照片 + 淡淡的桌面同心圆，像从上方看一桌菜 ---- */
+.c { background: #FFF7EC; position: relative; padding-bottom: 90px; }
+.c-rings { position: absolute; left: 0; top: 260px; width: 1080px; height: 1080px; }
+.c-ring {
+  position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%);
+  border-radius: 50%; border: 3px solid rgba(232, 163, 61, .18);
+}
+.c-hd { text-align: center; padding-top: 96px; position: relative; }
+.c-dots { display: flex; gap: 26px; justify-content: center; margin-bottom: 34px; }
+.c-dot { width: 16px; height: 16px; border-radius: 50%; background: #E8A33D; }
+.c-title { font-size: 78px; font-weight: 800; color: #4A2B18; letter-spacing: 3px; }
+.c-date { font-size: 34px; color: #8A5A33; margin-top: 24px; letter-spacing: 1px; }
+.c-sub { font-size: 30px; color: #8A5A33; opacity: .78; margin-top: 14px; }
+.c-wrap { position: relative; margin: 78px auto 0; width: 940px; }
+.c-row { display: flex; justify-content: center; align-items: flex-start; }
+.c-dish { width: 340px; margin: 0 20px 56px; text-align: center; }
+.c-img {
+  width: 340px; height: 340px; border-radius: 50%;
+  border: 10px solid #FFF7EC; box-shadow: 0 14px 34px rgba(120, 80, 50, .2);
+}
+.c-nm { font-size: 40px; font-weight: 800; color: #4A2B18; margin-top: 26px; }
+.c-num { font-size: 26px; color: #E8592F; font-weight: 800; margin-top: 10px; letter-spacing: 1px; }
+.c-ft { text-align: center; position: relative; }
+.c-ft-line { width: 160px; height: 8px; border-radius: 4px; background: #E8A33D; margin: 0 auto 52px; }
+.c-ft-tx { font-size: 46px; color: #4A2B18; }
+.c-ft-mi { font-size: 28px; color: #8A5A33; opacity: .85; margin-top: 28px; }
+</style>
+</head>
+<body>
+
+<div class="poster c">
+  <div class="c-rings">
+    <div class="c-ring" style="width:1040px;height:1040px"></div>
+    <div class="c-ring" style="width:780px;height:780px"></div>
+    <div class="c-ring" style="width:520px;height:520px"></div>
+  </div>
+
+  <div class="c-hd">
+    <div class="c-dots"><i class="c-dot"></i><i class="c-dot"></i><i class="c-dot"></i><i class="c-dot"></i></div>
+    <div class="c-title">今天的家庭菜单</div>
+    <div class="c-date">2026年10月12日</div>
+    <div class="c-sub">4 道菜 · 今晚 2 人在家吃</div>
+  </div>
+
+  <div class="c-wrap">
+    <div class="c-row">
+      <div class="c-dish">
+        <div class="c-img ph">菜品照片</div>
+        <div class="c-nm">红烧排骨</div>
+      </div>
+      <div class="c-dish">
+        <div class="c-img ph">菜品照片</div>
+        <div class="c-nm">青椒肉丝</div>
+      </div>
+    </div>
+    <div class="c-row">
+      <div class="c-dish">
+        <div class="c-img ph">菜品照片</div>
+        <div class="c-nm">蒜蓉油麦菜</div>
+        <div class="c-num">×2</div>
+      </div>
+      <div class="c-dish">
+        <div class="c-img ph">菜品照片</div>
+        <div class="c-nm">紫菜蛋花汤</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="c-ft">
+    <div class="c-ft-line"></div>
+    <div class="c-ft-tx">今晚吃这些，幸福！</div>
+    <div class="c-ft-mi">— 家庭菜单 · 一家人就要整整齐齐吃饭 —</div>
+  </div>
+</div>
+
+<div class="cap">
+  <div class="t">方案 C · 圆盘餐桌 <em>（最温磬可爱，适合发家庭群）</em></div>
+  菜图裁成<b>圆形</b>（半径 170，10px 米色描边 + 淡投影），像从上面看一桌菜；背景铺三层
+  淡淡的金色同心圆当「桌面」。一行最多 3 道、4～6 道自动两行；顶部 4 颗小圆点做点缀。<br>
+  <em>适合：3～6 道菜。实现改动量：小（圆形就是把 roundRect 换成 arc + clip，加两三个描边圆）。</em>
+</div>
+
+</body>
+</html>

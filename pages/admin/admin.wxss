@@ -94,6 +94,11 @@
   color: var(--ok-ink);
   background: var(--ok-l);
 }
+/* 深色里 --ok-l 是 16% 的白、--ok-ink 是深绿 → 深绿字压浅白底发糊，换暖色兜底 */
+.theme-dark .manage-status--on { background: var(--acc-l); color: var(--acc-ink); }
+@media (prefers-color-scheme: dark) {
+  .manage-status--on { background: var(--acc-l); color: var(--acc-ink); }
+}
 
 .manage-price {
   font-size: 24rpx;

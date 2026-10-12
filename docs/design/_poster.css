@@ -1,0 +1,37 @@
+/* 海报方案图共用样式 —— 海报本体按 canvas 真实尺寸（1080 宽）1:1 画，1px = canvas 里的 1px */
+body {
+  margin: 0;
+  padding: 24px;
+  background: #E6E0D8;
+  color: #2A2521;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+}
+.poster {
+  width: 1080px;
+  overflow: hidden;
+  box-shadow: 0 12px 44px rgba(60, 40, 30, 0.24);
+}
+/* 图占位：真机上这里是他们自己传的菜图；没有图时才落回 app 里那套暖色渐变块 */
+.ph {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(140deg, #E7A176, #C0613F);
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 26px;
+  letter-spacing: 6px;
+}
+.cap {
+  margin-top: 20px;
+  max-width: 1080px;
+  background: #FFFFFF;
+  border: 1px solid #E2D9CF;
+  border-radius: 16px;
+  padding: 20px 24px;
+  font-size: 21px;
+  line-height: 1.85;
+  color: #4A443E;
+}
+.cap .t { font-size: 24px; font-weight: 800; margin-bottom: 8px; color: #2A2521; }
+.cap b { color: #A8462E; }
+.cap em { font-style: normal; color: #8B8178; }
