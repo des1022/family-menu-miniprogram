@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>本月回顾 · 卡片间距 现状 vs 改后</title>
+<style>
+/* 数值取自 pages/calendar/calendar.wxss（1rpx = 0.5px）。数据用的是真机那一份。 */
+:root{
+  --pri:#D9714E; --pri-l:#FBEEE8; --pri-ink:#A8462E;
+  --acc:#E9A323; --acc-l:#FCF3DF; --acc-ink:#8E5F0C;
+  --bg:#FAF7F3; --surf:#FFFFFF; --surf2:#F4EFE9; --line:#EFE7DE;
+  --ink:#2A2521; --ink2:#8B8178; --ink3:#B7AEA4;
+  --btn-bg:linear-gradient(135deg,#DE7A56,#C4553A); --btn-ink:#FFFFFF;
+  --sh:0 2px 7px rgba(170,130,100,.08);
+}
+body{margin:0;padding:22px;background:#E6E0D8;color:#2A2521;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif}
+h1{font-size:17px;margin:0 0 6px;font-weight:700}
+.lead{font-size:12.5px;line-height:1.7;color:#5D564F;margin:0 0 18px;max-width:780px}
+.lead b{color:#A8462E}
+.rowc{display:flex;gap:22px;align-items:flex-start;flex-wrap:wrap}
+.col{width:375px;flex:0 0 auto}
+.cap{font-size:12.5px;font-weight:700;margin:0 0 8px}
+.cap em{font-style:normal;font-weight:400;color:#8B8178}
+.frame{width:375px;background:var(--bg);border-radius:16px;overflow:hidden}
+.pbody{padding:16px 14px 18px}
+
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 8px}
+.sec-t{font-size:15px;font-weight:700}
+.card{background:var(--surf);border:1px solid var(--line);border-radius:14px;box-shadow:var(--sh)}
+.pad{padding:13px 14px}
+/* ↓↓↓ 本轮唯一改动：卡片之间补上 26rpx（13px）间距 ↓↓↓ */
+.gap{margin-top:13px}
+
+.statbar{display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:var(--btn-bg);color:var(--btn-ink);border-radius:12px;padding:14px 15px;
+  margin-bottom:13px;box-shadow:0 4px 10px rgba(196,85,58,.22)}
+.statbar-l{display:flex;align-items:baseline;gap:6px;min-width:0}
+.statbar-n{font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1}
+.statbar-u{font-size:12px;opacity:.9}
+.statbar-r{flex:0 0 auto;text-align:right;font-size:10.5px;opacity:.85;line-height:1.45}
+.statbar-fav{display:block;max-width:150px;margin-top:1px;font-size:14px;font-weight:700;
+  opacity:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+
+.rv-t{font-size:13px;font-weight:700;margin-bottom:10px}
+.rv-tx{font-size:13px;color:var(--ink2);line-height:1.7}
+.rk{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.rk:last-child{margin-bottom:0}
+.rk-n{width:22px;height:22px;border-radius:7px;flex:0 0 auto;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:800;background:var(--surf2);color:var(--ink2)}
+.rk-n--1{background:var(--acc);color:#fff}
+.rk-n--2{background:var(--acc-l);color:var(--acc-ink)}
+.rk-n--3{background:var(--pri-l);color:var(--pri-ink)}
+.rk-main{flex:1;min-width:0}
+.rk-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.rk-nm{font-size:13.5px;font-weight:700}
+.rk-cnt{font-size:11.5px;color:var(--ink2);font-weight:600}
+.rank-bar{height:7px;border-radius:999px;background:var(--surf2);overflow:hidden}
+.rank-fill{height:100%;border-radius:999px;background:var(--btn-bg)}
+.cat{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.cat:last-child{margin-bottom:0}
+.cat-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.cat-nm{font-size:12.5px;width:54px;flex:0 0 auto}
+.cat-bar{flex:1;height:7px;border-radius:999px;background:var(--surf2);overflow:hidden}
+.cat-fill{height:100%;border-radius:999px}
+.cat-pct{font-size:11.5px;color:var(--ink2);width:37px;text-align:right;font-weight:600}
+.rv-tip{background:var(--acc-l);border-color:var(--acc)}
+.rv-tip .rv-tx{color:var(--acc-ink);font-weight:600}
+.note{font-size:11px;color:#8B8178;margin:9px 2px 0;line-height:1.6}
+.tag{display:inline-block;font-size:10px;font-weight:700;padding:2px 7px;border-radius:6px;
+  background:#F6D9CE;color:#A8462E;margin-left:6px;vertical-align:1px}
+.tag--ok{background:#DCEBE1;color:#3E7A55}
+</style>
+</head>
+<body>
+
+<h1>本月回顾 · 卡片间距：现状 vs 改后</h1>
+<p class="lead">
+  问题不在设计稿，在<b>代码里三张卡之间没有外边距</b> —— <code>.card</code> 本身不带 margin，
+  我连着写三张，它们就贴在一起，看着像一整块白。设计稿里那 13px 的空隙是我在预览 HTML 里
+  <b>手写</b>的，线上并没有。这轮把它落成了真样式（<code>.card-gap</code>），
+  并且把预览稿里手写的间距也去掉了 —— 以后设计稿和真机不会再对不上。<br>
+  数据用你真机那一份（4 顿 / 3 道菜 / 3 类）。
+</p>
+
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">现状 <em>· 三张卡贴在一起（就是你截图里那样）</em><span class="tag">连成一块</span></p>
+    <div class="frame"><div class="pbody">
+
+      <div class="sec-h"><span class="sec-t">本月回顾</span></div>
+
+      <div class="statbar">
+        <div class="statbar-l"><span class="statbar-n">4</span><span class="statbar-u">顿在家吃</span></div>
+        <div class="statbar-r">最爱<span class="statbar-fav">紫菜蛋花汤 · 3 次</span></div>
+      </div>
+
+      <div class="card pad">
+        <div class="rv-t">最常吃的三道</div>
+        <div class="rk">
+          <div class="rk-n rk-n--1">1</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">紫菜蛋花汤</span><span class="rk-cnt">3 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:100%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--2">2</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">蛋炒饭</span><span class="rk-cnt">2 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:67%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--3">3</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">清炒蒜蓉菜心</span><span class="rk-cnt">1 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:33%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad">
+        <div class="rv-t">分类占比</div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#4F9367"></span><span class="cat-nm">汤羹</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:50%;background:#4F9367"></div></div>
+          <span class="cat-pct">50%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#D9714E"></span><span class="cat-nm">主食</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:38%;background:#D9714E"></div></div>
+          <span class="cat-pct">38%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#E7A176"></span><span class="cat-nm">素菜</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:13%;background:#E7A176"></div></div>
+          <span class="cat-pct">13%</span>
+        </div>
+      </div>
+
+      <div class="card pad rv-tip">
+        <div class="rv-t">小建议</div>
+        <div class="rv-tx">荤素汤都顾到了，搭配挺均衡。</div>
+      </div>
+
+    </div></div>
+    <p class="note">三张卡的上下边死死贴住，只有圆角处露出一点点背景 —— 所以看起来「连在一起」。</p>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 卡之间补上 26rpx（13px）间距</em><span class="tag tag--ok">和设计稿一致</span></p>
+    <div class="frame"><div class="pbody">
+
+      <div class="sec-h"><span class="sec-t">本月回顾</span></div>
+
+      <div class="statbar">
+        <div class="statbar-l"><span class="statbar-n">4</span><span class="statbar-u">顿在家吃</span></div>
+        <div class="statbar-r">最爱<span class="statbar-fav">紫菜蛋花汤 · 3 次</span></div>
+      </div>
+
+      <div class="card pad">
+        <div class="rv-t">最常吃的三道</div>
+        <div class="rk">
+          <div class="rk-n rk-n--1">1</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">紫菜蛋花汤</span><span class="rk-cnt">3 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:100%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--2">2</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">蛋炒饭</span><span class="rk-cnt">2 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:67%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--3">3</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">清炒蒜蓉菜心</span><span class="rk-cnt">1 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:33%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad gap">
+        <div class="rv-t">分类占比</div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#4F9367"></span><span class="cat-nm">汤羹</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:50%;background:#4F9367"></div></div>
+          <span class="cat-pct">50%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#D9714E"></span><span class="cat-nm">主食</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:38%;background:#D9714E"></div></div>
+          <span class="cat-pct">38%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#E7A176"></span><span class="cat-nm">素菜</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:13%;background:#E7A176"></div></div>
+          <span class="cat-pct">13%</span>
+        </div>
+      </div>
+
+      <div class="card pad rv-tip gap">
+        <div class="rv-t">小建议</div>
+        <div class="rv-tx">荤素汤都顾到了，搭配挺均衡。</div>
+      </div>
+
+    </div></div>
+    <p class="note">每张卡各成一块，扫的时候一眼能分出「最常吃 / 分类 / 建议」三段。</p>
+  </div>
+
+</div>
+
+</body>
+</html>

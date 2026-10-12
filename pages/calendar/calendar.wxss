@@ -143,6 +143,12 @@
 
 
 /* ---------- 本月回顾 ---------- */
+/* 回顾区几张卡之间的呼吸间距。
+   .card 本身没有外边距，几张卡连着写就会**贴在一起**，看着像一整块白 ——
+   设计稿里那 13px 间距是我在 HTML 里手写的，线上并没有（2026-10-12 用户反馈
+   「设计图上有空间好看，软件上连在一起不好看」）。这里把它落成真样式。 */
+.card-gap { margin-top: 26rpx; }
+
 .rv-t { font-size: 26rpx; font-weight: 700; margin-bottom: 20rpx; }
 .rv-tx { font-size: 26rpx; color: var(--ink2); line-height: 1.7; }
 .rv-tip { background: var(--acc-l); border-color: var(--acc); }

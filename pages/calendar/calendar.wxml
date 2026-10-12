@@ -98,7 +98,7 @@
         </view>
       </view>
 
-      <view class="card card-pad" wx:if="{{cats.length}}">
+      <view class="card card-pad card-gap" wx:if="{{cats.length}}">
         <view class="rv-t">分类占比</view>
         <view class="cat" wx:for="{{cats}}" wx:key="name">
           <text class="cat-dot" style="background:{{item.color}}"></text>
@@ -108,7 +108,7 @@
         </view>
       </view>
 
-      <view class="card card-pad rv-tip" wx:if="{{tipText}}">
+      <view class="card card-pad rv-tip card-gap" wx:if="{{tipText}}">
         <view class="rv-t">小建议</view>
         <view class="rv-tx">{{tipText}}</view>
       </view>

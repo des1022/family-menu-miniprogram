@@ -64,6 +64,9 @@
 .rv-tip{background:var(--acc-l);border-color:var(--acc)}
 .rv-tip .rv-tx{color:var(--acc-ink);font-weight:600}
 
+/* 卡与卡之间的呼吸间距 —— 真机上是 .card-gap（26rpx = 13px）。
+   之前我是直接手写在元素上的，导致设计稿有间距、真机没有。 */
+.gap{margin-top:13px}
 .note{font-size:11px;color:var(--ink3);margin:9px 2px 0;line-height:1.6}
 </style>
 </head>
@@ -115,7 +118,7 @@
         </div>
       </div>
 
-      <div class="card pad" style="margin-top:13px">
+      <div class="card pad gap">
         <div class="rv-t">分类占比</div>
         <div class="cat">
           <span class="cat-dot" style="background:#D9714E"></span>
@@ -143,7 +146,7 @@
         </div>
       </div>
 
-      <div class="card pad rv-tip" style="margin-top:13px">
+      <div class="card pad rv-tip gap">
         <div class="rv-t">小建议</div>
         <div class="rv-tx">这个月素菜偏多，下周可以加两道荤菜换换口味。</div>
       </div>
@@ -188,7 +191,7 @@
         </div>
       </div>
 
-      <div class="card pad" style="margin-top:13px">
+      <div class="card pad gap">
         <div class="rv-t">分类占比</div>
         <div class="cat">
           <span class="cat-dot" style="background:#D9714E"></span>
@@ -216,7 +219,7 @@
         </div>
       </div>
 
-      <div class="card pad rv-tip" style="margin-top:13px">
+      <div class="card pad rv-tip gap">
         <div class="rv-t">小建议</div>
         <div class="rv-tx">这个月素菜偏多，下周可以加两道荤菜换换口味。</div>
       </div>
