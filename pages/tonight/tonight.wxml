@@ -236,50 +236,56 @@
       </view>
       <view class="dec-sub">从你家菜库里挑的，久没做过的优先</view>
 
-      <view class="dec-row">
-        <view class="dec-l">搭配</view>
-        <view class="dec-chips">
-          <view
-            class="chip {{dec.mix === item.key ? 'chip--on' : ''}}"
-            wx:for="{{mixes}}"
-            wx:key="key"
-            data-field="mix"
-            data-value="{{item.key}}"
-            bindtap="onPickDecOpt"
-          >{{item.label}}</view>
+      <view class="deccard">
+        <view class="dcrow">
+          <view class="dc-ic dc-ic--pri"><image class="dc-img" src="{{ico.decMix}}"/></view>
+          <view class="dc-lb">搭配</view>
+          <view class="dc-chips">
+            <view
+              class="chip {{dec.mix === item.key ? 'chip--on' : ''}}"
+              wx:for="{{mixes}}"
+              wx:key="key"
+              data-field="mix"
+              data-value="{{item.key}}"
+              bindtap="onPickDecOpt"
+            >{{item.label}}</view>
+          </view>
         </view>
-      </view>
 
-      <view class="dec-row">
-        <view class="dec-l">人数</view>
-        <view class="dec-chips">
-          <view
-            class="chip {{dec.size === item.key ? 'chip--on' : ''}}"
-            wx:for="{{sizes}}"
-            wx:key="key"
-            data-field="size"
-            data-value="{{item.key}}"
-            bindtap="onPickDecOpt"
-          >{{item.label}}</view>
+        <view class="dcrow">
+          <view class="dc-ic dc-ic--ok"><image class="dc-img" src="{{ico.decSize}}"/></view>
+          <view class="dc-lb">人数</view>
+          <view class="dc-chips">
+            <view
+              class="chip {{dec.size === item.key ? 'chip--on' : ''}}"
+              wx:for="{{sizes}}"
+              wx:key="key"
+              data-field="size"
+              data-value="{{item.key}}"
+              bindtap="onPickDecOpt"
+            >{{item.label}}</view>
+          </view>
         </view>
-      </view>
 
-      <view class="dec-row">
-        <view class="dec-l">口味</view>
-        <view class="dec-chips">
-          <view
-            class="chip {{dec.taste === item.key ? 'chip--on' : ''}}"
-            wx:for="{{tastes}}"
-            wx:key="key"
-            data-field="taste"
-            data-value="{{item.key}}"
-            bindtap="onPickDecOpt"
-          >{{item.label}}</view>
+        <view class="dcrow">
+          <view class="dc-ic dc-ic--acc"><image class="dc-img" src="{{ico.decTaste}}"/></view>
+          <view class="dc-lb">口味</view>
+          <view class="dc-chips">
+            <view
+              class="chip {{dec.taste === item.key ? 'chip--on' : ''}}"
+              wx:for="{{tastes}}"
+              wx:key="key"
+              data-field="taste"
+              data-value="{{item.key}}"
+              bindtap="onPickDecOpt"
+            >{{item.label}}</view>
+          </view>
         </view>
       </view>
 
       <scroll-view class="dec-list" scroll-y>
         <view class="dec-pick" wx:for="{{dec.picks}}" wx:key="_id">
+          <view class="dp-rank">{{index + 1}}</view>
           <image class="dp-img dish-dim" wx:if="{{item.imgSrc}}" src="{{item.imgSrc}}" mode="aspectFill" binderror="onMiniImgError" data-list="picks" data-idx="{{index}}"/>
           <view class="dp-img img-ph {{item.ph}}" wx:else>{{item.initial}}</view>
           <view class="dp-main">

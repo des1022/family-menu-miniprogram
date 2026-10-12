@@ -19,10 +19,10 @@
     </view>
 
     <!-- 分组列表 -->
-    <block wx:for="{{groups}}" wx:key="name" wx:for-item="grp">
-      <view class="grp">{{grp.name}}</view>
+    <view class="gcard" wx:for="{{groups}}" wx:key="name" wx:for-item="grp">
+      <view class="ghd">{{grp.name}}<text class="gcnt">{{grp.items.length}} 项</text></view>
       <view
-        class="item {{item.done ? 'item--done' : ''}}"
+        class="grow {{item.done ? 'grow--done' : ''}}"
         wx:for="{{grp.items}}"
         wx:key="_id"
         data-id="{{item._id}}"
@@ -35,7 +35,7 @@
         <text class="item-qty" wx:if="{{item.qty}}">{{item.qty}}</text>
         <text class="item-by" wx:if="{{item.done && item.byName}}">{{item.byName}}</text>
       </view>
-    </block>
+    </view>
 
     <!-- 常备调料 -->
     <view class="staple-hd" wx:if="{{stapleCount}}" bindtap="onToggleStaples">
@@ -44,11 +44,12 @@
     </view>
 
     <!-- 空态 -->
-    <view class="empty-ph" wx:if="{{!loading && !buyCount && !stapleCount}}">
-      <view class="ep-img"></view>
-      <view class="ep-t">还没有要买的东西</view>
-      <view class="ep-s">去「今晚」点几道菜，菜的食材会自动汇总到这里；也可以自己加</view>
-    </view>
+    <empty
+      wx:if="{{!loading && !buyCount && !stapleCount}}"
+      ico="basket"
+      text="还没有要买的东西"
+      sub="去「今晚」点几道菜，菜的食材会自动汇总到这里；也可以自己加"
+    />
 
     <view class="tip">长按某一项可以删掉。买菜时勾掉的项，家人那边会实时看到。</view>
   </view>

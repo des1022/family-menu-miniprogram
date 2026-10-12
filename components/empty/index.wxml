@@ -1,6 +1,10 @@
-<!-- 空状态占位 -->
+<!-- 空状态占位：圆底 + 一枚线性图标 + 文案
+     以前这里是一个灰色圆 + 一条灰横杠（颜色还写死），和 app 其它地方的
+     空态是两套东西。现在全站统一走这个组件（2026-10-12）。 -->
 <view class="empty">
-  <view class="empty-icon"></view>
+  <view class="empty-icon">
+    <image class="empty-img" src="{{icoSrc}}" mode="aspectFit"/>
+  </view>
   <view class="empty-text">{{text}}</view>
   <view class="empty-sub" wx:if="{{sub}}">{{sub}}</view>
   <slot></slot>

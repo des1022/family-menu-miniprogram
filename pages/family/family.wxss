@@ -13,10 +13,12 @@
   box-shadow: var(--sh);
 }
 .mem-av {
-  width: 78rpx; height: 78rpx; flex: 0 0 auto;
+  width: 80rpx; height: 80rpx; flex: 0 0 auto;
   border-radius: 50%;
   color: #fff; font-size: 30rpx; font-weight: 700;
   display: flex; align-items: center; justify-content: center;
+  /* 同色淡影在 wxml 里内联（颜色来自 item.color），这里只兜底一个极淡的 */
+  box-shadow: 0 6rpx 18rpx rgba(170, 130, 100, 0.18);
 }
 .mem-main { flex: 1; min-width: 0; }
 .mem-nm { display: flex; align-items: center; gap: 12rpx; font-size: 30rpx; font-weight: 700; }
@@ -64,7 +66,34 @@
 .row-img { width: 38rpx; height: 38rpx; }
 
 /* ---------- 外观 ---------- */
-.chips { display: flex; gap: 14rpx; flex-wrap: wrap; }
+/* 三选一做成「色块预览卡」：浅色 / 深色 / 跟随系统，选哪个一眼就懂，
+   不用先读文字再猜（2026-10-12）。预览色是固定的（它就是「长什么样」），不跟当前主题变。 */
+.tpick { display: flex; gap: 18rpx; }
+.tp {
+  flex: 1;
+  border: 3rpx solid var(--line);
+  border-radius: 24rpx;
+  padding: 18rpx 12rpx 14rpx;
+  background: var(--surf);
+  text-align: center;
+}
+.tp--on { border-color: var(--pri); background: var(--pri-l); }
+.tp-sw {
+  height: 68rpx;
+  border-radius: 16rpx;
+  margin-bottom: 14rpx;
+  display: flex; align-items: center; justify-content: center;
+  border: 2rpx solid rgba(0, 0, 0, 0.06);
+}
+.tp-dot { width: 24rpx; height: 24rpx; border-radius: 50%; }
+.tp-sw--0 { background: linear-gradient(90deg, #FAF7F3 0 50%, #37776A 50% 100%); }
+.tp-sw--0 .tp-dot { background: #D9714E; }
+.tp-sw--1 { background: #FAF7F3; }
+.tp-sw--1 .tp-dot { background: #D9714E; }
+.tp-sw--2 { background: #37776A; }
+.tp-sw--2 .tp-dot { background: #FFFFFF; }
+.tp-lb { font-size: 23rpx; font-weight: 600; color: var(--ink2); }
+.tp--on .tp-lb { color: var(--pri-ink); }
 .theme-tip { font-size: 23rpx; color: var(--ink2); margin-top: 18rpx; }
 
 /* ---------- 关于 ---------- */

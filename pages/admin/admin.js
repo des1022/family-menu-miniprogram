@@ -2,6 +2,7 @@ const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const { deleteDishImage } = require('../../utils/image.js')
 const { toast, confirm, formatPrice } = require('../../utils/util.js')
+const theme = require('../../utils/theme.js')
 
 const ALL_CAT = '全部'
 const OFF_CAT = '已下架'   // 状态筛选项：把下架的菜单独收在一处
@@ -18,10 +19,12 @@ Page({
     selecting: false,
     selectedMap: {},
     selectedCount: 0,
-    showMovePicker: false
+    showMovePicker: false,
+    themeCls: ''   // 「家庭 → 外观」选的主题；这页以前没绑，深色下会掉队
   },
 
   onShow() {
+    this.setData({ themeCls: theme.className() })
     this.loadDishes(true)
   },
 

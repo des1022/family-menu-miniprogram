@@ -2,6 +2,7 @@ const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const poster = require('../../utils/poster.js')
 const { toast, confirm } = require('../../utils/util.js')
+const theme = require('../../utils/theme.js')
 
 const VARIANTS = [
   { key: 'WARM', label: '温馨' },
@@ -18,10 +19,15 @@ Page({
     footer: '今晚吃这些，幸福！',
     date: '',
     dateText: '',
+    themeCls: '',      // 以前这页没绑主题，强制深色时不跟随
     empty: false,
     generating: true,
     saving: false,
     dispH: 500
+  },
+
+  onShow() {
+    this.setData({ themeCls: theme.className() })
   },
 
   onLoad(options) {

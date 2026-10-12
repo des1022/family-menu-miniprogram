@@ -1,5 +1,6 @@
 const db = require('../../utils/db.js')
 const { toast, confirm } = require('../../utils/util.js')
+const theme = require('../../utils/theme.js')
 
 /** showActionSheet 的 Promise 封装 */
 function actionSheet(itemList) {
@@ -19,11 +20,16 @@ Page({
     loading: false,
     editingId: '',      // 正在改名的分类 _id（空 = 新增模式）
     editingOld: '',     // 改名前的老名字，用来把名下的菜一起改过来
-    editingFocus: false // 点「编辑」后把光标送进输入框
+    editingFocus: false, // 点「编辑」后把光标送进输入框
+    themeCls: ''         // 以前这页没绑主题，强制深色时不跟随
   },
 
   onLoad() {
     this.load()
+  },
+
+  onShow() {
+    this.setData({ themeCls: theme.className() })
   },
 
   async load() {

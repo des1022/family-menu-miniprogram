@@ -16,7 +16,7 @@
     </view>
 
     <view class="mem" wx:for="{{members}}" wx:key="_id" data-id="{{item._id}}" bindtap="onOpenEdit">
-      <view class="mem-av" style="background:{{item.color}}">{{item.initial}}</view>
+      <view class="mem-av" style="background:{{item.color}};box-shadow:0 6rpx 18rpx {{item.color}}55">{{item.initial}}</view>
       <view class="mem-main">
         <view class="mem-nm">
           <text>{{item.nickname || '未命名'}}</text>
@@ -56,14 +56,17 @@
     <!-- 外观 -->
     <view class="sec-h"><text class="sec-t">外观</text></view>
     <view class="card card-pad">
-      <view class="chips">
+      <view class="tpick">
         <view
-          class="chip {{themeMode === item.value ? 'chip--on' : ''}}"
+          class="tp {{themeMode === item.value ? 'tp--on' : ''}}"
           wx:for="{{themeModes}}"
           wx:key="value"
           data-v="{{item.value}}"
           bindtap="onPickTheme"
-        >{{item.label}}</view>
+        >
+          <view class="tp-sw tp-sw--{{item.value}}"><view class="tp-dot"></view></view>
+          <view class="tp-lb">{{item.label}}</view>
+        </view>
       </view>
       <view class="theme-tip">{{isDark ? '当前是深色（墨绿）' : '当前是浅色（陶土橙）'}}</view>
     </view>

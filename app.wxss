@@ -354,12 +354,4 @@ view, text, input, textarea, button, picker, scroll-view {
   z-index: 20;
 }
 
-/* ==================== 空态 ==================== */
-.empty-ph { padding: 96rpx 40rpx; text-align: center; }
-.empty-ph .ep-img {
-  width: 128rpx; height: 128rpx; border-radius: 50%;
-  background: var(--pri-l);
-  margin: 0 auto 24rpx;
-}
-.empty-ph .ep-t { font-size: 30rpx; font-weight: 600; }
-.empty-ph .ep-s { font-size: 26rpx; color: var(--ink2); margin-top: 8rpx; }
+/* 空态统一到 components/empty 组件（圆底 + 图标），这里不再保留第二套 */

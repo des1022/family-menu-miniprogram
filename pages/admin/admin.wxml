@@ -1,4 +1,4 @@
-<view class="page">
+<view class="page {{themeCls}}">
   <!-- 批量工具行 -->
   <view class="batch-bar">
     <view class="batch-info">
@@ -60,11 +60,13 @@
 
   <empty
     wx:if="{{!loading && !allDishes.length}}"
+    ico="plate"
     text="还没有菜品"
     sub="点右下角「添加菜品」录入第一道菜"
   />
   <empty
     wx:elif="{{!loading && !groups.length}}"
+    ico="plate"
     text="{{filterCat === '已下架' ? '没有下架的菜' : '这里还没有菜'}}"
     sub="{{filterCat === '已下架' ? '暂时不做的菜下架后会收在这里' : '换个分类看看'}}"
   />

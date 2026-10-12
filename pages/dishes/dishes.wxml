@@ -108,11 +108,12 @@
     </view>
 
     <!-- 空态 -->
-    <view class="empty-ph" wx:if="{{!loading && !list.length}}">
-      <view class="ep-img"></view>
-      <view class="ep-t">{{keyword ? '没找到这道菜' : (hasFilter ? '这个筛选下没有菜' : '菜库还是空的')}}</view>
-      <view class="ep-s">{{keyword ? '换个关键词试试' : (hasFilter ? '换个筛选看看' : '点右下角添加，或去「今晚」一键填入示例菜库')}}</view>
-    </view>
+    <empty
+      wx:if="{{!loading && !list.length}}"
+      ico="bowl"
+      text="{{keyword ? '没找到这道菜' : (hasFilter ? '这个筛选下没有菜' : '菜库还是空的')}}"
+      sub="{{keyword ? '换个关键词试试' : (hasFilter ? '换个筛选看看' : '点右下角添加，或去「今晚」一键填入示例菜库')}}"
+    />
 
       </view>
     </view>

@@ -17,7 +17,11 @@ function iconSet(dark) {
     basket: '/assets/icons/basket' + p + '.png',
     dice: '/assets/icons/sparkle' + p + '.png',
     users: '/assets/icons/users' + n + '.png',
-    download: '/assets/icons/download' + n + '.png'
+    download: '/assets/icons/download' + n + '.png',
+    // 决策器三行的小图标：碗=搭配 / 两人=人数 / 火苗=口味
+    decMix: '/assets/icons/dec-mix' + n + '.png',
+    decSize: '/assets/icons/dec-size' + n + '.png',
+    decTaste: '/assets/icons/dec-taste' + n + '.png'
   }
 }
 

@@ -24,7 +24,9 @@
 
 .filter-chip--on {
   background: var(--pri);
-  color: var(--surf);
+  /* 原来写的是 var(--surf)：那是「表面色」不是「文字色」，
+     浅色下碰巧等于白色所以看不出问题，深色下会变成墨绿字压白底 */
+  color: var(--btn-ink);
   border-color: var(--pri);
   font-weight: 600;
 }
@@ -36,7 +38,7 @@
 .group-name {
   font-size: 28rpx;
   font-weight: 600;
-  color: #3A2E24;
+  color: var(--ink2);
   padding: 8rpx 8rpx 12rpx;
 }
 
@@ -47,7 +49,7 @@
   border-radius: 18rpx;
   padding: 18rpx;
   margin-bottom: 14rpx;
-  box-shadow: 0 2rpx 10rpx rgba(31, 35, 41, 0.04);
+  box-shadow: var(--sh);
 }
 
 .manage-img {
@@ -89,13 +91,14 @@
 }
 
 .manage-status--on {
-  color: #52A256;
-  background: #E9F6EA;
+  color: var(--ok-ink);
+  background: var(--ok-l);
 }
 
 .manage-price {
   font-size: 24rpx;
-  color: var(--pri);
+  color: var(--pri-ink);
+  font-weight: 600;
 }
 
 .manage-ops {
@@ -110,21 +113,26 @@
   text-align: center;
   padding: 6rpx 20rpx;
   border-radius: 999rpx;
-  border: 2rpx solid var(--line);
+  /* 三个操作按钮统一：浅底、无边框，靠文字颜色区分（原来的灰白底 + 描边在深色下很脏） */
+  border: 2rpx solid transparent;
   color: var(--ink2);
-  background: #FAFBFC;
+  background: var(--surf2);
 }
 
 .op-edit {
-  color: var(--pri);
-  border-color: #FFC9AE;
-  background: #FFF0E8;
+  color: var(--pri-ink);
+  background: var(--pri-l);
+}
+/* 深色下 --pri-l 是半透明白、--pri-ink 是白色，白字压半透明白对比度不够，
+   所以深色里改用暖色（柿子橙），和浅色下一样是「暖＝可操作」 */
+.theme-dark .op-edit { background: var(--acc-l); color: var(--acc-ink); }
+@media (prefers-color-scheme: dark) {
+  .op-edit { background: var(--acc-l); color: var(--acc-ink); }
 }
 
 .op-del {
-  color: #C0392B;
-  border-color: #F5C6C0;
-  background: #FDF3F2;
+  color: var(--danger);
+  background: var(--surf2);
 }
 
 .admin-ft {
@@ -136,7 +144,8 @@
   padding: 16rpx 24rpx;
   display: flex;
   gap: 20rpx;
-  box-shadow: 0 -4rpx 16rpx rgba(31, 35, 41, 0.06);
+  /* 底部固定栏：用一条 --line 细线收口，比写死的灰色投影干净，也跟着主题走 */
+  border-top: 2rpx solid var(--line);
 }
 
 .btn-flex {
@@ -157,7 +166,7 @@
 .batch-info {
   flex: 1;
   font-size: 28rpx;
-  color: #3A2E24;
+  color: var(--ink);
   font-weight: 600;
 }
 
@@ -171,27 +180,27 @@
 }
 
 .batch-btn--on {
-  color: var(--surf);
+  color: var(--btn-ink);
   background: var(--pri);
   border-color: var(--pri);
   font-weight: 600;
 }
 
 .manage-row--checked {
-  background: #FFF0E8;
+  background: var(--pri-l);
 }
 
 .check-circle {
   width: 40rpx;
   height: 40rpx;
   border-radius: 50%;
-  border: 3rpx solid #D9DCE0;
+  border: 3rpx solid var(--line);
   margin-right: 12rpx;
   flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--surf);
+  color: var(--btn-ink);
   font-size: 24rpx;
 }
 
@@ -210,7 +219,7 @@
 .move-mask {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.45);
+  background: rgba(30, 20, 14, 0.45);
   z-index: 120;
   display: flex;
   align-items: flex-end;

@@ -81,12 +81,15 @@
 
       <view class="card card-pad">
         <view class="rv-t">最常吃的三道</view>
-        <view class="rank" wx:for="{{top3}}" wx:key="name">
-          <view class="rank-hd">
-            <text class="rank-nm">{{item.name}}</text>
-            <text class="rank-num">{{item.count}} 次</text>
+        <view class="rk" wx:for="{{top3}}" wx:key="name">
+          <view class="rk-n rk-n--{{index + 1}}">{{index + 1}}</view>
+          <view class="rk-main">
+            <view class="rk-top">
+              <text class="rk-nm">{{item.name}}</text>
+              <text class="rk-cnt">{{item.count}} 次</text>
+            </view>
+            <view class="rank-bar"><view class="rank-fill" style="width:{{item.pct}}%"></view></view>
           </view>
-          <view class="rank-bar"><view class="rank-fill" style="width:{{item.pct}}%"></view></view>
         </view>
       </view>
 
@@ -106,11 +109,12 @@
       </view>
     </block>
 
-    <view class="empty-ph" wx:if="{{!loading && !mealCount}}">
-      <view class="ep-img"></view>
-      <view class="ep-t">这个月还没有记录</view>
-      <view class="ep-s">点上面的日期就能安排那天吃什么，也可以去「今晚」点菜</view>
-    </view>
+    <empty
+      wx:if="{{!loading && !mealCount}}"
+      ico="cal"
+      text="这个月还没有记录"
+      sub="点上面的日期就能安排那天吃什么，也可以去「今晚」点菜"
+    />
 
   </view>
 
