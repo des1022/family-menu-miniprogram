@@ -1,22 +1,31 @@
 .hd { padding: 24rpx 4rpx 8rpx; }
 
+/* ---------- 月历卡片（方案 B：格子块） ---------- */
+/* 以前月份、星期、日期、图例全部直接铺在页面底色上，没有容器，所以显得「没设计」。
+   现在整块收进一张白卡，和「接下来的安排」用同一套卡片语言。 */
+.cal-card {
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+  border-radius: var(--r-card);
+  box-shadow: var(--sh);
+  padding: 18rpx 16rpx 12rpx;
+}
+
 /* ---------- 月份切换 ---------- */
 .calh {
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 40rpx;
-  padding: 18rpx 0 22rpx;
+  justify-content: space-between;
+  padding: 2rpx 4rpx 14rpx;
 }
 .calh-a {
-  width: 64rpx; height: 64rpx;
+  width: 56rpx; height: 56rpx;
   display: flex; align-items: center; justify-content: center;
-  font-size: 40rpx; color: var(--ink2);
+  font-size: 36rpx; color: var(--ink2);
   border-radius: 50%;
-  background: var(--surf);
-  border: 2rpx solid var(--line);
+  background: var(--surf2);
 }
-.calh-m { font-size: 34rpx; font-weight: 700; letter-spacing: -0.01em; }
+.calh-m { font-size: 32rpx; font-weight: 700; letter-spacing: -0.01em; }
 
 /* ---------- 月概览 ---------- */
 .calstat {
@@ -43,47 +52,62 @@
   font-weight: 600;
   padding-bottom: 10rpx;
 }
+/* 每个日期＝一个浅底方块。原来的「今天」是画在整格上的圆角色块，
+   现在方块自己承担这个角色，所以格子的圆角/底色都搬进了 .tile。 */
 .cell {
   width: 14.28%;
-  height: 108rpx;
+  padding: 4rpx;
+}
+.cell--blank { visibility: hidden; }
+.tile {
+  height: 96rpx;
+  border-radius: 16rpx;
+  background: var(--surf2);
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 8rpx;
-  border-radius: 18rpx;
+  justify-content: center;
+  gap: 5rpx;
 }
-.cell--blank { visibility: hidden; }
-.cell--today { background: var(--pri); }
-.theme-dark .cell--today { background: #FFFFFF; }
+.cell-d { font-size: 27rpx; font-weight: 600; color: var(--ink2); line-height: 1.2; }
+/* 有记录的日子：暖色底 + 深字，一眼看出「这天排过菜」 */
+.tile--rec { background: var(--acc-l); }
+.tile--rec .cell-d { color: var(--acc-ink); font-weight: 700; }
+/* 今天：实心主色（深色模式主色是白的，所以字要转深） */
+.tile--today { background: var(--pri); }
+.tile--today .cell-d { color: var(--btn-ink); font-weight: 800; }
+.theme-dark .tile--today .cell-d { color: #2A5F54; }
 @media (prefers-color-scheme: dark) {
-  .cell--today { background: #FFFFFF; }
-}
-.cell-d { font-size: 27rpx; font-weight: 600; color: var(--ink); line-height: 1.25; }
-.cell--today .cell-d { color: var(--btn-ink); font-weight: 800; }
-.theme-dark .cell--today .cell-d { color: #2A5F54; }
-@media (prefers-color-scheme: dark) {
-  .cell--today .cell-d { color: #2A5F54; }
+  .tile--today .cell-d { color: #2A5F54; }
 }
 .cell-dots {
   display: flex;
   gap: 5rpx;
-  margin-top: 7rpx;
   height: 12rpx;
   align-items: center;
 }
 .dot { width: 12rpx; height: 12rpx; border-radius: 50%; }
-.cell--today .dot { outline: 2rpx solid rgba(255, 255, 255, 0.7); }
+/* 深色模式下「今天」是白底，白描边会看不见，所以只留浅色模式的描边 */
+.tile--today .dot { outline: 2rpx solid rgba(255, 255, 255, 0.7); }
+.theme-dark .tile--today .dot { outline: none; }
+@media (prefers-color-scheme: dark) {
+  .tile--today .dot { outline: none; }
+}
 
+/* 图例挪进卡片底部，用一条细线隔开 */
 .cal-legend {
   display: flex;
   align-items: center;
   gap: 24rpx;
   justify-content: center;
-  margin-top: 20rpx;
+  margin-top: 14rpx;
+  padding-top: 16rpx;
+  border-top: 2rpx solid var(--line);
   flex-wrap: wrap;
 }
 .lg { font-size: 21rpx; color: var(--ink2); display: flex; align-items: center; gap: 8rpx; }
 .lg-dot { width: 14rpx; height: 14rpx; border-radius: 50%; display: inline-block; }
+.lg-dot--rec { background: var(--acc); }
 .lg-dot--today { background: var(--pri); }
 .theme-dark .lg-dot--today { background: #FFFFFF; }
 .lg-t { font-size: 21rpx; color: var(--ink3); }

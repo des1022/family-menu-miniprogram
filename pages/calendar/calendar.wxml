@@ -8,41 +8,45 @@
       </view>
     </view>
 
-    <!-- 月份切换 -->
-    <view class="calh">
-      <view class="calh-a" bindtap="prevMonth">‹</view>
-      <view class="calh-m">{{monthText}}</view>
-      <view class="calh-a" bindtap="nextMonth">›</view>
-    </view>
-
-    <!-- 星期表头 -->
-    <view class="calgrid">
-      <view class="wd" wx:for="{{['一','二','三','四','五','六','日']}}" wx:key="*this">{{item}}</view>
-    </view>
-
-    <!-- 日期网格 -->
-    <view class="calgrid">
-      <view
-        class="cell {{cell ? '' : 'cell--blank'}} {{cell.date === today ? 'cell--today' : ''}}"
-        wx:for="{{cells}}"
-        wx:for-item="cell"
-        wx:key="key"
-        data-date="{{cell.date}}"
-        bindtap="onDayTap"
-      >
-        <block wx:if="{{cell}}">
-          <view class="cell-d">{{cell.day}}</view>
-          <view class="cell-dots">
-            <view class="dot" wx:for="{{cell.dots}}" wx:for-item="dot" wx:key="*this" style="background:{{dot}}"></view>
-          </view>
-        </block>
+    <!-- 月历：月份 / 星期 / 日期 / 图例收进同一张卡片（方案 B 格子块） -->
+    <view class="cal-card">
+      <view class="calh">
+        <view class="calh-a" bindtap="prevMonth">‹</view>
+        <view class="calh-m">{{monthText}}</view>
+        <view class="calh-a" bindtap="nextMonth">›</view>
       </view>
-    </view>
 
-    <view class="cal-legend">
-      <text class="lg"><text class="lg-dot" style="background:#E7A176"></text>有记录</text>
-      <text class="lg"><text class="lg-dot lg-dot--today"></text>今天</text>
-      <text class="lg-t">点的颜色 = 当天菜的配色</text>
+      <!-- 星期表头 -->
+      <view class="calgrid">
+        <view class="wd" wx:for="{{['一','二','三','四','五','六','日']}}" wx:key="*this">{{item}}</view>
+      </view>
+
+      <!-- 日期网格：每格一个浅底方块；有记录的换暖色底，今天实心主色 -->
+      <view class="calgrid">
+        <view
+          class="cell {{cell ? '' : 'cell--blank'}}"
+          wx:for="{{cells}}"
+          wx:for-item="cell"
+          wx:key="key"
+          data-date="{{cell.date}}"
+          bindtap="onDayTap"
+        >
+          <block wx:if="{{cell}}">
+            <view class="tile {{cell.dots.length ? 'tile--rec' : ''}} {{cell.date === today ? 'tile--today' : ''}}">
+              <view class="cell-d">{{cell.day}}</view>
+              <view class="cell-dots" wx:if="{{cell.dots.length}}">
+                <view class="dot" wx:for="{{cell.dots}}" wx:for-item="dot" wx:key="*this" style="background:{{dot}}"></view>
+              </view>
+            </view>
+          </block>
+        </view>
+      </view>
+
+      <view class="cal-legend">
+        <text class="lg"><text class="lg-dot lg-dot--rec"></text>有记录</text>
+        <text class="lg"><text class="lg-dot lg-dot--today"></text>今天</text>
+        <text class="lg-t">点的颜色 = 当天菜的配色</text>
+      </view>
     </view>
     <view class="cal-hint">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</view>
 
