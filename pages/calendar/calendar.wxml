@@ -72,10 +72,15 @@
     <block wx:if="{{mealCount}}">
       <view class="sec-h"><text class="sec-t">本月回顾</text></view>
 
-      <view class="calstat">
-        <view class="calstat-n">{{mealCount}}</view>
-        <view class="calstat-tx">
-          顿在家吃<text class="calstat-hl" wx:if="{{topName}}"> · 最爱 {{topName}}（{{topNum}} 次）</text>
+      <!-- 月概览：暖色横幅（左边「N 顿在家吃」，右边「最爱」） -->
+      <view class="statbar">
+        <view class="statbar-l">
+          <text class="statbar-n">{{mealCount}}</text>
+          <text class="statbar-u">顿在家吃</text>
+        </view>
+        <view class="statbar-r" wx:if="{{topName}}">
+          最爱
+          <text class="statbar-fav">{{topName}} · {{topNum}} 次</text>
         </view>
       </view>
 

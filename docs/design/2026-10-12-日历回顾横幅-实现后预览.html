@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>日历 · 「本月回顾」暖色横幅（实现后预览）</title>
+<link rel="stylesheet" href="_ui-plan.css">
+<style>
+/* =========================================================================
+   这一版是「接到代码里之后长什么样」的预览 —— 数值全部来自改后的
+   pages/calendar/calendar.wxss（1rpx = 0.5px），不是凭感觉画的。
+   ========================================================================= */
+
+/* 区块标题 */
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 8px}
+.sec-t{font-size:15px;font-weight:700}
+
+/* ---------- 月概览：暖色横幅（本轮唯一改动） ---------- */
+/* .statbar：padding 28/30rpx · 圆角 24rpx · gap 16rpx · margin-bottom 26rpx */
+.statbar{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  background:var(--btn-bg);color:var(--btn-ink);
+  border-radius:12px;padding:14px 15px;margin-bottom:13px;
+  box-shadow:0 4px 10px rgba(196,85,58,.22);
+}
+.dark .statbar{box-shadow:var(--sh)}
+.statbar-l{display:flex;align-items:baseline;gap:6px;min-width:0}
+/* 64rpx 字 · letter-spacing -2rpx */
+.statbar-n{font-size:32px;font-weight:800;letter-spacing:-1px;line-height:1}
+/* 24rpx · opacity .9 */
+.statbar-u{font-size:12px;opacity:.9}
+/* 21rpx · opacity .85 · line-height 1.45 */
+.statbar-r{flex:0 0 auto;text-align:right;font-size:10.5px;opacity:.85;line-height:1.45}
+/* 28rpx · 限宽 300rpx + 省略号 */
+.statbar-fav{
+  display:block;max-width:150px;margin-top:1px;
+  font-size:14px;font-weight:700;opacity:1;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+/* 没记录到「最爱」时右侧整块不渲染（wx:if="{{topName}}"） */
+
+/* ---------- 下面三块：逐项照抄线上，一个字没动 ---------- */
+.rv-t{font-size:13px;font-weight:700;margin-bottom:10px}
+.rv-tx{font-size:13px;color:var(--ink2);line-height:1.7}
+.rk{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.rk:last-child{margin-bottom:0}
+.rk-n{width:22px;height:22px;border-radius:7px;flex:0 0 auto;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:800;background:var(--surf2);color:var(--ink2)}
+.rk-n--1{background:var(--acc);color:#fff}
+.rk-n--2{background:var(--acc-l);color:var(--acc-ink)}
+.rk-n--3{background:var(--pri-l);color:var(--pri-ink)}
+.rk-main{flex:1;min-width:0}
+.rk-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.rk-nm{font-size:13.5px;font-weight:700}
+.rk-cnt{font-size:11.5px;color:var(--ink2);font-weight:600}
+.rank-bar{height:7px;border-radius:999px;background:var(--surf2);overflow:hidden}
+.rank-fill{height:100%;border-radius:999px;background:var(--btn-bg)}
+.cat{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.cat:last-child{margin-bottom:0}
+.cat-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.cat-nm{font-size:12.5px;width:54px;flex:0 0 auto}
+.cat-bar{flex:1;height:7px;border-radius:999px;background:var(--surf2);overflow:hidden}
+.cat-fill{height:100%;border-radius:999px}
+.cat-pct{font-size:11.5px;color:var(--ink2);width:37px;text-align:right;font-weight:600}
+.rv-tip{background:var(--acc-l);border-color:var(--acc)}
+.rv-tip .rv-tx{color:var(--acc-ink);font-weight:600}
+
+.note{font-size:11px;color:var(--ink3);margin:9px 2px 0;line-height:1.6}
+</style>
+</head>
+<body>
+
+<h1>日历 · 「本月回顾」= 暖色横幅（已接进代码，这是实际渲染）</h1>
+<p class="lead">
+  这一版<b>只改了「N 顿在家吃」那一条</b>：从「浅橙底卡片」换成整条<b>暖橙渐变横幅</b>。
+  下面「最常吃的三道 / 分类占比 / 小建议」<b>一个字没动</b> —— 还是各自独立的卡、
+  分类还是逐行条、建议还是暖黄底那张。<br>
+  下面三帧的数值全部取自改后的 <code>calendar.wxss</code>（1rpx = 0.5px）。
+</p>
+
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">① 改后 · 浅色 <em>· 就是线上会长成的样子</em></p>
+    <div class="frame"><div class="p" style="padding:13px 14px">
+
+      <div class="sec-h"><span class="sec-t">本月回顾</span></div>
+
+      <div class="statbar">
+        <div class="statbar-l"><span class="statbar-n">23</span><span class="statbar-u">顿在家吃</span></div>
+        <div class="statbar-r">最爱<span class="statbar-fav">紫菜蛋花汤 · 5 次</span></div>
+      </div>
+
+      <div class="card pad">
+        <div class="rv-t">最常吃的三道</div>
+        <div class="rk">
+          <div class="rk-n rk-n--1">1</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">紫菜蛋花汤</span><span class="rk-cnt">5 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:100%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--2">2</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">清炒时蔬</span><span class="rk-cnt">4 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:80%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--3">3</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">红烧排骨</span><span class="rk-cnt">3 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:60%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad" style="margin-top:13px">
+        <div class="rv-t">分类占比</div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#D9714E"></span>
+          <span class="cat-nm">素菜</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:42%;background:#D9714E"></div></div>
+          <span class="cat-pct">42%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#E7A176"></span>
+          <span class="cat-nm">汤羹</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:28%;background:#E7A176"></div></div>
+          <span class="cat-pct">28%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#4F9367"></span>
+          <span class="cat-nm">荤菜</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:20%;background:#4F9367"></div></div>
+          <span class="cat-pct">20%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#8E9BC4"></span>
+          <span class="cat-nm">主食</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:10%;background:#8E9BC4"></div></div>
+          <span class="cat-pct">10%</span>
+        </div>
+      </div>
+
+      <div class="card pad rv-tip" style="margin-top:13px">
+        <div class="rv-t">小建议</div>
+        <div class="rv-tx">这个月素菜偏多，下周可以加两道荤菜换换口味。</div>
+      </div>
+
+    </div></div>
+    <p class="note">整条暖橙渐变 + 白字。「23」自己在左边站着，「最爱」在右边有了一块小位置。</p>
+  </div>
+
+  <div class="col">
+    <p class="cap">② 改后 · 强制深色 <em>· 颜色自动跟着换，不用单独兜</em></p>
+    <div class="frame dark"><div class="p" style="padding:13px 14px">
+
+      <div class="sec-h"><span class="sec-t">本月回顾</span></div>
+
+      <div class="statbar">
+        <div class="statbar-l"><span class="statbar-n">23</span><span class="statbar-u">顿在家吃</span></div>
+        <div class="statbar-r">最爱<span class="statbar-fav">紫菜蛋花汤 · 5 次</span></div>
+      </div>
+
+      <div class="card pad">
+        <div class="rv-t">最常吃的三道</div>
+        <div class="rk">
+          <div class="rk-n rk-n--1">1</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">紫菜蛋花汤</span><span class="rk-cnt">5 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:100%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--2">2</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">清炒时蔬</span><span class="rk-cnt">4 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:80%"></div></div>
+          </div>
+        </div>
+        <div class="rk">
+          <div class="rk-n rk-n--3">3</div>
+          <div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">红烧排骨</span><span class="rk-cnt">3 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:60%"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card pad" style="margin-top:13px">
+        <div class="rv-t">分类占比</div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#D9714E"></span>
+          <span class="cat-nm">素菜</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:42%;background:#D9714E"></div></div>
+          <span class="cat-pct">42%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#E7A176"></span>
+          <span class="cat-nm">汤羹</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:28%;background:#E7A176"></div></div>
+          <span class="cat-pct">28%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#4F9367"></span>
+          <span class="cat-nm">荤菜</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:20%;background:#4F9367"></div></div>
+          <span class="cat-pct">20%</span>
+        </div>
+        <div class="cat">
+          <span class="cat-dot" style="background:#8E9BC4"></span>
+          <span class="cat-nm">主食</span>
+          <div class="cat-bar"><div class="cat-fill" style="width:10%;background:#8E9BC4"></div></div>
+          <span class="cat-pct">10%</span>
+        </div>
+      </div>
+
+      <div class="card pad rv-tip" style="margin-top:13px">
+        <div class="rv-t">小建议</div>
+        <div class="rv-tx">这个月素菜偏多，下周可以加两道荤菜换换口味。</div>
+      </div>
+
+    </div></div>
+    <p class="note">深色下 <code>--btn-bg</code> 是白底、<code>--btn-ink</code> 是深墨绿字 —— 横幅自动变，
+      投影也换成常规阴影（橙色投影压在白卡上会脏）。</p>
+  </div>
+
+  <div class="col">
+    <p class="cap">③ 长菜名 / 没有「最爱」 <em>· 两种边界情况</em></p>
+    <div class="frame"><div class="p" style="padding:13px 14px">
+
+      <div class="sec-h"><span class="sec-t">本月回顾</span></div>
+
+      <div class="statbar">
+        <div class="statbar-l"><span class="statbar-n">7</span><span class="statbar-u">顿在家吃</span></div>
+        <div class="statbar-r">最爱<span class="statbar-fav">青椒土豆丝炒肉 · 5 次</span></div>
+      </div>
+      <p class="note" style="margin:-3px 2px 13px">菜名太长时右侧限宽 300rpx + 省略号，不会把左边的数字挤扁。</p>
+
+      <div class="statbar" style="margin-bottom:6px">
+        <div class="statbar-l"><span class="statbar-n">1</span><span class="statbar-u">顿在家吃</span></div>
+      </div>
+      <p class="note">还没重复吃过同一道菜时，右侧整块不渲染，横幅只剩左边 —— 不会出现「最爱  ·  次」这种空壳。</p>
+
+    </div></div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -27,20 +27,50 @@
 }
 .calh-m { font-size: 32rpx; font-weight: 700; letter-spacing: -0.01em; }
 
-/* ---------- 月概览 ---------- */
-.calstat {
+/* ---------- 月概览：暖色横幅 ---------- */
+/* 原来是一条 --pri-l 浅橙底 + --pri 描边的卡，和下面的白卡一样重，
+   「N 顿在家吃」这个最重要的数字也没跳出来。现在整条铺暖橙渐变、白字，
+   左边大数字自己站着，右边「最爱」有了一块小位置（2026-10-12）。
+   颜色直接用主按钮那套变量：浅色下暖橙渐变 + 白字，深色下自动变白底 + 深墨绿字。 */
+.statbar {
   display: flex;
   align-items: center;
-  gap: 20rpx;
-  background: var(--pri-l);
-  border: 2rpx solid var(--pri);
+  justify-content: space-between;
+  gap: 16rpx;
+  background: var(--btn-bg);
+  color: var(--btn-ink);
   border-radius: 24rpx;
-  padding: 22rpx 26rpx;
+  padding: 28rpx 30rpx;
   margin-bottom: 26rpx;
+  box-shadow: 0 8rpx 20rpx rgba(196, 85, 58, 0.22);
 }
-.calstat-n { font-size: 44rpx; font-weight: 800; color: var(--pri-ink); line-height: 1; }
-.calstat-tx { font-size: 25rpx; color: var(--ink); line-height: 1.5; }
-.calstat-hl { font-weight: 700; }
+/* 深色下 --btn-bg 是白底，橙色投影压在白卡上会很脏，换成常规阴影 */
+.theme-dark .statbar { box-shadow: var(--sh); }
+@media (prefers-color-scheme: dark) {
+  .statbar { box-shadow: var(--sh); }
+}
+.statbar-l { display: flex; align-items: baseline; gap: 12rpx; min-width: 0; }
+.statbar-n { font-size: 64rpx; font-weight: 800; letter-spacing: -2rpx; line-height: 1; }
+.statbar-u { font-size: 24rpx; opacity: 0.9; }
+.statbar-r {
+  flex: 0 0 auto;
+  text-align: right;
+  font-size: 21rpx;
+  opacity: 0.85;
+  line-height: 1.45;
+}
+/* 菜名可能很长（「青椒土豆丝炒肉」这种），限宽 + 省略号，别把左边的数字挤扁 */
+.statbar-fav {
+  display: block;
+  max-width: 300rpx;
+  margin-top: 2rpx;
+  font-size: 28rpx;
+  font-weight: 700;
+  opacity: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* ---------- 日期网格 ---------- */
 .calgrid { display: flex; flex-wrap: wrap; }
