@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>方案四 · 让彩色只出现在"真的有含义"的地方</title>
+<link rel="stylesheet" href="_plan2.css">
+<style>
+.chd{display:flex;align-items:center;gap:9px;padding:12px 14px 10px}
+.sec-ic{width:26px;height:26px;border-radius:9px;display:flex;align-items:center;
+  justify-content:center;flex:0 0 auto}
+.sec-ic img{width:16px;height:16px;display:block}
+.sec-ic--pri{background:var(--pri-l)}
+.sec-ic--acc{background:var(--acc-l)}
+.sec-ic--ok{background:var(--ok-l)}
+.sec-ic--neu{background:var(--surf2)}
+.ct{font-size:15px;font-weight:800}
+.chd .rt{margin-left:auto;font-size:11px;color:var(--ink2)}
+.rline{display:flex;align-items:center;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.rline:first-child{border-top:none}
+.rline .dt-ing-i{font-size:12px}
+table{border-collapse:collapse;width:100%;font-size:12px;background:var(--surf);
+  border-radius:12px;overflow:hidden;box-shadow:var(--sh)}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--bg);font-weight:700;font-size:11.5px;color:#6B635B}
+.dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+</style>
+</head>
+<body>
+
+<h1>方案四 · 让彩色只出现在「真的有含义」的地方</h1>
+<p class="lead">
+  现在一屏里会同时出现好几种彩色的<b>浅底方块</b>，大半是<b>纯装饰</b>（区块图标、食材签）——
+  每个单看都不难看，但叠在一起就分不清哪个是重点。下面把同一块界面「现状 / 改后」并排放。
+</p>
+
+<h2>① 菜品编辑页的区块头</h2>
+<div class="rowc">
+  <div class="col">
+    <p class="cap">现状 <em>· 四个区块，三种颜色轮着用</em></p>
+    <div class="frame"><div class="fbody" style="padding:0">
+      <div class="card" style="margin:0;border-radius:0;border-left:0;border-right:0">
+        <div class="chd">
+          <div class="sec-ic sec-ic--pri"><img src="../../assets/icons/sec-cam.png"></div>
+          <div class="ct">菜品图片</div></div>
+        <div class="chd">
+          <div class="sec-ic sec-ic--acc"><img src="../../assets/icons/sec-info.png"></div>
+          <div class="ct">基本信息</div></div>
+        <div class="chd">
+          <div class="sec-ic sec-ic--ok"><img src="../../assets/icons/sec-basket.png"></div>
+          <div class="ct">食材清单</div></div>
+        <div class="chd">
+          <div class="sec-ic sec-ic--pri"><img src="../../assets/icons/sec-steps.png"></div>
+          <div class="ct">做法步骤</div></div>
+      </div>
+    </div></div>
+    <p class="note">
+      红 / 琥珀 / 绿 / 红 —— 这四种配色<b>不表示任何含义</b>，纯粹是为了"不单调"。
+      结果是这四个区块看起来互不相干，而且和下面真正的状态色（绿色的"已上架"）混在一起。
+    </p>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 全部中性，靠图标区分</em><span class="pill pill--ok">推荐</span></p>
+    <div class="frame"><div class="fbody" style="padding:0">
+      <div class="card" style="margin:0;border-radius:0;border-left:0;border-right:0">
+        <div class="chd">
+          <div class="sec-ic sec-ic--neu"><img src="../../assets/icons/sec-cam.png"></div>
+          <div class="ct">菜品图片</div></div>
+        <div class="chd">
+          <div class="sec-ic sec-ic--neu"><img src="../../assets/icons/sec-info.png"></div>
+          <div class="ct">基本信息</div></div>
+        <div class="chd">
+          <div class="sec-ic sec-ic--neu"><img src="../../assets/icons/sec-basket.png"></div>
+          <div class="ct">食材清单</div></div>
+        <div class="chd">
+          <div class="sec-ic sec-ic--neu"><img src="../../assets/icons/sec-steps.png"></div>
+          <div class="ct">做法步骤</div></div>
+      </div>
+    </div></div>
+    <p class="note">
+      图标本身就不一样（相机 / 文档 / 篮子 / 列表），<b>不需要靠底色再强调一遍</b>。
+      底改成浅灰后，四个区块从"四个频道"变成"一页里的四段"，页面安静下来。
+    </p>
+  </div>
+</div>
+
+<h2>② 决策器的三行</h2>
+<div class="rowc">
+  <div class="col">
+    <p class="cap">现状 <em>· 三行三个颜色</em></p>
+    <div class="frame"><div class="fbody">
+      <div class="deccard">
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--pri"><img class="dc-img" src="../../assets/icons/dec-mix.png"></div>
+          <div class="dc-lb">搭配</div>
+          <div class="dc-chips"><span class="chip on">2荤1素1汤</span><span class="chip">2荤2素</span></div>
+        </div>
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--ok"><img class="dc-img" src="../../assets/icons/dec-size.png"></div>
+          <div class="dc-lb">人数</div>
+          <div class="dc-chips"><span class="chip">3-4 人</span><span class="chip">5 人以上</span></div>
+        </div>
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--acc"><img class="dc-img" src="../../assets/icons/dec-taste.png"></div>
+          <div class="dc-lb">口味</div>
+          <div class="dc-chips"><span class="chip on">随便</span><span class="chip">清淡</span></div>
+        </div>
+      </div>
+    </div></div>
+    <p class="note">左边的红/绿/黄方块和"选中"的橙色 chip 抢注意力。</p>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 中性底 + 只留选中态的橙</em><span class="pill pill--ok">推荐</span></p>
+    <div class="frame"><div class="fbody">
+      <div class="deccard">
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--neu"><img class="dc-img" src="../../assets/icons/dec-mix.png"></div>
+          <div class="dc-lb">搭配</div>
+          <div class="dc-chips"><span class="chip on">2荤1素1汤</span><span class="chip">2荤2素</span></div>
+        </div>
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--neu"><img class="dc-img" src="../../assets/icons/dec-size.png"></div>
+          <div class="dc-lb">人数</div>
+          <div class="dc-chips"><span class="chip">3-4 人</span><span class="chip">5 人以上</span></div>
+        </div>
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--neu"><img class="dc-img" src="../../assets/icons/dec-taste.png"></div>
+          <div class="dc-lb">口味</div>
+          <div class="dc-chips"><span class="chip on">随便</span><span class="chip">清淡</span></div>
+        </div>
+      </div>
+    </div></div>
+    <p class="note">一眼看到的就是"哪一项被选中了"，没有别的颜色来干扰。</p>
+  </div>
+</div>
+
+<h2>③ 菜品详情里的食材签</h2>
+<div class="rowc">
+  <div class="col">
+    <p class="cap">现状 <em>· 绿色底 + 绿字</em></p>
+    <div class="frame"><div class="fbody">
+      <div class="dt-h">食材</div>
+      <div class="dt-ing">
+        <span class="dt-ing-i">牛肉</span><span class="dt-ing-i">小米辣</span>
+        <span class="dt-ing-i">生抽</span><span class="dt-ing-i">香醋</span>
+      </div>
+    </div></div>
+    <p class="note">食材是"内容"，不是"状态"，用绿色会让它和真正的成功状态（已买 / 已上架）撞色。</p>
+  </div>
+  <div class="col">
+    <p class="cap">改后 <em>· 中性底；只有「命中忌口」才上色</em><span class="pill pill--ok">推荐</span></p>
+    <div class="frame"><div class="fbody">
+      <div class="dt-h">食材</div>
+      <div class="dt-ing">
+        <span class="dt-ing-i dt-ing-i--neu">牛肉</span>
+        <span class="dt-ing-i dt-ing-i--bad">香菜</span>
+        <span class="dt-ing-i dt-ing-i--neu">小米辣</span>
+        <span class="dt-ing-i dt-ing-i--neu">生抽</span>
+      </div>
+    </div></div>
+    <p class="note">
+      平时是安静的灰签；<b>一旦命中家人忌口才变红</b> —— 这样一个颜色出现就一定有含义，
+      和方案一（忌口）是同一件事的两面。
+    </p>
+  </div>
+</div>
+
+<h2>④ 规则表（定了这个，颜色一个都不用改）</h2>
+<table style="max-width:790px">
+  <tr><th style="width:150px">颜色</th><th>只允许用于</th><th>明确不要用于</th></tr>
+  <tr>
+    <td><span class="dot" style="background:#D9714E"></span>主色（陶土橙）</td>
+    <td>主操作按钮、当前选中、今天</td>
+    <td>区块图标等装饰</td>
+  </tr>
+  <tr>
+    <td><span class="dot" style="background:#E9A323"></span>强调（琥珀）</td>
+    <td><b>只给「时间与记录 / 提示」</b>：有记录的日子、日期胶囊、小建议、名次</td>
+    <td>纯装饰图标</td>
+  </tr>
+  <tr>
+    <td><span class="dot" style="background:#4F9367"></span>成功（绿）</td>
+    <td><b>只给「已完成 / 状态」</b>：已上架、已买、已确认、自检通过</td>
+    <td>食材签、区块图标、决策器图标</td>
+  </tr>
+  <tr>
+    <td><span class="dot" style="background:#C94A3F"></span>危险（砖红）</td>
+    <td><b>只给破坏性动作与警告</b>（删除 / 忌口命中），且<b>只用文字色、不填大色块</b></td>
+    <td>任何填充色块</td>
+  </tr>
+  <tr>
+    <td><span class="dot" style="background:#F4EFE9"></span>中性浅灰</td>
+    <td>一切容器、分区、图标底、内容标签（食材 / 标签 / 提示条）</td>
+    <td>—</td>
+  </tr>
+</table>
+<p class="note" style="max-width:790px">
+  合计改动：<b>菜品编辑页 4 处 + 决策器 3 处 + 食材签 3 处（详情 / 安排弹层 / 今晚详情）</b>，
+  每处只是把背景从某个彩色变量换成 <code>--surf2</code>。<b>色值一个都不用动。</b>
+</p>
+
+</body>
+</html>

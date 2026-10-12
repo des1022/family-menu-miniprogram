@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>方案三 · 「缺个青菜」的建议改成从你自己菜库挑</title>
+<link rel="stylesheet" href="_plan2.css">
+<style>
+.grid{display:flex;flex-wrap:wrap;gap:9px}
+.dish{width:104px;background:var(--surf);border:1px solid var(--line);border-radius:12px;
+  overflow:hidden;box-shadow:var(--sh)}
+.dish .im{height:74px;display:flex;align-items:center;justify-content:center;
+  font-size:22px;font-weight:800;color:#fff;background:linear-gradient(140deg,#E7A176,#C0613F)}
+.dish .bd{padding:7px 8px 9px}
+.dish .nm{font-size:12px;font-weight:700;line-height:1.3}
+.dish .mt{font-size:9.5px;color:var(--ink3);margin-top:3px}
+.toprow{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<h1>方案三 · 「缺个青菜」的建议，改成从你自己菜库挑</h1>
+<p class="lead">
+  今晚页会检测「这一桌还缺个青菜 / 再配个汤更完整」—— 这个判断是准的。
+  但提示里的菜名是<b>写死在代码里</b>的（蒜蓉小青菜 · 凉拌黄瓜 · 醋溜土豆丝），
+  你菜库里不一定有这几道，点了也只是跳到菜库、没带筛选条件。
+</p>
+
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">现状 <em>· 菜名是写死的，点「去看看」只跳到菜库</em></p>
+    <div class="frame"><div class="nav">今晚</div><div class="fbody">
+      <div class="sec-h"><span class="sec-t">今晚的桌</span><span class="sec-m">3 道</span></div>
+      <div class="card pad" style="padding:11px 12px">
+        <div style="font-size:12px;color:var(--ink2);line-height:1.9">
+          红烧排骨 · 蒜蓉南瓜苗 · 紫菜蛋花汤
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="sug">
+          <div class="sug-tx">
+            这一桌还缺个青菜
+            <div style="font-weight:400;margin-top:3px;color:#8E5F0C;opacity:.9">
+              蒜蓉小青菜 · 凉拌黄瓜 · 醋溜土豆丝
+            </div>
+          </div>
+          <div class="sug-go">去看看</div>
+        </div>
+      </div>
+    </div></div>
+    <p class="note">
+      这三道是文案里<b>写死的示例</b> —— 如果菜库里没有，这句话就是空的；
+      点「去看看」也只是跳到菜库，你还得自己找。
+    </p>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 从你的菜库挑，点一下直接筛过去</em><span class="pill pill--ok">推荐</span></p>
+    <div class="frame"><div class="nav">今晚</div><div class="fbody">
+      <div class="sec-h"><span class="sec-t">今晚的桌</span><span class="sec-m">3 道</span></div>
+      <div class="card pad" style="padding:11px 12px">
+        <div style="font-size:12px;color:var(--ink2);line-height:1.9">
+          红烧排骨 · 蒜蓉南瓜苗 · 紫菜蛋花汤
+        </div>
+      </div>
+      <div style="margin-top:12px">
+        <div class="sug">
+          <div class="sug-tx">
+            这一桌还缺个青菜
+            <div style="font-weight:400;margin-top:3px;color:#8E5F0C;opacity:.9">
+              你菜库里的：蒜蓉菜心 · 清炒油麦菜 · 凉拌黄瓜
+            </div>
+          </div>
+          <div class="sug-go">去挑一道</div>
+        </div>
+      </div>
+    </div></div>
+    <p class="note">
+      三道都来自<b>你自己的菜库</b>（按「素菜」这一类挑，久没做的排前面）；
+      点了直接跳到菜库并<b>自动筛到「素菜」</b>，不用再找。菜名是可点的。
+    </p>
+  </div>
+
+</div>
+
+<h2>点「去挑一道」之后 —— 直接落在筛好的素菜上</h2>
+<div class="col">
+  <div class="frame"><div class="nav">菜库</div><div class="fbody">
+    <div class="toprow">
+      <span class="chip">全部 24</span>
+      <span class="chip on">素菜 6</span>
+      <span class="chip">★ 常吃</span>
+      <span class="chip">本周没吃</span>
+    </div>
+    <div class="grid">
+      <div class="dish"><div class="im">蒜</div><div class="bd">
+        <div class="nm">蒜蓉菜心</div><div class="mt">近一个月做过 0 次</div></div></div>
+      <div class="dish"><div class="im">清</div><div class="bd">
+        <div class="nm">清炒油麦菜</div><div class="mt">近一个月做过 1 次</div></div></div>
+      <div class="dish"><div class="im">凉</div><div class="bd">
+        <div class="nm">凉拌黄瓜</div><div class="mt">近一个月做过 2 次</div></div></div>
+      <div class="dish"><div class="im">醋</div><div class="bd">
+        <div class="nm">醋溜土豆丝</div><div class="mt">近一个月做过 3 次</div></div></div>
+    </div>
+  </div></div>
+  <p class="note">
+    落到菜库时已经筛好「素菜」，且按「久没做的排前面」排 —— 你最可能想换换口味的排在最前。
+  </p>
+</div>
+
+<div class="card" style="margin-top:18px;padding:14px 16px;max-width:790px">
+  <div style="font-size:13px;font-weight:700;margin-bottom:8px">改动内容</div>
+  <div style="font-size:12.5px;line-height:1.9;color:#4A443E">
+    ① 建议里的菜名：改成<b>从菜库按同一分类挑 3 道</b>（复用已有的排序：久没做的优先）；<br>
+    ② 点建议时：<b>带上分类筛选</b>跳到菜库（现在只是跳过去）。<br>
+    <span style="color:#8B8178">改动量：小（一个取数函数 + 跳转带参数）。</span>
+  </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>方案一 · 把「忌口」用起来</title>
+<link rel="stylesheet" href="_plan2.css">
+</head>
+<body>
+
+<h1>方案一 · 把「忌口」用起来</h1>
+<p class="lead">
+  你已经填了 <b>10 个忌口选项</b>（少辣 / 不吃香菜 / 忌海鲜…），但代码里<b>一处都没读它</b>。
+  下面两组：上面是<b>点开一道菜</b>时，下面是<b>「帮我选一顿」的候选</b>时 —— 左右对比该怎么改。
+</p>
+
+<h2>① 点开一道菜（菜库详情）</h2>
+<div class="rowc">
+  <div class="col">
+    <p class="cap">现状 <em>· 完全看不出来这道菜里有香菜</em></p>
+    <div class="frame"><div class="nav">菜库</div><div class="fbody">
+      <div class="dt-hero">
+        <div class="dt-img">香</div>
+        <div class="dt-fav">☆</div>
+      </div>
+      <div class="dt-nm">香菜拌牛肉</div>
+      <div class="dt-meta">
+        <span class="tag">凉菜</span>
+        <span class="tag tag--pri">微辣</span>
+        <span class="t-micro">近一个月做过 2 次</span>
+      </div>
+      <div class="dt-sec">
+        <div class="dt-h">食材</div>
+        <div class="dt-ing">
+          <span class="dt-ing-i">牛肉</span>
+          <span class="dt-ing-i">香菜</span>
+          <span class="dt-ing-i">小米辣</span>
+          <span class="dt-ing-i">生抽</span>
+          <span class="dt-ing-i">香醋</span>
+        </div>
+      </div>
+      <div class="dt-sec">
+        <div class="dt-h">做法 <span style="font-weight:600">2 步</span></div>
+        <div class="dt-tx">1. 牛肉切薄片焯水；2. 加香菜段与调料拌匀。</div>
+      </div>
+      <div class="btn-row">
+        <div class="btn btn-ghost">编辑</div>
+        <div class="btn btn-pri">加进今晚</div>
+      </div>
+    </div></div>
+    <p class="note">食材签全是绿的，一眼看不出哪样是「有人不吃的」。</p>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 命中忌口的食材标红 + 一句提醒</em><span class="pill pill--ok">推荐</span></p>
+    <div class="frame"><div class="nav">菜库</div><div class="fbody">
+      <div class="dt-hero">
+        <div class="dt-img">香</div>
+        <div class="dt-fav">☆</div>
+      </div>
+      <div class="dt-nm">香菜拌牛肉</div>
+      <div class="dt-meta">
+        <span class="tag">凉菜</span>
+        <span class="tag tag--pri">微辣</span>
+        <span class="tag tag--bad">含香菜</span>
+        <span class="t-micro">近一个月做过 2 次</span>
+      </div>
+      <div class="dt-warn">程蒙不吃香菜 —— 做的时候可以单独盛一份出来再撒。</div>
+      <div class="dt-sec">
+        <div class="dt-h">食材</div>
+        <div class="dt-ing">
+          <span class="dt-ing-i">牛肉</span>
+          <span class="dt-ing-i dt-ing-i--bad">香菜</span>
+          <span class="dt-ing-i">小米辣</span>
+          <span class="dt-ing-i">生抽</span>
+          <span class="dt-ing-i">香醋</span>
+        </div>
+      </div>
+      <div class="dt-sec">
+        <div class="dt-h">做法 <span style="font-weight:600">2 步</span></div>
+        <div class="dt-tx">1. 牛肉切薄片焯水；2. 加香菜段与调料拌匀。</div>
+      </div>
+      <div class="btn-row">
+        <div class="btn btn-ghost">编辑</div>
+        <div class="btn btn-pri">加进今晚</div>
+      </div>
+    </div></div>
+    <p class="note">三处小改动：菜名旁一枚「含香菜」小标、食材签标红、一句话给出<b>解决办法</b>（而不是简单否决）。</p>
+  </div>
+</div>
+
+<h2>② 「帮我选一顿」的候选</h2>
+<div class="rowc">
+  <div class="col">
+    <p class="cap">现状 <em>· 照样会把香菜拌牛肉推给你</em></p>
+    <div class="frame"><div class="fbody" style="padding:14px">
+      <div class="deccard">
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--pri"><img class="dc-img" src="../../assets/icons/dec-mix.png"></div>
+          <div class="dc-lb">搭配</div>
+          <div class="dc-chips">
+            <span class="chip on">2荤1素1汤</span><span class="chip">2荤2素</span>
+          </div>
+        </div>
+      </div>
+      <div class="dec-pick">
+        <div class="dp-rank">1</div>
+        <div class="dp-img">红</div>
+        <div class="dp-main">
+          <div class="dp-nm">红烧排骨</div>
+          <div class="dp-mt">荤菜 · 家常 · 5 天前做过</div>
+        </div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="dec-pick">
+        <div class="dp-rank">2</div>
+        <div class="dp-img">香</div>
+        <div class="dp-main">
+          <div class="dp-nm">香菜拌牛肉</div>
+          <div class="dp-mt">荤菜 · 凉菜 · 还没做过</div>
+        </div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="dec-pick">
+        <div class="dp-rank">3</div>
+        <div class="dp-img">蒜</div>
+        <div class="dp-main">
+          <div class="dp-nm">蒜蓉南瓜苗</div>
+          <div class="dp-mt">素菜 · 家常 · 12 天前做过</div>
+        </div>
+        <div class="dp-swap">换一个</div>
+      </div>
+    </div></div>
+    <p class="note">「还没做过」所以被优先推荐 —— 恰好是有人不吃的菜。</p>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 候选上直接标出来 + 说明这一步先给「提示」还是「过滤」</em></p>
+    <div class="frame"><div class="fbody" style="padding:14px">
+      <div class="deccard">
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--pri"><img class="dc-img" src="../../assets/icons/dec-mix.png"></div>
+          <div class="dc-lb">搭配</div>
+          <div class="dc-chips">
+            <span class="chip on">2荤1素1汤</span><span class="chip">2荤2素</span>
+          </div>
+        </div>
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--neu"><img class="dc-img" src="../../assets/icons/sec-eye.png"></div>
+          <div class="dc-lb">忌口</div>
+          <div class="dc-chips">
+            <span class="chip chip--home">已避开 程蒙的忌口</span>
+          </div>
+        </div>
+      </div>
+      <div class="dec-pick">
+        <div class="dp-rank">1</div>
+        <div class="dp-img">红</div>
+        <div class="dp-main">
+          <div class="dp-nm">红烧排骨</div>
+          <div class="dp-mt">荤菜 · 家常 · 5 天前做过</div>
+        </div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="dec-pick" style="border-color:rgba(201,74,63,.35)">
+        <div class="dp-rank">2</div>
+        <div class="dp-img">香</div>
+        <div class="dp-main">
+          <div class="dp-nm">香菜拌牛肉 <span class="tag tag--bad">含香菜</span></div>
+          <div class="dp-mt">荤菜 · 凉菜 · 还没做过</div>
+        </div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="dec-pick">
+        <div class="dp-rank">3</div>
+        <div class="dp-img">蒜</div>
+        <div class="dp-main">
+          <div class="dp-nm">蒜蓉南瓜苗</div>
+          <div class="dp-mt">素菜 · 家常 · 12 天前做过</div>
+        </div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="btn-row">
+        <div class="btn btn-ghost">再换一桌</div>
+        <div class="btn btn-pri">就这些，定了</div>
+      </div>
+    </div></div>
+    <p class="note">候选卡上加一枚「含香菜」小标（<b>提示，不拦截</b>）；决策器里多一行显示「已避开 程蒙的忌口」。</p>
+  </div>
+</div>
+
+<div class="card" style="margin-top:18px;padding:14px 16px;max-width:790px">
+  <div style="font-size:13px;font-weight:700;margin-bottom:8px">这一步先做到哪一档？（后续可再升级）</div>
+  <div style="font-size:12.5px;line-height:1.9;color:#4A443E">
+    <b style="color:#A8462E">档 1 · 只提示（上图，推荐先做）</b> —— 标出来 + 给解决办法。决定权仍然在人手里，
+    家人之间也不会因为"被系统禁了某道菜"而不高兴。<br>
+    <b style="color:#A8462E">档 2 · 提示 + 候选池过滤</b> —— 决策器直接不推命中忌口的菜（「换一个」时也不会换到）。
+    适合"确实一次都不能出现"的忌口（比如过敏）。<br>
+    两档用的是<b>同一张映射表</b>（不吃香菜 → 香菜 / 忌海鲜 → 虾蟹鱼贝…），
+    所以先做档 1，将来想升级只改一行开关。
+  </div>
+</div>
+
+</body>
+</html>

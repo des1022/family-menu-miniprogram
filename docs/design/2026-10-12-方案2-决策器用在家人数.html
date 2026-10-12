@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>方案二 · 决策器用上「今晚在家人数」</title>
+<link rel="stylesheet" href="_plan2.css">
+</head>
+<body>
+
+<h1>方案二 · 决策器用上「今晚在家人数」</h1>
+<p class="lead">
+  家里每个人都有一个「今晚在不在家吃」的开关，程序<b>已经</b>把它算成了「X 人在家吃」
+  （家庭页和今晚页都在显示）。但点「帮我选一顿」时，人数还是要<b>再手选一次</b>
+  （1-2 人 / 3-4 人 / 5 人以上）—— 同一件事填两遍，还可能互相打脸。
+</p>
+
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">现状 <em>· 家里 2 人在家吃，这里却默认按 3-4 人配</em></p>
+    <div class="frame"><div class="nav">今晚 · 帮我选一顿</div><div class="fbody">
+      <div class="deccard">
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--pri"><img class="dc-img" src="../../assets/icons/dec-mix.png"></div>
+          <div class="dc-lb">搭配</div>
+          <div class="dc-chips">
+            <span class="chip on">2荤1素1汤</span>
+            <span class="chip">2荤2素</span>
+            <span class="chip">1荤1素1汤</span>
+            <span class="chip">随便配</span>
+          </div>
+        </div>
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--ok"><img class="dc-img" src="../../assets/icons/dec-size.png"></div>
+          <div class="dc-lb">人数</div>
+          <div class="dc-chips">
+            <span class="chip">1-2 人</span>
+            <span class="chip on">3-4 人</span>
+            <span class="chip">5 人以上</span>
+          </div>
+        </div>
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--acc"><img class="dc-img" src="../../assets/icons/dec-taste.png"></div>
+          <div class="dc-lb">口味</div>
+          <div class="dc-chips">
+            <span class="chip on">随便</span>
+            <span class="chip">清淡</span>
+            <span class="chip">下饭</span>
+            <span class="chip">重口</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dec-pick">
+        <div class="dp-rank">1</div><div class="dp-img">红</div>
+        <div class="dp-main"><div class="dp-nm">红烧排骨</div>
+          <div class="dp-mt">荤菜 · 家常 · 5 天前做过</div></div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="dec-pick">
+        <div class="dp-rank">2</div><div class="dp-img">番</div>
+        <div class="dp-main"><div class="dp-nm">番茄炒蛋</div>
+          <div class="dp-mt">荤菜 · 家常 · 9 天前做过</div></div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="dec-pick">
+        <div class="dp-rank">3</div><div class="dp-img">蒜</div>
+        <div class="dp-main"><div class="dp-nm">蒜蓉南瓜苗</div>
+          <div class="dp-mt">素菜 · 家常 · 12 天前做过</div></div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="dec-pick">
+        <div class="dp-rank">4</div><div class="dp-img">紫</div>
+        <div class="dp-main"><div class="dp-nm">紫菜蛋花汤</div>
+          <div class="dp-mt">汤羹 · 家常 · 3 天前做过</div></div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="btn-row">
+        <div class="btn btn-ghost">再换一桌</div>
+        <div class="btn btn-pri">就这些，定了</div>
+      </div>
+    </div></div>
+    <p class="note">
+      这桌按「3-4 人」配了 <b>4 道菜</b>，但冰箱里只有 2 个人吃 —— 容易剩。
+    </p>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 人数直接来自「今晚在家吃」的开关</em><span class="pill pill--ok">推荐</span></p>
+    <div class="frame"><div class="nav">今晚 · 帮我选一顿</div><div class="fbody">
+      <div class="deccard">
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--pri"><img class="dc-img" src="../../assets/icons/dec-mix.png"></div>
+          <div class="dc-lb">搭配</div>
+          <div class="dc-chips">
+            <span class="chip on">2荤1素1汤</span>
+            <span class="chip">2荤2素</span>
+            <span class="chip">1荤1素1汤</span>
+            <span class="chip">随便配</span>
+          </div>
+        </div>
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--ok"><img class="dc-img" src="../../assets/icons/dec-size.png"></div>
+          <div class="dc-lb">人数</div>
+          <div class="dc-chips">
+            <span class="chip chip--home on" style="background:var(--ok);color:#fff;border-color:var(--ok)">2 人（今天在家的）</span>
+            <span class="chip">3-4 人</span>
+            <span class="chip">5 人以上</span>
+          </div>
+        </div>
+        <div class="dcrow">
+          <div class="dc-ic dc-ic--acc"><img class="dc-img" src="../../assets/icons/dec-taste.png"></div>
+          <div class="dc-lb">口味</div>
+          <div class="dc-chips">
+            <span class="chip on">随便</span>
+            <span class="chip">清淡</span>
+            <span class="chip">下饭</span>
+            <span class="chip">重口</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="dec-pick">
+        <div class="dp-rank">1</div><div class="dp-img">红</div>
+        <div class="dp-main"><div class="dp-nm">红烧排骨</div>
+          <div class="dp-mt">荤菜 · 家常 · 5 天前做过</div></div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="dec-pick">
+        <div class="dp-rank">2</div><div class="dp-img">蒜</div>
+        <div class="dp-main"><div class="dp-nm">蒜蓉南瓜苗</div>
+          <div class="dp-mt">素菜 · 家常 · 12 天前做过</div></div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="dec-pick">
+        <div class="dp-rank">3</div><div class="dp-img">紫</div>
+        <div class="dp-main"><div class="dp-nm">紫菜蛋花汤</div>
+          <div class="dp-mt">汤羹 · 家常 · 3 天前做过</div></div>
+        <div class="dp-swap">换一个</div>
+      </div>
+      <div class="btn-row">
+        <div class="btn btn-ghost">再换一桌</div>
+        <div class="btn btn-pri">就这些，定了</div>
+      </div>
+    </div></div>
+    <p class="note">
+      默认选中「<b>2 人（今天在家的）</b>」，所以只配了 <b>3 道</b>菜（2 荤 1 素 + 汤）；
+      想按别的份量做，照样能手动改回 3-4 人 —— <b>只是不用再填一遍</b>。
+    </p>
+  </div>
+
+</div>
+
+<div class="card" style="margin-top:18px;padding:14px 16px;max-width:790px">
+  <div style="font-size:13px;font-weight:700;margin-bottom:8px">这个「2 人」是从哪来的？</div>
+  <div style="font-size:12.5px;line-height:1.9;color:#4A443E">
+    家庭页里每个人都有「今晚在不在家吃」的开关（做饭的人按这个决定做多少）——
+    程序已经在算这个数了（今晚页右上角、家庭页标题都在显示）。
+    改动只是<b>把这个数接到决策器的人数行</b>，多一个「今天在家的」选项并默认选中它。
+    <br><span style="color:#8B8178">改动量：小（一处默认值 + 一行文案）。</span>
+  </div>
+</div>
+
+</body>
+</html>
