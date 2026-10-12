@@ -166,10 +166,13 @@ GLOBALS = {'item', 'index', 'true', 'false', 'null', 'undefined', 'wx', 'getApp'
 FOR_RE = re.compile(r'wx:for="\{\{[^}]+\}\}"([^>]*)>')
 ROOT_RE = re.compile(r'\{\{\s*([a-z][A-Za-z0-9_]*)')
 FOR_ITEM_RE = re.compile(r'wx:for-item="([^"]+)"')
+# wx:for-index 声明的循环下标名（默认 index）同样是合法的模板变量。
+# 之前只收 wx:for-item，导致「用了自定义下标名」会被误报成「循环变量名可疑」。
+FOR_INDEX_RE = re.compile(r'wx:for-index="([^"]+)"')
 for p in files("*.wxml"):
     text = p.read_text(encoding="utf-8")
     js = p.with_suffix(".js")
-    known = GLOBALS | set(FOR_ITEM_RE.findall(text))
+    known = GLOBALS | set(FOR_ITEM_RE.findall(text)) | set(FOR_INDEX_RE.findall(text))
     if js.exists():
         known |= set(re.findall(r"[A-Za-z_$][A-Za-z0-9_$]*",
                                 js.read_text(encoding="utf-8", errors="replace")))

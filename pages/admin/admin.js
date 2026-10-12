@@ -1,6 +1,6 @@
 const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
-const { deleteDishImage } = require('../../utils/image.js')
+const { deleteDishImage, attachImgUrls } = require('../../utils/image.js')
 const { toast, confirm, formatPrice } = require('../../utils/util.js')
 const theme = require('../../utils/theme.js')
 
@@ -42,6 +42,9 @@ Page({
       // 「已下架」只作为筛选胶囊存在，不能当成可移动的目标分类
       const catOptions = [ALL_CAT].concat(moveCats).concat([OFF_CAT])
       const decorated = dishes.map(d => Object.assign({}, d, { priceText: formatPrice(d.price) }))
+      // 先把云存储 fileID 换成临时链接再渲染。这页以前直接用 item.image（原始 fileID），
+      // 而本环境的存储桶是私有的 —— 别人传的图在这儿就是一块灰底（2026-10-12 反馈）。
+      await attachImgUrls(decorated)
       this.setData({ allDishes: decorated, catOptions: catOptions, moveCats: moveCats },
         () => this.buildGroups())
     } catch (e) {
@@ -97,6 +100,16 @@ Page({
 
   onToggleCheck(e) {
     if (this.data.selecting) this.toggleSelect(e.currentTarget.dataset.id)
+  },
+
+  /** 缩略图加载失败 -> 退回灰底（管理页只要能看出「没图」即可，不区分原因） */
+  onImgError(e) {
+    const ds = e.currentTarget.dataset
+    const g = Number(ds.g)
+    const i = Number(ds.i)
+    if (isNaN(g) || isNaN(i)) return
+    console.warn('[admin] 缩略图加载失败', ds.name, e.detail && e.detail.errMsg)
+    this.setData({ ['groups[' + g + '].dishes[' + i + '].imgFailed']: true })
   },
 
   onLongPressRow(e) {

@@ -26,7 +26,7 @@
   </scroll-view>
 
   <!-- 分组列表 -->
-  <view class="group" wx:for="{{groups}}" wx:key="name" wx:for-item="group">
+  <view class="group" wx:for="{{groups}}" wx:key="name" wx:for-item="group" wx:for-index="gIdx">
     <view class="group-name">{{group.name}}（{{group.dishes.length}}）</view>
     <view
       class="manage-row {{item.checked ? 'manage-row--checked' : ''}}"
@@ -39,7 +39,19 @@
       <view class="check-circle {{item.checked ? 'check-circle--on' : ''}}" wx:if="{{selecting}}" catchtap="onToggleCheck" data-id="{{item._id}}">
         <text wx:if="{{item.checked}}">✓</text>
       </view>
-      <image class="manage-img" src="{{item.image}}" mode="aspectFill" lazy-load />
+      <image
+        class="manage-img"
+        wx:if="{{item.imgSrc && !item.imgFailed}}"
+        src="{{item.imgSrc}}"
+        mode="aspectFill"
+        lazy-load
+        data-g="{{gIdx}}"
+        data-i="{{index}}"
+        data-name="{{item.name}}"
+        binderror="onImgError"
+      />
+      <!-- 没图 / 读不到：保持 --surf2 灰底，不再出现「白块」 -->
+      <view class="manage-img" wx:else/>
       <view class="manage-info">
         <view class="manage-name">{{item.name}}</view>
         <view class="manage-meta">
