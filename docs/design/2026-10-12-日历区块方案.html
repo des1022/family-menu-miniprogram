@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>家庭菜单 · 日历区块设计方案</title>
+<style>
+  :root{
+    --pri:#D9714E; --pri-d:#C4553A; --pri-l:#FBEEE8; --pri-ink:#A8462E;
+    --acc:#E9A323; --acc-l:#FCF3DF; --acc-ink:#8E5F0C;
+    --bg:#FAF7F3; --surf:#FFFFFF; --surf2:#F4EFE9; --line:#EFE7DE;
+    --ink:#2A2521; --ink2:#8B8178; --ink3:#B7AEA4;
+    --sh:0 2px 7px rgba(170,130,100,.08);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;padding:26px 24px 30px;background:#E6E0D8;
+       font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+       color:#2A2521;-webkit-font-smoothing:antialiased}
+  h1{font-size:19px;margin:0 0 6px}
+  .sub{font-size:13px;color:#8B8178;margin:0 0 20px;line-height:1.7}
+  .row{display:flex;gap:26px;align-items:flex-start}
+  .col{width:375px;flex:0 0 auto}
+  .cap{font-size:13px;font-weight:700;margin:0 0 9px}
+  .cap em{font-style:normal;font-weight:400;color:#8B8178}
+  .frame{width:375px;background:var(--bg);border-radius:20px;overflow:hidden;
+         box-shadow:0 10px 28px rgba(90,60,40,.16);padding-bottom:14px}
+  .nav{height:44px;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:600}
+  .body{padding:0 16px}
+  .hd{padding:4px 0 12px}
+  .hd .t{font-size:25px;font-weight:800;letter-spacing:-.5px}
+  .hd .s{font-size:12px;color:var(--ink2);margin-top:3px}
+
+  .calgrid{display:flex;flex-wrap:wrap}
+  .wd{width:14.28%;text-align:center;font-size:11px;color:var(--ink3);font-weight:600;padding-bottom:5px}
+  .cell{width:14.28%;height:54px;display:flex;flex-direction:column;align-items:center;
+        padding-top:4px;border-radius:9px}
+  .blank{visibility:hidden}
+  .cell-d{font-size:13.5px;font-weight:600;color:var(--ink);line-height:1.25}
+  .dots{display:flex;gap:2.5px;margin-top:3.5px;height:6px;align-items:center}
+  .dot{width:6px;height:6px;border-radius:50%}
+
+  .calh{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .calh-m{font-size:16px;font-weight:700}
+  .calh-a{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;
+          justify-content:center;font-size:16px;line-height:1}
+
+  /* ① 现状 */
+  .a-plain .calh-a{background:#fff;color:var(--ink2)}
+  .a-plain .cell--today{background:var(--pri)}
+  .a-plain .cell--today .cell-d{color:#fff;font-weight:800}
+
+  /* A 白卡月历 */
+  .cardbox{background:var(--surf);border:1px solid var(--line);border-radius:14px;
+           box-shadow:var(--sh);padding:13px 11px 9px}
+  .cardbox .calh-a{background:var(--surf2);color:var(--ink2)}
+  .cardbox .cell--today{background:var(--pri)}
+  .cardbox .cell--today .cell-d{color:#fff;font-weight:800}
+  .cardbox .lgrow{border-top:1px solid var(--line);margin-top:8px;padding-top:9px}
+
+  /* B 格子块月历 */
+  .tile-grid .cell{width:14.28%;height:52px;padding:2px;border-radius:0}
+  .tile{width:100%;height:100%;border-radius:8px;background:var(--surf2);
+        display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px}
+  .tile .cell-d{color:var(--ink2)}
+  .tile.rec{background:var(--acc-l)}
+  .tile.rec .cell-d{color:var(--acc-ink);font-weight:700}
+  .tile--today{background:var(--pri)}
+  .tile--today .cell-d{color:#fff;font-weight:800}
+
+  /* C 暖色挂牌 */
+  .warm{background:var(--pri-l);border:1px solid rgba(217,113,78,.2);border-radius:14px;
+        padding:13px 11px 10px}
+  .warm .calh-m{color:var(--pri-ink)}
+  .warm .calh-a{background:rgba(255,255,255,.85);color:var(--pri-ink)}
+  .warm .wd{color:#C7907C}
+  .warm .cell-d{color:var(--pri-ink)}
+  .warm .cell--today{background:#fff;box-shadow:0 1px 4px rgba(168,70,46,.18)}
+  .warm .cell--today .cell-d{color:var(--pri-ink);font-weight:800}
+  .warm .lgrow{border-top:1px solid rgba(217,113,78,.16);margin-top:8px;padding-top:9px}
+  .warm .lg,.warm .lg-t{color:#A9745F}
+
+  /* 图例 / 提示 / 下面的卡片 */
+  .lgrow{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}
+  .lg{font-size:10.5px;color:var(--ink2);display:flex;align-items:center;gap:4px}
+  .lg i{width:7px;height:7px;border-radius:50%;display:block}
+  .lg-t{font-size:10.5px;color:var(--ink3)}
+  .legendline{display:flex;align-items:center;justify-content:center;gap:12px;
+              flex-wrap:wrap;margin:9px 0 0}
+  .hint{margin-top:9px;background:var(--acc-l);border:1px solid var(--acc);border-radius:11px;
+        padding:8px 10px;font-size:11.5px;color:var(--acc-ink);font-weight:600;line-height:1.5}
+  .sech{display:flex;align-items:baseline;justify-content:space-between;margin:16px 0 8px}
+  .sech .st{font-size:14px;font-weight:700}
+  .sech .sm{font-size:11.5px;color:var(--pri-ink);font-weight:700}
+  .card{background:var(--surf);border:1px solid var(--line);border-radius:13px;padding:11px 12px}
+  .card .l1{display:flex;align-items:baseline;justify-content:space-between}
+  .card .d{font-size:13px;font-weight:700}
+  .card .c{font-size:11.5px;color:var(--ink2)}
+  .card .n{font-size:11.5px;color:var(--ink2);margin-top:4px}
+
+  .legend{margin-top:24px;font-size:13px;line-height:1.9;color:#3A332C;max-width:1240px}
+  .legend b{color:#1E1913}
+</style>
+</head>
+<body>
+
+<h1>日历区块 · 三个方向</h1>
+<p class="sub">按真机尺寸 1:1 渲染（375px 宽，1rpx = 0.5px），用的都是 app.wxss 里现有的颜色变量。每帧下面还带了「接下来的安排」，方便判断新块和它是不是一套语言。</p>
+
+<div class="row">
+
+  <div class="col">
+    <p class="cap">① 现状 <em>（对照）</em></p>
+    <div class="frame a-plain">
+      <div class="nav">日历</div>
+      <div class="body">
+        <div class="hd"><div class="t">日历</div><div class="s">这一个月的餐桌</div></div>
+        <div class="calh"><div class="calh-a">‹</div><div class="calh-m">2026 年 10 月</div><div class="calh-a">›</div></div>
+        <div class="calgrid">
+          <div class="wd">一</div><div class="wd">二</div><div class="wd">三</div><div class="wd">四</div><div class="wd">五</div><div class="wd">六</div><div class="wd">日</div>
+        </div>
+        <div class="calgrid">
+          <div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div>
+          <div class="cell"><div class="cell-d">1</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">2</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">3</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">4</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">5</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">6</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#E9A323"></i></div></div>
+          <div class="cell"><div class="cell-d">7</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">8</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">9</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">10</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">11</div><div class="dots"><i class="dot" style="background:#D99A9A"></i><i class="dot" style="background:#D99A9A"></i></div></div>
+          <div class="cell cell--today"><div class="cell-d">12</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">13</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">14</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">15</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">16</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">17</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">18</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">19</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">20</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">21</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#97B36A"></i></div></div>
+          <div class="cell"><div class="cell-d">22</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">23</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">24</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">25</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">26</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">27</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">28</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">29</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#E9A323"></i></div></div>
+          <div class="cell"><div class="cell-d">30</div><div class="dots"></div></div>
+          <div class="cell"><div class="cell-d">31</div><div class="dots"></div></div>
+        </div>
+        <div class="legendline">
+          <span class="lg"><i style="background:#E7A176"></i>有记录</span>
+          <span class="lg"><i style="background:#D9714E"></i>今天</span>
+          <span class="lg-t">点的颜色 = 当天菜的配色</span>
+        </div>
+        <div class="hint">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</div>
+        <div class="sech"><span class="st">接下来的安排</span><span class="sm">2 天</span></div>
+        <div class="card"><div class="l1"><span class="d">10月21日 周三</span><span class="c">2 道</span></div><div class="n">手擀面、冬瓜排骨汤</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">A 白卡月历 <em>（最稳，推荐）</em></p>
+    <div class="frame">
+      <div class="nav">日历</div>
+      <div class="body">
+        <div class="hd"><div class="t">日历</div><div class="s">这一个月的餐桌</div></div>
+        <div class="cardbox">
+          <div class="calh"><div class="calh-a">‹</div><div class="calh-m">2026 年 10 月</div><div class="calh-a">›</div></div>
+          <div class="calgrid">
+            <div class="wd">一</div><div class="wd">二</div><div class="wd">三</div><div class="wd">四</div><div class="wd">五</div><div class="wd">六</div><div class="wd">日</div>
+          </div>
+          <div class="calgrid">
+            <div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div>
+            <div class="cell"><div class="cell-d">1</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">2</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">3</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">4</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">5</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">6</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#E9A323"></i></div></div>
+            <div class="cell"><div class="cell-d">7</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">8</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">9</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">10</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">11</div><div class="dots"><i class="dot" style="background:#D99A9A"></i><i class="dot" style="background:#D99A9A"></i></div></div>
+            <div class="cell cell--today"><div class="cell-d">12</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">13</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">14</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">15</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">16</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">17</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">18</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">19</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">20</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">21</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#97B36A"></i></div></div>
+            <div class="cell"><div class="cell-d">22</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">23</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">24</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">25</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">26</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">27</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">28</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">29</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#E9A323"></i></div></div>
+            <div class="cell"><div class="cell-d">30</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">31</div><div class="dots"></div></div>
+          </div>
+          <div class="lgrow">
+            <span class="lg"><i style="background:#E7A176"></i>有记录</span>
+            <span class="lg"><i style="background:#D9714E"></i>今天</span>
+            <span class="lg-t">点的颜色 = 当天菜的配色</span>
+          </div>
+        </div>
+        <div class="hint">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</div>
+        <div class="sech"><span class="st">接下来的安排</span><span class="sm">2 天</span></div>
+        <div class="card"><div class="l1"><span class="d">10月21日 周三</span><span class="c">2 道</span></div><div class="n">手擀面、冬瓜排骨汤</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">B 格子块月历 <em>（纸月历感）</em></p>
+    <div class="frame">
+      <div class="nav">日历</div>
+      <div class="body">
+        <div class="hd"><div class="t">日历</div><div class="s">这一个月的餐桌</div></div>
+        <div class="cardbox tile-grid">
+          <div class="calh"><div class="calh-a">‹</div><div class="calh-m">2026 年 10 月</div><div class="calh-a">›</div></div>
+          <div class="calgrid">
+            <div class="wd">一</div><div class="wd">二</div><div class="wd">三</div><div class="wd">四</div><div class="wd">五</div><div class="wd">六</div><div class="wd">日</div>
+          </div>
+          <div class="calgrid">
+            <div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div>
+            <div class="cell"><div class="tile"><div class="cell-d">1</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">2</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">3</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">4</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">5</div></div></div>
+            <div class="cell"><div class="tile rec"><div class="cell-d">6</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#E9A323"></i></div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">7</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">8</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">9</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">10</div></div></div>
+            <div class="cell"><div class="tile rec"><div class="cell-d">11</div><div class="dots"><i class="dot" style="background:#D99A9A"></i><i class="dot" style="background:#D99A9A"></i></div></div></div>
+            <div class="cell"><div class="tile tile--today"><div class="cell-d">12</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">13</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">14</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">15</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">16</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">17</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">18</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">19</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">20</div></div></div>
+            <div class="cell"><div class="tile rec"><div class="cell-d">21</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#97B36A"></i></div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">22</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">23</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">24</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">25</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">26</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">27</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">28</div></div></div>
+            <div class="cell"><div class="tile rec"><div class="cell-d">29</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#E9A323"></i></div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">30</div></div></div>
+            <div class="cell"><div class="tile"><div class="cell-d">31</div></div></div>
+          </div>
+          <div class="lgrow">
+            <span class="lg"><i style="background:#FAC775"></i>有记录</span>
+            <span class="lg"><i style="background:#D9714E"></i>今天</span>
+            <span class="lg-t">点的颜色 = 当天菜的配色</span>
+          </div>
+        </div>
+        <div class="hint">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</div>
+        <div class="sech"><span class="st">接下来的安排</span><span class="sm">2 天</span></div>
+        <div class="card"><div class="l1"><span class="d">10月21日 周三</span><span class="c">2 道</span></div><div class="n">手擀面、冬瓜排骨汤</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">C 暖色挂牌 <em>（存在感最强）</em></p>
+    <div class="frame">
+      <div class="nav">日历</div>
+      <div class="body">
+        <div class="hd"><div class="t">日历</div><div class="s">这一个月的餐桌</div></div>
+        <div class="warm">
+          <div class="calh"><div class="calh-a">‹</div><div class="calh-m">2026 年 10 月</div><div class="calh-a">›</div></div>
+          <div class="calgrid">
+            <div class="wd">一</div><div class="wd">二</div><div class="wd">三</div><div class="wd">四</div><div class="wd">五</div><div class="wd">六</div><div class="wd">日</div>
+          </div>
+          <div class="calgrid">
+            <div class="cell blank"></div><div class="cell blank"></div><div class="cell blank"></div>
+            <div class="cell"><div class="cell-d">1</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">2</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">3</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">4</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">5</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">6</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#E9A323"></i></div></div>
+            <div class="cell"><div class="cell-d">7</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">8</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">9</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">10</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">11</div><div class="dots"><i class="dot" style="background:#D99A9A"></i><i class="dot" style="background:#D99A9A"></i></div></div>
+            <div class="cell cell--today"><div class="cell-d">12</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">13</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">14</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">15</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">16</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">17</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">18</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">19</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">20</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">21</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#97B36A"></i></div></div>
+            <div class="cell"><div class="cell-d">22</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">23</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">24</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">25</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">26</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">27</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">28</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">29</div><div class="dots"><i class="dot" style="background:#E9A323"></i><i class="dot" style="background:#E9A323"></i></div></div>
+            <div class="cell"><div class="cell-d">30</div><div class="dots"></div></div>
+            <div class="cell"><div class="cell-d">31</div><div class="dots"></div></div>
+          </div>
+          <div class="lgrow">
+            <span class="lg"><i style="background:#E7A176"></i>有记录</span>
+            <span class="lg"><i style="background:#FFFFFF"></i>今天</span>
+            <span class="lg-t">点的颜色 = 当天菜的配色</span>
+          </div>
+        </div>
+        <div class="hint">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</div>
+        <div class="sech"><span class="st">接下来的安排</span><span class="sm">2 天</span></div>
+        <div class="card"><div class="l1"><span class="d">10月21日 周三</span><span class="c">2 道</span></div><div class="n">手擀面、冬瓜排骨汤</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="legend">
+  <b>·</b> A 只做一件事：把月份、星期、日期、图例收进<b>一张白卡</b>（圆角 · 细边 · 轻阴影），和下面「接下来的安排」用同一套卡片语言；箭头改成浅底圆形按钮。信息一个没变。<br>
+  <b>·</b> B 在白卡基础上把每个日期做成<b>浅底小方块</b>：有记录的格子换成暖黄底 + 深字，今天实心陶土橙。整体像一张纸月历，格子的密度感最强。<br>
+  <b>·</b> C 整块用<b>陶土浅底</b>，数字走深陶土墨色，今天反过来用白底。存在感最强，但和 app 其它页面的浅底语言差别最大 —— 看你想要多「跳」。<br>
+  <b>·</b> 三个方案都保留了：点日期排菜、有记录的小圆点、图例、提示条；深色模式也跟着走同一套变量。
+</div>
+
+</body>
+</html>
