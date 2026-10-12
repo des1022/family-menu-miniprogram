@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>家庭菜单 · 日历页整体重设计</title>
+<link rel="stylesheet" href="_ui-plan.css">
+<style>
+/* ==================== 日历页专用（变量与 app.wxss 一致，1rpx = 0.5px） ==================== */
+.t-h1{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.t-sub{font-size:13px;color:var(--ink2);margin-top:2px}
+.hd{display:flex;align-items:flex-start;justify-content:space-between;padding:4px 2px 11px}
+.hd-badge{display:flex;align-items:baseline;gap:3px;background:var(--pri-l);
+  border-radius:999px;padding:7px 13px;color:var(--pri-ink)}
+.hd-badge b{font-size:19px;font-weight:800;letter-spacing:-.5px}
+.hd-badge span{font-size:11.5px;font-weight:600}
+
+/* 月历卡 */
+.calcard{background:var(--surf);border:1px solid var(--line);border-radius:14px;
+  box-shadow:var(--sh);padding:9px 8px 6px}
+.calh{display:flex;align-items:center;justify-content:space-between;padding:1px 2px 7px}
+.calh-a{width:28px;height:28px;border-radius:50%;background:var(--surf2);color:var(--ink2);
+  display:flex;align-items:center;justify-content:center;font-size:18px}
+.calh-m{font-size:16px;font-weight:700}
+.calgrid{display:flex;flex-wrap:wrap}
+.wd{width:14.28%;text-align:center;font-size:11px;color:var(--ink3);font-weight:600;padding-bottom:5px}
+.cell{width:14.28%;padding:2px}
+.cell--blank{visibility:hidden}
+.tile{height:48px;border-radius:8px;background:var(--surf2);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2.5px}
+.cell-d{font-size:13.5px;font-weight:600;color:var(--ink2);line-height:1.2}
+.tile--rec{background:var(--acc-l)}
+.tile--rec .cell-d{color:var(--acc-ink);font-weight:700}
+.tile--today{background:var(--pri)}
+.tile--today .cell-d{color:var(--btn-ink);font-weight:800}
+.cell-dots{display:flex;gap:2.5px;height:6px;align-items:center}
+.dot{width:6px;height:6px;border-radius:50%}
+.tile--today .dot{outline:1px solid rgba(255,255,255,.7)}
+/* B 方案：格子更矮 */
+.slim .tile{height:38px}
+.slim .cell-d{font-size:12.5px}
+.slim .calcard{padding-bottom:8px}
+
+.legend{display:flex;align-items:center;gap:12px;justify-content:center;
+  margin-top:7px;padding-top:8px;border-top:1px solid var(--line);flex-wrap:wrap}
+.lg{font-size:10.5px;color:var(--ink2);display:flex;align-items:center;gap:4px}
+.lg-dot{width:7px;height:7px;border-radius:50%}
+.lg-dot--rec{background:var(--acc)}
+.lg-dot--today{background:var(--pri)}
+.lg-t{font-size:10.5px;color:var(--ink3)}
+.cal-tip{margin-top:7px;padding:6px 9px;border-radius:9px;background:var(--surf2);
+  font-size:10.5px;color:var(--ink2);line-height:1.5}
+
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin:13px 2px 8px}
+.sec-t{font-size:15px;font-weight:700}
+.sec-m{font-size:12px;color:var(--pri-ink);font-weight:600}
+.hintline{font-size:11px;color:var(--ink3);margin:6px 2px 0;line-height:1.5}
+
+/* 接下来的安排：A 用日期胶囊 */
+.up-i{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.up-i:last-child{border-bottom:none}
+.up-clip{width:42px;height:42px;flex:0 0 auto;border-radius:12px;background:var(--pri-l);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--pri-ink)}
+.up-clip b{font-size:16px;font-weight:800;line-height:1}
+.up-clip span{font-size:9.5px;margin-top:2px}
+.up-n{font-size:13.5px;font-weight:600;line-height:1.4;flex:1;min-width:0}
+.up-c{font-size:11px;color:var(--ink2);font-weight:600;flex:0 0 auto}
+.up-arw{color:var(--ink3);font-size:17px;line-height:1;flex:0 0 auto}
+/* 现状 / B 用的朴素行 */
+.up-i2{display:flex;align-items:center;gap:8px;padding:11px 12px;border-bottom:1px solid var(--line)}
+.up-i2:last-child{border-bottom:none}
+.up-l{flex:1;min-width:0}
+.up-hd{display:flex;align-items:baseline;gap:8px}
+.up-d{font-size:13.5px;font-weight:700}
+.up-c2{font-size:11.5px;color:var(--ink2);font-weight:600}
+.up-n2{font-size:12px;color:var(--ink2);margin-top:3px;line-height:1.5}
+
+/* 本月回顾（收进一张卡） */
+.rv-big{display:flex;align-items:baseline;gap:7px;padding:13px 14px 4px}
+.rv-big b{font-size:34px;font-weight:800;letter-spacing:-1.5px;color:var(--pri-ink);line-height:1}
+.rv-big span{font-size:12.5px;color:var(--ink2)}
+.rv-sub{padding:0 14px 13px;font-size:12.5px;color:var(--ink2)}
+.rv-sub b{color:var(--ink);font-weight:700}
+.rv-blk{padding:12px 14px;border-top:1px solid var(--line)}
+.rv-t{font-size:13px;font-weight:700;margin-bottom:9px}
+.rk{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.rk:last-child{margin-bottom:0}
+.rk-n{width:22px;height:22px;border-radius:7px;flex:0 0 auto;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:800;background:var(--surf2);color:var(--ink2)}
+.rk-n--1{background:var(--acc);color:#fff}
+.rk-n--2{background:var(--acc-l);color:var(--acc-ink)}
+.rk-n--3{background:var(--pri-l);color:var(--pri-ink)}
+.rk-main{flex:1;min-width:0}
+.rk-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.rk-nm{font-size:13.5px;font-weight:700}
+.rk-cnt{font-size:11.5px;color:var(--ink2);font-weight:600}
+.rank-bar{height:7px;border-radius:999px;background:var(--surf2);overflow:hidden}
+.rank-fill{height:100%;border-radius:999px;background:var(--btn-bg)}
+
+/* 堆叠条（分类占比改成一条） */
+.stack{display:flex;height:11px;border-radius:999px;overflow:hidden;background:var(--surf2)}
+.seg{height:100%}
+.stacklg{display:flex;flex-wrap:wrap;gap:9px;margin-top:8px}
+.stacklg span{font-size:10.5px;color:var(--ink2);display:flex;align-items:center;gap:4px}
+.sq{width:7px;height:7px;border-radius:2px}
+
+.rvtip{padding:11px 14px;background:var(--acc-l);font-size:12px;color:var(--acc-ink);
+  font-weight:600;line-height:1.6;border-top:1px solid var(--line)}
+
+/* B：把「本月回顾」做成深色强调卡 */
+.statcard{background:linear-gradient(135deg,#DE7A56,#C4553A);border-radius:14px;
+  box-shadow:0 6px 18px rgba(196,85,58,.24);padding:15px;color:#fff}
+.statcard .sn{display:flex;align-items:baseline;gap:6px}
+.statcard .sn b{font-size:38px;font-weight:800;letter-spacing:-1.5px;line-height:1}
+.statcard .sn span{font-size:12.5px;opacity:.9}
+.statcard .ss{font-size:12px;opacity:.92;margin-top:6px}
+.statcard .stack{background:rgba(255,255,255,.22);margin-top:12px}
+.statcard .stacklg span{color:rgba(255,255,255,.92)}
+.statcard .rkw{display:flex;align-items:center;gap:9px;margin-top:11px}
+.statcard .rkn{width:20px;height:20px;border-radius:7px;background:rgba(255,255,255,.24);
+  display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex:0 0 auto}
+.statcard .rknm{font-size:13px;font-weight:700}
+.statcard .rkc{margin-left:auto;font-size:11.5px;opacity:.9}
+
+/* C：时间轴 */
+.tl{position:relative;padding-left:26px}
+.tl:before{content:'';position:absolute;left:9px;top:7px;bottom:7px;width:2px;background:var(--line)}
+.tl-i{position:relative;padding-bottom:15px}
+.tl-i:last-child{padding-bottom:0}
+.tl-dot{position:absolute;left:-22px;top:3px;width:12px;height:12px;border-radius:50%;
+  background:var(--surf);border:2.5px solid var(--acc)}
+.tl-dot--next{background:var(--surf);border-color:var(--pri)}
+.tl-dot--today{background:var(--pri);border-color:var(--pri)}
+.tl-lb{font-size:11.5px;color:var(--ink2);font-weight:600;display:flex;align-items:center;gap:6px}
+.pill{font-size:10px;font-weight:700;background:var(--pri-l);color:var(--pri-ink);
+  border-radius:999px;padding:1px 7px}
+.tl-tx{font-size:13.5px;font-weight:600;margin-top:3px;line-height:1.45}
+</style>
+</head>
+<body>
+
+<h1>家庭菜单 · 日历页整体重设计</h1>
+<p class="lead">
+  上次改的是<b>月历那一块</b>（格子块月历），这次看<b>整页</b>。先把「差在哪」说清楚 ——
+  不是某一块难看，是<b>整页的节奏是平的</b>：从上到下 <b>6 个宽度一样、圆角一样的卡</b>
+  （月历卡 → 安排卡 → 最常吃卡 → 分类卡 → 建议卡），读起来像一份报表。
+  再加上三处：<b>页头占了两行却没放任何信息</b>（"本月吃了 23 顿"这个最重要的数字被埋在最下面）、
+  <b>「接下来的安排」和「本月回顾」排版完全对称</b>（一个看未来一个看过去，读者要先读字才知道）、
+  <b>「最常吃的三道」和「分类占比」的条长得几乎一样</b>（看起来像重复了两遍）。
+</p>
+
+<h2 class="first"><span class="n">1</span>现状 ／ A 未来优先<span class="h2s">A 是改动最小的那一版</span></h2>
+<div class="rowc">
+
+  <!-- ============ 现状 ============ -->
+  <div class="col">
+    <p class="cap">现状 <em>· 6 个同质卡自上而下，节奏平</em></p>
+    <div class="frame">
+      <div class="nav">日历</div>
+      <div class="fbody">
+        <div class="hd">
+          <div>
+            <div class="t-h1">日历</div>
+            <div class="t-sub">这一个月的餐桌</div>
+          </div>
+        </div>
+        <div class="calcard">
+          <div class="calh"><div class="calh-a">‹</div><div class="calh-m">2026 年 10 月</div><div class="calh-a">›</div></div>
+          <div class="calgrid" data-cal></div>
+          <div class="legend">
+            <span class="lg"><i class="lg-dot lg-dot--rec"></i>有记录</span>
+            <span class="lg"><i class="lg-dot lg-dot--today"></i>今天</span>
+            <span class="lg-t">点的颜色 = 当天菜的配色</span>
+          </div>
+        </div>
+        <div class="hintline" style="margin:7px 2px 0">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</div>
+
+        <div class="sec-h"><span class="sec-t">接下来的安排</span><span class="sec-m">2 天</span></div>
+        <div class="card">
+          <div class="up-i2">
+            <div class="up-l">
+              <div class="up-hd"><span class="up-d">10月15日 周四</span><span class="up-c2">2 道</span></div>
+              <div class="up-n2">蒜蓉南瓜苗、酸辣土豆丝</div>
+            </div>
+            <span class="up-arw">›</span>
+          </div>
+          <div class="up-i2">
+            <div class="up-l">
+              <div class="up-hd"><span class="up-d">10月18日 周日</span><span class="up-c2">3 道</span></div>
+              <div class="up-n2">紫菜蛋花汤、清炒时蔬、红烧排骨</div>
+            </div>
+            <span class="up-arw">›</span>
+          </div>
+        </div>
+        <div class="hintline">点一行就能继续加菜或撤菜</div>
+
+        <div class="sec-h"><span class="sec-t">本月回顾</span></div>
+        <div class="calstat" style="display:flex;align-items:center;gap:10px;background:var(--pri-l);
+          border:1px solid var(--pri);border-radius:12px;padding:11px 13px;margin-bottom:13px">
+          <div style="font-size:22px;font-weight:800;color:var(--pri-ink);line-height:1">23</div>
+          <div style="font-size:12.5px;line-height:1.5">顿在家吃 · 最爱 <b>紫菜蛋花汤</b>（5 次）</div>
+        </div>
+        <div class="card" style="padding:13px 14px;margin-bottom:13px">
+          <div class="rv-t">最常吃的三道</div>
+          <div class="rk">
+            <div class="rk-n rk-n--1">1</div>
+            <div class="rk-main">
+              <div class="rk-top"><span class="rk-nm">紫菜蛋花汤</span><span class="rk-cnt">5 次</span></div>
+              <div class="rank-bar"><div class="rank-fill" style="width:100%"></div></div>
+            </div>
+          </div>
+          <div class="rk">
+            <div class="rk-n rk-n--2">2</div>
+            <div class="rk-main">
+              <div class="rk-top"><span class="rk-nm">酸辣土豆丝</span><span class="rk-cnt">4 次</span></div>
+              <div class="rank-bar"><div class="rank-fill" style="width:80%"></div></div>
+            </div>
+          </div>
+          <div class="rk">
+            <div class="rk-n rk-n--3">3</div>
+            <div class="rk-main">
+              <div class="rk-top"><span class="rk-nm">蒜蓉南瓜苗</span><span class="rk-cnt">3 次</span></div>
+              <div class="rank-bar"><div class="rank-fill" style="width:60%"></div></div>
+            </div>
+          </div>
+        </div>
+        <div class="card" style="padding:13px 14px;margin-bottom:13px">
+          <div class="rv-t">分类占比</div>
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px">
+            <i class="sq" style="background:#4F9367"></i><span style="font-size:12.5px;width:54px">素菜</span>
+            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:42%;background:#4F9367"></div></div>
+            <span style="font-size:11.5px;color:var(--ink2);width:37px;text-align:right;font-weight:600">42%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px">
+            <i class="sq" style="background:#E9A323"></i><span style="font-size:12.5px;width:54px">汤羹</span>
+            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:26%;background:#E9A323"></div></div>
+            <span style="font-size:11.5px;color:var(--ink2);width:37px;text-align:right;font-weight:600">26%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:7px;margin-bottom:9px">
+            <i class="sq" style="background:#D9714E"></i><span style="font-size:12.5px;width:54px">主食</span>
+            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:19%;background:#D9714E"></div></div>
+            <span style="font-size:11.5px;color:var(--ink2);width:37px;text-align:right;font-weight:600">19%</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:7px">
+            <i class="sq" style="background:#8C7AA8"></i><span style="font-size:12.5px;width:54px">热菜</span>
+            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:13%;background:#8C7AA8"></div></div>
+            <span style="font-size:11.5px;color:var(--ink2);width:37px;text-align:right;font-weight:600">13%</span>
+          </div>
+        </div>
+        <div class="rvtip" style="border-radius:14px;border:1px solid var(--acc)">
+          <div style="font-size:13px;font-weight:700;margin-bottom:5px">小建议</div>
+          素菜占了四成多，主食偏少。下周可以多排两道面食或米饭类。
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ A 未来优先 ============ -->
+  <div class="col">
+    <p class="cap">A 未来优先 <em>· 数字上页头，回顾收成一张卡</em></p>
+    <div class="frame">
+      <div class="nav">日历</div>
+      <div class="fbody">
+        <div class="hd">
+          <div>
+            <div class="t-h1">日历</div>
+            <div class="t-sub">这一个月的餐桌</div>
+          </div>
+          <div class="hd-badge"><b>23</b><span>顿</span></div>
+        </div>
+        <div class="calcard">
+          <div class="calh"><div class="calh-a">‹</div><div class="calh-m">2026 年 10 月</div><div class="calh-a">›</div></div>
+          <div class="calgrid" data-cal></div>
+          <div class="legend">
+            <span class="lg"><i class="lg-dot lg-dot--rec"></i>有记录</span>
+            <span class="lg"><i class="lg-dot lg-dot--today"></i>今天</span>
+          </div>
+          <div class="cal-tip">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</div>
+        </div>
+
+        <div class="sec-h"><span class="sec-t">接下来的安排</span><span class="sec-m">2 天</span></div>
+        <div class="card">
+          <div class="up-i">
+            <div class="up-clip"><b>15</b><span>周四</span></div>
+            <div class="up-n">蒜蓉南瓜苗、酸辣土豆丝</div>
+            <div class="up-c">2 道</div>
+            <span class="up-arw">›</span>
+          </div>
+          <div class="up-i">
+            <div class="up-clip"><b>18</b><span>周日</span></div>
+            <div class="up-n">紫菜蛋花汤、清炒时蔬、红烧排骨</div>
+            <div class="up-c">3 道</div>
+            <span class="up-arw">›</span>
+          </div>
+        </div>
+        <div class="hintline">点一行就能继续加菜或撤菜</div>
+
+        <div class="sec-h"><span class="sec-t">本月回顾</span></div>
+        <div class="card" style="overflow:hidden">
+          <div class="rv-big"><b>23</b><span>顿在家吃</span></div>
+          <div class="rv-sub">最爱 <b>紫菜蛋花汤</b> · 这个月做了 5 次</div>
+          <div class="rv-blk">
+            <div class="rv-t">最常吃的三道</div>
+            <div class="rk">
+              <div class="rk-n rk-n--1">1</div>
+              <div class="rk-main">
+                <div class="rk-top"><span class="rk-nm">紫菜蛋花汤</span><span class="rk-cnt">5 次</span></div>
+                <div class="rank-bar"><div class="rank-fill" style="width:100%"></div></div>
+              </div>
+            </div>
+            <div class="rk">
+              <div class="rk-n rk-n--2">2</div>
+              <div class="rk-main">
+                <div class="rk-top"><span class="rk-nm">酸辣土豆丝</span><span class="rk-cnt">4 次</span></div>
+                <div class="rank-bar"><div class="rank-fill" style="width:80%"></div></div>
+              </div>
+            </div>
+            <div class="rk">
+              <div class="rk-n rk-n--3">3</div>
+              <div class="rk-main">
+                <div class="rk-top"><span class="rk-nm">蒜蓉南瓜苗</span><span class="rk-cnt">3 次</span></div>
+                <div class="rank-bar"><div class="rank-fill" style="width:60%"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="rv-blk">
+            <div class="rv-t">分类占比</div>
+            <div class="stack">
+              <div class="seg" style="width:42%;background:#4F9367"></div>
+              <div class="seg" style="width:26%;background:#E9A323"></div>
+              <div class="seg" style="width:19%;background:#D9714E"></div>
+              <div class="seg" style="width:13%;background:#8C7AA8"></div>
+            </div>
+            <div class="stacklg">
+              <span><i class="sq" style="background:#4F9367"></i>素菜 42%</span>
+              <span><i class="sq" style="background:#E9A323"></i>汤羹 26%</span>
+              <span><i class="sq" style="background:#D9714E"></i>主食 19%</span>
+              <span><i class="sq" style="background:#8C7AA8"></i>热菜 13%</span>
+            </div>
+          </div>
+          <div class="rvtip">
+            <b>小建议</b>　素菜占了四成多，主食偏少。下周可以多排两道面食或米饭类。
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="note">
+  <b>A 动了四处</b>：① 页头右侧加一枚「<b>23 顿</b>」胶囊 —— 全月最重要的数字第一次出现在首屏；
+  ② 卡外的提示句收进月历卡（`--surf2` 浅底一行），不再是"漏在外面的注释"；
+  ③ 图例去掉那句长解释，只留两个点（格子已经有底色，自己会说话）；
+  ④ 三道菜 + 分类 + 建议<b>从三张卡并成一张</b>，分类从"四行条"改成<b>一条堆叠条</b> ——
+  一眼看出比例，也不再和上面的排名条长一样。日期还多了个胶囊，"未来"这件事一眼可见。
+</p>
+
+<h2><span class="n">2</span>B 看板 ／ C 时间线<span class="h2s">两个和 A 不同的方向</span></h2>
+<div class="rowc">
+
+  <!-- ============ B 看板 ============ -->
+  <div class="col">
+    <p class="cap">B 看板 <em>· 把「这个月吃得怎么样」当主角</em></p>
+    <div class="frame slim">
+      <div class="nav">日历</div>
+      <div class="fbody">
+        <div class="hd">
+          <div>
+            <div class="t-h1">2026 年 10 月</div>
+            <div class="t-sub">这一个月的餐桌</div>
+          </div>
+          <div style="display:flex;gap:6px">
+            <div class="calh-a">‹</div>
+            <div class="calh-a">›</div>
+          </div>
+        </div>
+
+        <div class="calcard" style="margin-bottom:13px">
+          <div class="calgrid" data-cal></div>
+        </div>
+
+        <div class="statcard">
+          <div class="sn"><b>23</b><span>顿在家吃</span></div>
+          <div class="ss">最爱 <b>紫菜蛋花汤</b> · 这个月做了 5 次</div>
+          <div class="stack">
+            <div class="seg" style="width:42%;background:rgba(255,255,255,.95)"></div>
+            <div class="seg" style="width:26%;background:rgba(255,255,255,.7)"></div>
+            <div class="seg" style="width:19%;background:rgba(255,255,255,.45)"></div>
+            <div class="seg" style="width:13%;background:rgba(255,255,255,.26)"></div>
+          </div>
+          <div class="stacklg">
+            <span><i class="sq" style="background:rgba(255,255,255,.95)"></i>素菜 42%</span>
+            <span><i class="sq" style="background:rgba(255,255,255,.7)"></i>汤羹 26%</span>
+            <span><i class="sq" style="background:rgba(255,255,255,.45)"></i>主食 19%</span>
+            <span><i class="sq" style="background:rgba(255,255,255,.26)"></i>热菜 13%</span>
+          </div>
+          <div class="rkw"><span class="rkn">1</span><span class="rknm">紫菜蛋花汤</span><span class="rkc">5 次</span></div>
+          <div class="rkw"><span class="rkn">2</span><span class="rknm">酸辣土豆丝</span><span class="rkc">4 次</span></div>
+          <div class="rkw"><span class="rkn">3</span><span class="rknm">蒜蓉南瓜苗</span><span class="rkc">3 次</span></div>
+        </div>
+
+        <div class="sec-h"><span class="sec-t">接下来的安排</span><span class="sec-m">2 天</span></div>
+        <div class="card">
+          <div class="up-i2">
+            <div class="up-l">
+              <div class="up-hd"><span class="up-d">10月15日 周四</span><span class="up-c2">2 道</span></div>
+              <div class="up-n2">蒜蓉南瓜苗、酸辣土豆丝</div>
+            </div>
+            <span class="up-arw">›</span>
+          </div>
+          <div class="up-i2">
+            <div class="up-l">
+              <div class="up-hd"><span class="up-d">10月18日 周日</span><span class="up-c2">3 道</span></div>
+              <div class="up-n2">紫菜蛋花汤、清炒时蔬、红烧排骨</div>
+            </div>
+            <span class="up-arw">›</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:8px">
+      月历压矮（格子 48→38rpx 高度感、去掉图例改成格子自己说话），月份与切换移进页头 ——
+      <b>腾出的位置给一张深色强调卡</b>：大数字 + 堆叠条 + 前三名全在里面。
+      这是"想看看这个月吃得怎么样"时的答案，一屏就能给全。
+      代价是<b>「接下来的安排」被推到了下面</b>（如果排未来是高频动作，这点要权衡）。
+    </p>
+  </div>
+
+  <!-- ============ C 时间线 ============ -->
+  <div class="col">
+    <p class="cap">C 时间线 <em>· 以「日期」为轴，过去未来连成一条</em></p>
+    <div class="frame">
+      <div class="nav">日历</div>
+      <div class="fbody">
+        <div class="hd">
+          <div>
+            <div class="t-h1">日历</div>
+            <div class="t-sub">这一个月的餐桌</div>
+          </div>
+          <div class="hd-badge"><b>23</b><span>顿</span></div>
+        </div>
+        <div class="calcard" style="margin-bottom:13px">
+          <div class="calh"><div class="calh-a">‹</div><div class="calh-m">2026 年 10 月</div><div class="calh-a">›</div></div>
+          <div class="calgrid" data-cal></div>
+          <div class="legend">
+            <span class="lg"><i class="lg-dot lg-dot--rec"></i>有记录</span>
+            <span class="lg"><i class="lg-dot lg-dot--today"></i>今天</span>
+          </div>
+        </div>
+
+        <div class="sec-h"><span class="sec-t">餐桌流水</span><span class="sec-m">未来 2 天</span></div>
+        <div class="card" style="padding:14px">
+          <div class="tl">
+            <div class="tl-i">
+              <div class="tl-dot tl-dot--next"></div>
+              <div class="tl-lb">10月15日 周四 <span class="pill">已排</span></div>
+              <div class="tl-tx">蒜蓉南瓜苗、酸辣土豆丝</div>
+            </div>
+            <div class="tl-i">
+              <div class="tl-dot tl-dot--next"></div>
+              <div class="tl-lb">10月18日 周日 <span class="pill">已排</span></div>
+              <div class="tl-tx">紫菜蛋花汤、清炒时蔬、红烧排骨</div>
+            </div>
+            <div class="tl-i">
+              <div class="tl-dot tl-dot--today"></div>
+              <div class="tl-lb">今天 · 10月12日 周一</div>
+              <div class="tl-tx">紫菜蛋花汤、清炒时蔬</div>
+            </div>
+            <div class="tl-i">
+              <div class="tl-dot"></div>
+              <div class="tl-lb">10月11日 周日</div>
+              <div class="tl-tx">酸辣土豆丝、蒜蓉南瓜苗、米饭</div>
+            </div>
+            <div class="tl-i">
+              <div class="tl-dot"></div>
+              <div class="tl-lb">10月06日 周一</div>
+              <div class="tl-tx">红烧排骨、清炒时蔬</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-h"><span class="sec-t">本月回顾</span></div>
+        <div class="card" style="overflow:hidden">
+          <div class="rv-big"><b>23</b><span>顿在家吃</span></div>
+          <div class="rv-sub">最爱 <b>紫菜蛋花汤</b> · 这个月做了 5 次</div>
+          <div class="rv-blk">
+            <div class="rv-t">分类占比</div>
+            <div class="stack">
+              <div class="seg" style="width:42%;background:#4F9367"></div>
+              <div class="seg" style="width:26%;background:#E9A323"></div>
+              <div class="seg" style="width:19%;background:#D9714E"></div>
+              <div class="seg" style="width:13%;background:#8C7AA8"></div>
+            </div>
+            <div class="stacklg">
+              <span><i class="sq" style="background:#4F9367"></i>素菜 42%</span>
+              <span><i class="sq" style="background:#E9A323"></i>汤羹 26%</span>
+              <span><i class="sq" style="background:#D9714E"></i>主食 19%</span>
+              <span><i class="sq" style="background:#8C7AA8"></i>热菜 13%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:8px">
+      最有"过日子的感觉"的一版：<b>把未来的安排和最近吃过的菜连成一条时间线</b>，
+      今天那个点实心橙。不再区分"安排"和"回顾"两个区块 ——
+      它们本来就是同一条时间轴上的两段。<br>
+      <b>代价要说清楚</b>：要新增"最近几天吃过什么"的展示（数据其实已有，只是没这么用过），
+      而且列表会长（要限制条数），改动量是三个方案里最大的。
+    </p>
+  </div>
+</div>
+
+<p class="note">
+  <b>三个方向的取舍</b>：
+  <b>A</b> 改动最小、只重排不重构 —— 解决的问题是"节奏平 + 信息埋得深"，风险最低；
+  <b>B</b> 把数据变成主角，一屏给全"这个月吃得怎么样"，但要把"排未来"让位；
+  <b>C</b> 最有生活气息，也最贵（要新增数据展示 + 列表要限长）。<br>
+  三者<b>互不冲突</b>：A 的页头胶囊、卡内提示、堆叠条，B 和 C 也都能用。
+</p>
+
+<script>
+(function () {
+  var WD = ['一', '二', '三', '四', '五', '六', '日']
+  var REC = [6, 11, 15, 21, 26]   // 有记录的日子
+  var TODAY = 12
+  var BLANK = 3                    // 2026-10-01 是周四
+  document.querySelectorAll('.calgrid[data-cal]').forEach(function (g) {
+    var html = ''
+    WD.forEach(function (w) { html += '<div class="wd">' + w + '</div>' })
+    for (var i = 0; i < BLANK; i++) html += '<div class="cell cell--blank"></div>'
+    for (var d = 1; d <= 31; d++) {
+      var rec = REC.indexOf(d) >= 0
+      var td = d === TODAY
+      html += '<div class="cell"><div class="tile' + (rec ? ' tile--rec' : '') +
+              (td ? ' tile--today' : '') + '">' +
+              '<div class="cell-d">' + d + '</div>' +
+              (rec ? '<div class="cell-dots"><div class="dot" style="background:#E7A176"></div></div>' : '') +
+              '</div></div>'
+    }
+    g.innerHTML = html
+  })
+})()
+</script>
+
+</body>
+</html>
