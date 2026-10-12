@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>家庭菜单 · UI 美化方案 ③观感</title>
+<link rel="stylesheet" href="_ui-plan.css">
+</head>
+<body>
+
+<h1>家庭菜单 · UI 美化方案 ③ 观感（P2）</h1>
+<p class="lead">
+  体检清单的 <b>P2</b>：四处「功能没问题、但还能再上一层」的地方。
+  这一组全部是<b>纯视觉</b>改动，不动任何逻辑，<b>不改也不会影响使用</b> —— 属于加分项。
+</p>
+
+<!-- ============ 1 ============ -->
+<h2 class="first"><span class="n">1</span>今晚 · 帮我选一顿<span class="h2s">三排 chips 全靠文字分层级</span></h2>
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">现状 <em>· 三排 chips 平铺，候选菜也偏平</em></p>
+    <div class="frame">
+      <div class="nav">今晚</div>
+      <div class="fbody" style="padding-top:6px">
+        <div class="card pad" style="padding-bottom:6px">
+          <div class="sec-t" style="margin-bottom:4px">帮你选一顿</div>
+          <div class="dec-sub">从你家菜库里挑的，久没做过的优先</div>
+          <div class="dec-row">
+            <div class="dec-l">搭配</div>
+            <div class="dec-chips">
+              <span class="chip on">两菜一汤</span><span class="chip">三菜一汤</span><span class="chip">随便</span>
+            </div>
+          </div>
+          <div class="dec-row">
+            <div class="dec-l">人数</div>
+            <div class="dec-chips">
+              <span class="chip on">2 人</span><span class="chip">3 人</span><span class="chip">4 人</span>
+            </div>
+          </div>
+          <div class="dec-row">
+            <div class="dec-l">口味</div>
+            <div class="dec-chips">
+              <span class="chip on">不挑</span><span class="chip">清淡</span><span class="chip">下饭</span>
+            </div>
+          </div>
+          <div class="dec-pick" style="margin-top:10px">
+            <div class="dp-img">蒜</div>
+            <div class="dp-main">
+              <div class="dp-nm">蒜蓉南瓜苗</div>
+              <div class="dp-mt">素菜 · 近一个月做过 4 次</div>
+            </div>
+            <div class="dp-swap">换一个</div>
+          </div>
+          <div class="dec-pick">
+            <div class="dp-img">酸</div>
+            <div class="dp-main">
+              <div class="dp-nm">酸辣土豆丝</div>
+              <div class="dp-mt">素菜 · 近一个月做过 6 次</div>
+            </div>
+            <div class="dp-swap">换一个</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 每组选择器一枚图标 + 一张卡，候选菜给名次</em></p>
+    <div class="frame n">
+      <div class="nav">今晚</div>
+      <div class="fbody" style="padding-top:6px">
+        <div class="sec-t" style="margin-bottom:4px">帮你选一顿</div>
+        <div class="dec-sub">从你家菜库里挑的，久没做过的优先</div>
+        <div class="decCard">
+          <div class="drow">
+            <div class="dc-ic" style="background:var(--pri-l)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--pri-ink)" stroke-width="1.9"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4.4 11h15.2a7.6 7.6 0 0 1-15.2 0z"/><path d="M3.2 11h17.6"/>
+                <path d="M9.4 8.2c0-1.2 1-1.5 1-2.6M13.6 8.2c0-1.2 1-1.5 1-2.6"/>
+              </svg>
+            </div>
+            <div class="dc-lb">搭配</div>
+            <div class="dc-chips">
+              <span class="chip on">两菜一汤</span><span class="chip">三菜一汤</span><span class="chip">随便</span>
+            </div>
+          </div>
+          <div class="drow">
+            <div class="dc-ic" style="background:var(--ok-l)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--ok-ink)" stroke-width="1.9"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="9" cy="8" r="3.2"/>
+                <path d="M2.8 19.6c0-3.4 2.8-6.2 6.2-6.2s6.2 2.8 6.2 6.2"/>
+                <path d="M16.2 5.4a3.2 3.2 0 0 1 0 5.6M17.6 13.6c2.2.7 3.8 2.7 3.8 5"/>
+              </svg>
+            </div>
+            <div class="dc-lb">人数</div>
+            <div class="dc-chips">
+              <span class="chip on">2 人</span><span class="chip">3 人</span><span class="chip">4 人</span>
+            </div>
+          </div>
+          <div class="drow">
+            <div class="dc-ic" style="background:var(--acc-l)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--acc-ink)" stroke-width="1.9"
+                   stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3.6c1.9 2.8 2.9 5 2.9 6.7a2.9 2.9 0 1 1-5.8 0c0-1.7 1-3.9 2.9-6.7z"/>
+                <path d="M12 20.4a5.6 5.6 0 0 0 5.6-5.6"/>
+              </svg>
+            </div>
+            <div class="dc-lb">口味</div>
+            <div class="dc-chips">
+              <span class="chip on">不挑</span><span class="chip">清淡</span><span class="chip">下饭</span>
+            </div>
+          </div>
+        </div>
+        <div class="dec-pick" style="position:relative">
+          <div class="dp-rank">1</div>
+          <div class="dp-img">蒜</div>
+          <div class="dp-main">
+            <div class="dp-nm">蒜蓉南瓜苗</div>
+            <div class="dp-mt">素菜 · 近一个月做过 4 次</div>
+          </div>
+          <div class="dp-swap">换一个</div>
+        </div>
+        <div class="dec-pick" style="position:relative">
+          <div class="dp-rank">2</div>
+          <div class="dp-img" style="background-image:linear-gradient(140deg,#BFCB93,#6E8B4E)">酸</div>
+          <div class="dp-main">
+            <div class="dp-nm">酸辣土豆丝</div>
+            <div class="dp-mt">素菜 · 近一个月做过 6 次</div>
+          </div>
+          <div class="dp-swap">换一个</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="note">
+  <b>搭配 / 人数 / 口味</b> 各拿一个颜色（陶土橙 / 绿 / 琥珀，就是编辑页那三色），
+  三排之间有了边界，不用再靠「每排左边两个字」去分辨。候选菜加一枚<b>名次角标</b>，
+  一眼知道这是第几个推荐、还能换几次。
+</p>
+
+<!-- ============ 2 ============ -->
+<h2><span class="n">2</span>日历 · 本月回顾<span class="h2s">裸进度条 → 成绩单</span></h2>
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">现状 <em>· 菜名 + 次数 + 一条进度条</em></p>
+    <div class="frame">
+      <div class="nav">日历</div>
+      <div class="fbody" style="padding-top:6px">
+        <div class="sec-t" style="margin:6px 0 12px">本月回顾</div>
+        <div class="calstat">
+          <div class="calstat-n">23</div>
+          <div class="calstat-tx">顿在家吃 · 最爱 紫菜蛋花汤（5 次）</div>
+        </div>
+        <div class="card pad">
+          <div class="rv-t">最常吃的三道</div>
+          <div class="rank">
+            <div class="rank-hd"><span class="rank-nm">紫菜蛋花汤</span><span class="rank-num">5 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:100%"></div></div>
+          </div>
+          <div class="rank">
+            <div class="rank-hd"><span class="rank-nm">酸辣土豆丝</span><span class="rank-num">4 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:80%"></div></div>
+          </div>
+          <div class="rank">
+            <div class="rank-hd"><span class="rank-nm">蒜蓉南瓜苗</span><span class="rank-num">3 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:60%"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 名次徽章 + 次数右对齐</em></p>
+    <div class="frame n">
+      <div class="nav">日历</div>
+      <div class="fbody" style="padding-top:6px">
+        <div class="sec-t" style="margin:6px 0 12px">本月回顾</div>
+        <div class="calstat">
+          <div class="calstat-n">23</div>
+          <div class="calstat-tx">顿在家吃 · 最爱 紫菜蛋花汤（5 次）</div>
+        </div>
+        <div class="card pad">
+          <div class="rv-t">最常吃的三道</div>
+          <div class="rk">
+            <div class="rk-n g1">1</div>
+            <div class="rk-main">
+              <div class="rk-top"><span class="rk-nm">紫菜蛋花汤</span><span class="rk-cnt">5 次</span></div>
+              <div class="rank-bar"><div class="rank-fill" style="width:100%"></div></div>
+            </div>
+          </div>
+          <div class="rk">
+            <div class="rk-n g2">2</div>
+            <div class="rk-main">
+              <div class="rk-top"><span class="rk-nm">酸辣土豆丝</span><span class="rk-cnt">4 次</span></div>
+              <div class="rank-bar"><div class="rank-fill" style="width:80%"></div></div>
+            </div>
+          </div>
+          <div class="rk">
+            <div class="rk-n g3">3</div>
+            <div class="rk-main">
+              <div class="rk-top"><span class="rk-nm">蒜蓉南瓜苗</span><span class="rk-cnt">3 次</span></div>
+              <div class="rank-bar"><div class="rank-fill" style="width:60%"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="note">
+  改动只有两处：<b>左边加一枚名次徽章</b>（1 金 / 2 浅金 / 3 陶土橙），<b>条和文字分成两行</b>。
+  名次徽章让「最常吃」从一条数据变成一件有点成就感的事 —— 月底翻到这里会想看一眼。
+</p>
+
+<!-- ============ 3 ============ -->
+<h2><span class="n">3</span>采购清单<span class="h2s">分组标题是纯文字，条目各占一张卡</span></h2>
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">现状 <em>· 标题浮着，条目一张张分开</em></p>
+    <div class="frame">
+      <div class="nav">采购清单</div>
+      <div class="fbody" style="padding-top:6px">
+        <div class="prog">
+          <div class="prog-hd"><span>已买 <span class="prog-n">3</span> / 8 项</span><span class="prog-who">程蒙 在买</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:38%"></div></div>
+        </div>
+        <div class="grp">肉类</div>
+        <div class="item"><div class="cb">✓</div><div class="item-nm">五花肉</div><span class="item-qty">500g</span></div>
+        <div class="item"><div class="cb">✓</div><div class="item-nm">鸡翅中</div><span class="item-qty">8 个</span></div>
+        <div class="grp">蔬菜</div>
+        <div class="item"><div class="cb"></div><div class="item-nm">小葱</div><span class="item-qty">1 把</span></div>
+        <div class="item done"><div class="cb">✓</div><div class="item-nm">生姜</div><span class="item-qty">1 块</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 一个分组一张卡，组内用分隔线</em></p>
+    <div class="frame n">
+      <div class="nav">采购清单</div>
+      <div class="fbody" style="padding-top:6px">
+        <div class="prog">
+          <div class="prog-hd"><span>已买 <span class="prog-n">3</span> / 8 项</span><span class="prog-who">程蒙 在买</span></div>
+          <div class="prog-bar"><div class="prog-fill" style="width:38%"></div></div>
+        </div>
+        <div class="gcard">
+          <div class="ghd">肉类<span class="gcnt">2 项</span></div>
+          <div class="grow done"><div class="cb">✓</div><div class="item-nm">五花肉</div><span class="item-qty">500g</span></div>
+          <div class="grow done"><div class="cb">✓</div><div class="item-nm">鸡翅中</div><span class="item-qty">8 个</span></div>
+        </div>
+        <div class="gcard">
+          <div class="ghd">蔬菜<span class="gcnt">2 项</span></div>
+          <div class="grow"><div class="cb"></div><div class="item-nm">小葱</div><span class="item-qty">1 把</span></div>
+          <div class="grow done"><div class="cb">✓</div><div class="item-nm">生姜</div><span class="item-qty">1 块</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="note">
+  <b>「清单感」来自容器，不来自条目。</b>改成「一个分组一张卡、组内用 <code>--line</code> 分隔」之后，
+  同样 4 项内容占的高度<b>更矮</b>（少了两条卡片间距 + 圆角），一次能看到更多项，
+  也更像一张真的采购单。分组标题补一枚数量胶囊，不用再数字数。
+</p>
+
+<!-- ============ 4 ============ -->
+<h2><span class="n">4</span>家庭 · 外观与成员<span class="h2s">三选一靠文字，头像缺一圈色</span></h2>
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">现状 <em>· 三个胶囊 + 一行提示</em></p>
+    <div class="frame">
+      <div class="nav">家庭</div>
+      <div class="fbody" style="padding-top:6px">
+        <div class="sec-t" style="margin:6px 0 10px">成员</div>
+        <div class="card" style="overflow:hidden">
+          <div class="mem">
+            <div class="mem-av" style="background:#D9714E">程</div>
+            <div class="mem-main">
+              <div class="mem-nm">程蒙 <span class="mem-me">我</span></div>
+              <div class="mem-tg">爱吃辣，不吃香菜</div>
+            </div>
+            <div class="sw"><div class="sw-knob"></div></div>
+          </div>
+          <div class="mem">
+            <div class="mem-av" style="background:#4F9367">陈</div>
+            <div class="mem-main">
+              <div class="mem-nm">陈瑞丽</div>
+              <div class="mem-tg">口味清淡</div>
+            </div>
+            <div class="sw"><div class="sw-knob"></div></div>
+          </div>
+        </div>
+        <div class="sec-t" style="margin:16px 0 10px">外观</div>
+        <div class="card pad">
+          <div class="chips">
+            <span class="chip on">浅色</span><span class="chip">深色</span><span class="chip">跟随系统</span>
+          </div>
+          <div class="theme-tip">当前是浅色（陶土橙）</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 外观给三张预览卡，头像有立体感</em></p>
+    <div class="frame n">
+      <div class="nav">家庭</div>
+      <div class="fbody" style="padding-top:6px">
+        <div class="sec-t" style="margin:6px 0 10px">成员</div>
+        <div class="card" style="overflow:hidden">
+          <div class="mem">
+            <div class="mem-av" style="background:#D9714E;box-shadow:0 0 0 2.5px var(--surf),0 3px 8px rgba(217,113,78,.34)">程</div>
+            <div class="mem-main">
+              <div class="mem-nm">程蒙 <span class="mem-me">我</span></div>
+              <div class="mem-tg">爱吃辣，不吃香菜</div>
+            </div>
+            <div class="sw"><div class="sw-knob"></div></div>
+          </div>
+          <div class="mem">
+            <div class="mem-av" style="background:#4F9367;box-shadow:0 0 0 2.5px var(--surf),0 3px 8px rgba(79,147,103,.34)">陈</div>
+            <div class="mem-main">
+              <div class="mem-nm">陈瑞丽</div>
+              <div class="mem-tg">口味清淡</div>
+            </div>
+            <div class="sw"><div class="sw-knob"></div></div>
+          </div>
+        </div>
+        <div class="sec-t" style="margin:16px 0 10px">外观</div>
+        <div class="card pad">
+          <div class="tpick">
+            <div class="tp on">
+              <div class="tp-sw" style="background:#FAF7F3">
+                <div style="position:absolute;width:12px;height:12px;border-radius:50%;
+                  background:#D9714E;left:50%;top:50%;transform:translate(-50%,-50%)"></div>
+              </div>
+              <div class="tp-lb">浅色</div>
+            </div>
+            <div class="tp">
+              <div class="tp-sw" style="background:#37776A">
+                <div style="position:absolute;width:12px;height:12px;border-radius:50%;
+                  background:#FFFFFF;left:50%;top:50%;transform:translate(-50%,-50%)"></div>
+              </div>
+              <div class="tp-lb">深色</div>
+            </div>
+            <div class="tp">
+              <div class="tp-sw" style="background:linear-gradient(90deg,#FAF7F3 0 50%,#37776A 50% 100%)">
+                <div style="position:absolute;width:12px;height:12px;border-radius:50%;
+                  background:#D9714E;left:25%;top:50%;transform:translate(-50%,-50%)"></div>
+                <div style="position:absolute;width:12px;height:12px;border-radius:50%;
+                  background:#FFFFFF;left:75%;top:50%;transform:translate(-50%,-50%)"></div>
+              </div>
+              <div class="tp-lb">跟随系统</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="note">
+  <b>外观</b>：三个词（浅色 / 深色 / 跟随系统）对家里人来说不一定直观，改成三张<b>色块预览卡</b>，
+  选哪个一眼就懂，不用读文字。<br>
+  <b>成员</b>：头像稍微放大，加一圈和卡片同色的描边 + 一点<b>同色淡影</b>
+  （<code>item.color</code> 本来就存了每人一个颜色），整行立刻有了立体感和颜色；
+  「我」的标签和开关保持不变。
+</p>
+
+</body>
+</html>

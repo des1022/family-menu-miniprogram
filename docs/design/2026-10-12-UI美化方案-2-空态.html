@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>家庭菜单 · UI 美化方案 ②空态</title>
+<link rel="stylesheet" href="_ui-plan.css">
+</head>
+<body>
+
+<h1>家庭菜单 · UI 美化方案 ② 空态</h1>
+<p class="lead">
+  体检清单的 <b>P1</b>。现在 app 里其实有 <b>三套</b>空态：<br>
+  ① <code>app.wxss</code> 的 <code>.ep-img</code> —— 一个 <b>128rpx 纯色圆圈，里面什么都没有</b>（菜库 / 采购清单 / 日历 共用）；
+  ② <code>components/empty</code> —— <b>灰色圆 + 一条灰横杠</b>（菜品管理用，颜色还全是写死的）；
+  ③ 今晚页 —— 用真插画 <code>/assets/hero/couple.jpg</code>。<br>
+  一个精致、两个像占位符。下面先把两种凑合的做法摆出来，再给三个方案。
+</p>
+
+<h2 class="first"><span class="n">0</span>先看现状 · 两种「凑合」<span class="h2s">同一个 app 里的三种空态</span></h2>
+<div class="rowc">
+  <div class="col">
+    <p class="cap">菜库（现状）<em> · 一个空圆圈</em></p>
+    <div class="frame">
+      <div class="nav">菜库</div>
+      <div class="fbody">
+        <div class="ep">
+          <div class="ep-img"></div>
+          <div class="ep-t">菜库还是空的</div>
+          <div class="ep-s">点右下角添加，或去「今晚」一键填入示例菜库</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <p class="cap">菜品管理（现状）<em> · 灰圆 + 灰横杠</em></p>
+    <div class="frame">
+      <div class="nav">菜品管理</div>
+      <div class="fbody">
+        <div class="ep">
+          <div class="epGhost"></div>
+          <div class="epGhostT">还没有菜品</div>
+          <div class="epGhostS">点右下角「添加菜品」录入第一道菜</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col">
+    <p class="cap">今晚（现状）<em> · 真插画 ← 只有它是对的</em></p>
+    <div class="frame">
+      <div class="nav">今晚</div>
+      <div class="fbody">
+        <div style="height:200px;border-radius:14px;overflow:hidden;position:relative;
+          background:linear-gradient(140deg,#F3D9C8,#E7B79C);margin-top:8px">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(250,247,243,0) 0%,rgba(250,247,243,.62) 48%,rgba(250,247,243,.82) 100%)"></div>
+          <div style="position:absolute;left:0;right:0;bottom:26px;text-align:center">
+            <div style="font-size:15px;font-weight:600">今晚还没点菜</div>
+            <div style="font-size:13px;color:var(--ink2);margin-top:4px">让家里一起点，或者我帮你选一顿</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="note">
+  空态是「用户会反复看到」的界面 —— 菜库刚建、新的一月、采购清单清空之后，第一眼都是它。
+  现在它长得像「这里坏了」，而今晚页那张插画证明我们是有能力做好的。
+</p>
+
+<h2><span class="n">1</span>三个方案<span class="h2s">都以「菜库还是空的」为例</span></h2>
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">A 圆底 + 线性图标 <em>· 最稳</em></p>
+    <div class="frame epA">
+      <div class="nav">菜库</div>
+      <div class="fbody">
+        <div class="ep">
+          <div class="ep-img">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--pri)" stroke-width="1.75"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.4 11.4h17.2a8.6 8.6 0 0 1-8.6 8.6 8.6 8.6 0 0 1-8.6-8.6z"/>
+              <path d="M2.2 11.4h19.6"/>
+              <path d="M9.6 7.9c0-1.3 1.15-1.6 1.15-2.8M13.25 7.9c0-1.3 1.15-1.6 1.15-2.8"/>
+            </svg>
+          </div>
+          <div class="ep-t">菜库还是空的</div>
+          <div class="ep-s">点右下角添加，或去「今晚」一键填入示例菜库</div>
+        </div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:8px">
+      沿用现有的线性图标（就是底部 tabBar / 编辑页色块里那一套），只把「空圆圈」换成「圆底 + 图标」。
+      <b>一行 CSS + 一个图标文件</b>，风格天然一致。
+    </p>
+  </div>
+
+  <div class="col">
+    <p class="cap">B 暖色渐变圆 + 白图标 <em>· 最有存在感</em></p>
+    <div class="frame epB">
+      <div class="nav">菜库</div>
+      <div class="fbody">
+        <div class="ep">
+          <div class="ep-img">
+            <svg viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.75"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.4 11.4h17.2a8.6 8.6 0 0 1-8.6 8.6 8.6 8.6 0 0 1-8.6-8.6z"/>
+              <path d="M2.2 11.4h19.6"/>
+              <path d="M9.6 7.9c0-1.3 1.15-1.6 1.15-2.8M13.25 7.9c0-1.3 1.15-1.6 1.15-2.8"/>
+            </svg>
+          </div>
+          <div class="ep-t">菜库还是空的</div>
+          <div class="ep-s">点右下角添加，或去「今晚」一键填入示例菜库</div>
+        </div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:8px">
+      圆底用和「无图占位块」同一套暖色渐变（<code>#E7A176 → #C0613F</code>），白色图标 + 一圈投影。
+      和菜品卡片的占位块是同一个视觉家族，比 A 更「亮」，也更像 app 自己的样子。
+    </p>
+  </div>
+
+  <div class="col">
+    <p class="cap">C 小插画 <em>· 最有画面感</em></p>
+    <div class="frame epC">
+      <div class="nav">菜库</div>
+      <div class="fbody">
+        <div class="ep">
+          <div class="ep-illo">
+            <svg viewBox="0 0 120 76" fill="none">
+              <path d="M48 30c0-4.5 4-5.5 4-10" stroke="#D9714E" stroke-width="2.2"
+                    stroke-linecap="round" opacity=".45"/>
+              <path d="M64 28c0-4.5 4-5.5 4-10" stroke="#D9714E" stroke-width="2.2"
+                    stroke-linecap="round" opacity=".45"/>
+              <path d="M24 38h56a28 28 0 0 1-56 0z" fill="#FBEEE8"/>
+              <path d="M24 38a28 28 0 0 0 56 0" stroke="#D9714E" stroke-width="2.4"
+                    stroke-linecap="round"/>
+              <path d="M18 38h68" stroke="#D9714E" stroke-width="2.4" stroke-linecap="round"/>
+              <path d="M84 50c6.5-4.5 13-4.5 16.5-1.5-1.5 7-7.5 11-14.5 9.5-2.6-.8-3.5-5.8-2-8z"
+                    fill="#E9F3ED" stroke="#4F9367" stroke-width="2" stroke-linejoin="round"/>
+              <path d="M87.5 56c3.2-2.4 7.3-4.2 11-4.6" stroke="#4F9367" stroke-width="1.6"
+                    stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="ep-t">菜库还是空的</div>
+          <div class="ep-s">点右下角添加，或去「今晚」一键填入示例菜库</div>
+        </div>
+      </div>
+    </div>
+    <p class="note" style="margin-top:8px">
+      不再是一个圆，而是一组元素：<b>冒热气的碗 + 一片菜叶</b>。画面感最强，也和今晚页那张插画接得上。
+      代价是要多画几张（菜库 / 采购 / 日历 各一张），而 A、B 只要换图标。
+    </p>
+  </div>
+</div>
+
+<h2><span class="n">2</span>同一方案用在三个页面<span class="h2s">以 A 为例 —— 换图标就是换场景</span></h2>
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">菜库 <em>· 碗</em></p>
+    <div class="frame epA">
+      <div class="nav">菜库</div>
+      <div class="fbody">
+        <div class="ep">
+          <div class="ep-img">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--pri)" stroke-width="1.75"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.4 11.4h17.2a8.6 8.6 0 0 1-8.6 8.6 8.6 8.6 0 0 1-8.6-8.6z"/>
+              <path d="M2.2 11.4h19.6"/>
+              <path d="M9.6 7.9c0-1.3 1.15-1.6 1.15-2.8M13.25 7.9c0-1.3 1.15-1.6 1.15-2.8"/>
+            </svg>
+          </div>
+          <div class="ep-t">菜库还是空的</div>
+          <div class="ep-s">点右下角添加，或去「今晚」一键填入示例菜库</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">采购清单 <em>· 菜篮</em></p>
+    <div class="frame epA">
+      <div class="nav">采购清单</div>
+      <div class="fbody">
+        <div class="ep">
+          <div class="ep-img">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--pri)" stroke-width="1.75"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3.6 9.5h16.8l-1.5 9.1a2 2 0 0 1-2 1.7H7.1a2 2 0 0 1-2-1.7z"/>
+              <path d="M8.6 9.5 10.7 4M15.4 9.5 13.3 4"/>
+              <path d="M10.2 13.2v4M13.8 13.2v4"/>
+            </svg>
+          </div>
+          <div class="ep-t">还没有要买的东西</div>
+          <div class="ep-s">去「今晚」点几道菜，菜的食材会自动汇总到这里；也可以自己加</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">日历 <em>· 日历</em></p>
+    <div class="frame epA">
+      <div class="nav">日历</div>
+      <div class="fbody">
+        <div class="ep">
+          <div class="ep-img">
+            <svg viewBox="0 0 24 24" fill="none" stroke="var(--pri)" stroke-width="1.75"
+                 stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3.4" y="5.2" width="17.2" height="15.4" rx="2.4"/>
+              <path d="M3.4 9.9h17.2"/>
+              <path d="M8.2 3.2v3.6M15.8 3.2v3.6"/>
+              <path d="M9.8 13.6h1.2M13 13.6h1.2M9.8 17.1h1.2"/>
+            </svg>
+          </div>
+          <div class="ep-t">这个月还没有记录</div>
+          <div class="ep-s">点上面的日期就能安排那天吃什么，也可以去「今晚」点菜</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="note">
+  三个图标都是<b>现成的</b>（碗 = tabBar 的「今晚」，菜篮 = 编辑页的「食材」色块，日历 = tabBar 的「日历」），
+  所以选 A 的话几乎不需要新画东西。<b>菜品管理页那套灰色的 <code>components/empty</code> 也一起换掉</b>，
+  全 app 只剩一种空态。<br>
+  深色模式不用另做：图标和圆底都用 <code>--pri</code> / <code>--pri-l</code>，跟着变量走。
+</p>
+
+</body>
+</html>

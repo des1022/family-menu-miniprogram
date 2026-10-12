@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>家庭菜单 · UI 美化方案 ①配色与主题</title>
+<link rel="stylesheet" href="_ui-plan.css">
+</head>
+<body>
+
+<h1>家庭菜单 · UI 美化方案 ① 配色与主题</h1>
+<p class="lead">
+针对体检清单的 <b>P0</b>：<b>菜品管理页</b>自造了一整套写死的颜色（13 处），并且<b>没绑主题</b> ——
+在「家庭 → 外观」里强制深色时，别的页面都变墨绿，只有它还是白底。
+下面左列是现状、右列是改后（都用同一份代码渲染，只换了颜色来源）。
+</p>
+
+<h2 class="first"><span class="n">1</span>菜品管理页 · 浅色<span class="h2s">左：现状 ／ 右：改后</span></h2>
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">现状 <em>· 颜色写死，与全站色板无关</em></p>
+    <div class="frame p">
+      <div class="nav">菜品管理</div>
+      <div class="fbody">
+        <div class="batchbar">
+          <div class="batch-info">管理菜品（12）</div>
+          <div class="batch-btn on">批量管理</div>
+        </div>
+        <div class="fbar">
+          <span class="fchip on">全部</span><span class="fchip">热菜</span>
+          <span class="fchip">素菜</span><span class="fchip">汤羹</span><span class="fchip">已下架</span>
+        </div>
+        <div class="gname">素菜（4）</div>
+        <div class="mrow">
+          <div class="m-img">蒜</div>
+          <div class="m-info">
+            <div class="m-name">蒜蓉南瓜苗</div>
+            <div class="m-meta"><span class="m-status m-status-on">上架中</span><span class="m-price">¥18</span></div>
+          </div>
+          <div class="m-ops">
+            <div class="op-btn op-edit">编辑</div>
+            <div class="op-btn">下架</div>
+            <div class="op-btn op-del">删除</div>
+          </div>
+        </div>
+        <div class="mrow">
+          <div class="m-img">清</div>
+          <div class="m-info">
+            <div class="m-name">清炒时蔬</div>
+            <div class="m-meta"><span class="m-status m-status-on">上架中</span><span class="m-price">¥12</span></div>
+          </div>
+          <div class="m-ops">
+            <div class="op-btn op-edit">编辑</div>
+            <div class="op-btn">下架</div>
+            <div class="op-btn op-del">删除</div>
+          </div>
+        </div>
+        <div class="gname">汤羹（2）</div>
+        <div class="mrow">
+          <div class="m-img">紫</div>
+          <div class="m-info">
+            <div class="m-name">紫菜蛋花汤</div>
+            <div class="m-meta"><span class="m-status">已下架</span></div>
+          </div>
+          <div class="m-ops">
+            <div class="op-btn op-edit">编辑</div>
+            <div class="op-btn">上架</div>
+            <div class="op-btn op-del">删除</div>
+          </div>
+        </div>
+        <div class="aft">
+          <div class="btn btn-ghost">分类管理</div>
+          <div class="btn btn-pri">＋ 添加菜品</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 全部走 --ok / --pri / --danger / --ink2</em></p>
+    <div class="frame n">
+      <div class="nav">菜品管理</div>
+      <div class="fbody">
+        <div class="batchbar">
+          <div class="batch-info">管理菜品（12）</div>
+          <div class="batch-btn on">批量管理</div>
+        </div>
+        <div class="fbar">
+          <span class="fchip on">全部</span><span class="fchip">热菜</span>
+          <span class="fchip">素菜</span><span class="fchip">汤羹</span><span class="fchip">已下架</span>
+        </div>
+        <div class="gname">素菜（4）</div>
+        <div class="mrow">
+          <div class="m-img">蒜</div>
+          <div class="m-info">
+            <div class="m-name">蒜蓉南瓜苗</div>
+            <div class="m-meta"><span class="m-status m-status-on">上架中</span><span class="m-price">¥18</span></div>
+          </div>
+          <div class="m-ops">
+            <div class="op-btn op-edit">编辑</div>
+            <div class="op-btn">下架</div>
+            <div class="op-btn op-del">删除</div>
+          </div>
+        </div>
+        <div class="mrow">
+          <div class="m-img">清</div>
+          <div class="m-info">
+            <div class="m-name">清炒时蔬</div>
+            <div class="m-meta"><span class="m-status m-status-on">上架中</span><span class="m-price">¥12</span></div>
+          </div>
+          <div class="m-ops">
+            <div class="op-btn op-edit">编辑</div>
+            <div class="op-btn">下架</div>
+            <div class="op-btn op-del">删除</div>
+          </div>
+        </div>
+        <div class="gname">汤羹（2）</div>
+        <div class="mrow">
+          <div class="m-img">紫</div>
+          <div class="m-info">
+            <div class="m-name">紫菜蛋花汤</div>
+            <div class="m-meta"><span class="m-status">已下架</span></div>
+          </div>
+          <div class="m-ops">
+            <div class="op-btn op-edit">编辑</div>
+            <div class="op-btn">上架</div>
+            <div class="op-btn op-del">删除</div>
+          </div>
+        </div>
+        <div class="aft">
+          <div class="btn btn-ghost">分类管理</div>
+          <div class="btn btn-pri">＋ 添加菜品</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="note">
+  改后只动了「颜色从哪来」：<b>上架中</b> → <code>--ok-l</code> / <code>--ok-ink</code>；
+  <b>编辑</b> → <code>--pri-l</code> / <code>--pri-ink</code>；<b>删除</b> → <code>--danger</code>；
+  分组标题 / 辅助文字 → <code>--ink2</code>。按钮底色统一成 <code>--surf2</code> 并去掉边框，整页立刻安静下来。
+</p>
+
+<h2><span class="n">2</span>同一页 · 深色模式<span class="h2s">这一组是「问题本身」——看左列</span></h2>
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">现状 <em>· 变量跟着变深了，写死的颜色没变</em></p>
+    <div class="frame dark p">
+      <div class="nav">菜品管理</div>
+      <div class="fbody">
+        <div class="batchbar">
+          <div class="batch-info">管理菜品（12）</div>
+          <div class="batch-btn on">批量管理</div>
+        </div>
+        <div class="fbar">
+          <span class="fchip on">全部</span><span class="fchip">热菜</span>
+          <span class="fchip">素菜</span><span class="fchip">汤羹</span>
+        </div>
+        <div class="gname">素菜（4）</div>
+        <div class="mrow">
+          <div class="m-img">蒜</div>
+          <div class="m-info">
+            <div class="m-name">蒜蓉南瓜苗</div>
+            <div class="m-meta"><span class="m-status m-status-on">上架中</span><span class="m-price">¥18</span></div>
+          </div>
+          <div class="m-ops">
+            <div class="op-btn op-edit">编辑</div>
+            <div class="op-btn">下架</div>
+            <div class="op-btn op-del">删除</div>
+          </div>
+        </div>
+        <div class="mrow">
+          <div class="m-img">清</div>
+          <div class="m-info">
+            <div class="m-name">清炒时蔬</div>
+            <div class="m-meta"><span class="m-status m-status-on">上架中</span><span class="m-price">¥12</span></div>
+          </div>
+          <div class="m-ops">
+            <div class="op-btn op-edit">编辑</div>
+            <div class="op-btn">下架</div>
+            <div class="op-btn op-del">删除</div>
+          </div>
+        </div>
+        <div class="aft">
+          <div class="btn btn-ghost">分类管理</div>
+          <div class="btn btn-pri">＋ 添加菜品</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 跟着主题走，和其他页一致</em></p>
+    <div class="frame dark n">
+      <div class="nav">菜品管理</div>
+      <div class="fbody">
+        <div class="batchbar">
+          <div class="batch-info">管理菜品（12）</div>
+          <div class="batch-btn on">批量管理</div>
+        </div>
+        <div class="fbar">
+          <span class="fchip on">全部</span><span class="fchip">热菜</span>
+          <span class="fchip">素菜</span><span class="fchip">汤羹</span>
+        </div>
+        <div class="gname">素菜（4）</div>
+        <div class="mrow">
+          <div class="m-img">蒜</div>
+          <div class="m-info">
+            <div class="m-name">蒜蓉南瓜苗</div>
+            <div class="m-meta"><span class="m-status m-status-on">上架中</span><span class="m-price">¥18</span></div>
+          </div>
+          <div class="m-ops">
+            <div class="op-btn op-edit">编辑</div>
+            <div class="op-btn">下架</div>
+            <div class="op-btn op-del">删除</div>
+          </div>
+        </div>
+        <div class="mrow">
+          <div class="m-img">清</div>
+          <div class="m-info">
+            <div class="m-name">清炒时蔬</div>
+            <div class="m-meta"><span class="m-status m-status-on">上架中</span><span class="m-price">¥12</span></div>
+          </div>
+          <div class="m-ops">
+            <div class="op-btn op-edit">编辑</div>
+            <div class="op-btn">下架</div>
+            <div class="op-btn op-del">删除</div>
+          </div>
+        </div>
+        <div class="aft">
+          <div class="btn btn-ghost">分类管理</div>
+          <div class="btn btn-pri">＋ 添加菜品</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="note">
+  左列能直接看出那些<b>写死的颜色</b>在深色底下有多突兀：<b>#FFF0E8 的「编辑」</b>是一整块亮橙、
+  <b>#FDF3F2 的「删除」</b>是一块浅粉、<b>#FAFBFC 的按钮底</b>发灰发白，而分组标题
+  <code>#3A2E24</code> 是深棕色 —— 压在墨绿底上几乎看不见。右列全部走变量之后
+  「编辑」是暖色、「上架/下架」是中性、「删除」只用红色文字，层次分明又不吵。
+  <br>
+  另外 <code>.manage-price</code> 用的是 <code>var(--pri)</code>、<code>.filter-chip--on</code>
+  用的是 <code>var(--surf)</code> —— 这属于<b>「拿表面色当文字色」</b>：浅色下碰巧是对的，
+  深色下 <code>--pri</code> 变成白色、<code>--surf</code> 变成墨绿，语义就漂了。
+  改后统一用 <code>--pri-ink</code> / <code>--btn-ink</code>，这两个变量天生就是「用来写字的」。
+</p>
+
+<h2><span class="n">3</span>分类管理页 · 强制深色<span class="h2s">同一类问题，改动更小</span></h2>
+<div class="rowc">
+
+  <div class="col">
+    <p class="cap">现状 <em>· 「家庭 → 外观」选了深色，它还是白的</em></p>
+    <div class="frame p">
+      <div class="nav">分类管理</div>
+      <div class="fbody">
+        <div class="card" style="margin-top:8px;overflow:hidden">
+          <div style="padding:13px 14px 10px">
+            <div class="addrow">
+              <div class="add-input">输入新分类，如：热菜 / 汤羹</div>
+              <div class="add-btn">添加</div>
+            </div>
+          </div>
+          <div class="catrow"><div class="nm">全部</div></div>
+          <div class="catrow"><div class="nm">热菜</div>
+            <div class="cat-ops"><div class="cat-btn">编辑</div><div class="cat-btn del">删除</div></div>
+          </div>
+          <div class="catrow"><div class="nm">素菜</div>
+            <div class="cat-ops"><div class="cat-btn">编辑</div><div class="cat-btn del">删除</div></div>
+          </div>
+          <div class="catrow" style="border-bottom:none"><div class="nm">汤羹</div>
+            <div class="cat-ops"><div class="cat-btn">编辑</div><div class="cat-btn del">删除</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col">
+    <p class="cap">改后 <em>· 只补一行 themeCls</em></p>
+    <div class="frame dark n">
+      <div class="nav">分类管理</div>
+      <div class="fbody">
+        <div class="card" style="margin-top:8px;overflow:hidden">
+          <div style="padding:13px 14px 10px">
+            <div class="addrow">
+              <div class="add-input">输入新分类，如：热菜 / 汤羹</div>
+              <div class="add-btn">添加</div>
+            </div>
+          </div>
+          <div class="catrow"><div class="nm">全部</div></div>
+          <div class="catrow"><div class="nm">热菜</div>
+            <div class="cat-ops"><div class="cat-btn">编辑</div><div class="cat-btn del">删除</div></div>
+          </div>
+          <div class="catrow"><div class="nm">素菜</div>
+            <div class="cat-ops"><div class="cat-btn">编辑</div><div class="cat-btn del">删除</div></div>
+          </div>
+          <div class="catrow" style="border-bottom:none"><div class="nm">汤羹</div>
+            <div class="cat-ops"><div class="cat-btn">编辑</div><div class="cat-btn del">删除</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<p class="note">
+  这一页的颜色本来就全部走了变量，所以<b>两张图的差别只在「有没有跟随主题」</b> ——
+  也就是页面根节点少写了一行 <code>{{themeCls}}</code>。分享海报页同理。
+  三页加起来不到 20 行改动，但「深色」这条线就齐了：
+  <b>不管你在「外观」里选什么，所有页面都跟着变</b>。
+</p>
+
+</body>
+</html>
