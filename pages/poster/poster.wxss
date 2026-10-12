@@ -62,26 +62,30 @@
   opacity: 0.6;
 }
 
-/* ---------- 表单行（本页原先缺少这些类的定义，补上） ---------- */
-.form-row {
-  display: flex;
-  align-items: center;
-  gap: 20rpx;
-  padding: 24rpx 26rpx;
-  background: var(--surf);
-  border-radius: 22rpx;
+/* ---------- 文案表单 ----------
+   原来这一块是「一个 .form-row 只装标签 + 下面一个裸 input」，
+   结果页面上是两个空荡荡的圆角条 + 两个独立输入框，看着像没画完。
+   现在按「一行小标题 + 一个输入框」的字段块来排（数值对齐家庭页的表单）。 */
+.fld-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14rpx; }
+.fld-l { font-size: 24rpx; font-weight: 700; color: var(--ink2); }
+.fld-x {
+  font-size: 23rpx; font-weight: 700; color: var(--pri-ink);
+  background: var(--pri-l); border-radius: 999rpx; padding: 6rpx 20rpx;
+}
+/* 深色下 --pri-l 是半透明白、--pri-ink 是纯白 → 白字压浅白会糊，换暖色（和全站一套） */
+.theme-dark .fld-x { background: var(--acc-l); color: var(--acc-ink); }
+@media (prefers-color-scheme: dark) {
+  .fld-x { background: var(--acc-l); color: var(--acc-ink); }
+}
+.fld-in {
+  height: 92rpx;
+  line-height: 92rpx;
+  padding: 0 24rpx;
+  background: var(--surf2);
   border: 2rpx solid var(--line);
-  box-shadow: var(--sh);
-}
-.form-label {
-  width: 130rpx;
-  flex: 0 0 auto;
-  font-size: 26rpx;
-  color: var(--ink2);
-}
-.form-input {
-  flex: 1;
+  border-radius: 20rpx;
   font-size: 29rpx;
   color: var(--ink);
 }
+.fld-h { font-size: 22rpx; color: var(--ink3); margin-top: 12rpx; line-height: 1.6; }
 .ph { color: var(--ink3); font-size: 29rpx; }

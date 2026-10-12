@@ -15,10 +15,12 @@ Page({
   data: {
     variants: VARIANTS,
     variant: 'WARM',
-    title: '今天的家庭菜单',
+    // 标题默认不是写死的「今天的家庭菜单」，而是每次进页面随机挑一句温馨话
+    title: '',
     footer: '今晚吃这些，幸福！',
     date: '',
     dateText: '',
+    eatCount: 0,
     themeCls: '',      // 以前这页没绑主题，强制深色时不跟随
     empty: false,
     generating: true,
@@ -34,7 +36,11 @@ Page({
     const date = (options && options.date) || db.todayStr()
     this._date = date
     this._lines = []
-    this.setData({ date: date, dateText: poster.dateCNFull(date) })
+    this.setData({
+      date: date,
+      dateText: poster.dateCNFull(date),
+      title: poster.randomPhrase()
+    })
   },
 
   onReady() {
@@ -43,7 +49,10 @@ Page({
 
   async loadLines() {
     try {
-      const records = await db.getRecordsByDate(this._date)
+      const [records, members] = await Promise.all([
+        db.getRecordsByDate(this._date),
+        db.getMembers().catch(() => [])
+      ])
       if (!records.length) {
         this.setData({ empty: true, generating: false })
         return
@@ -53,12 +62,20 @@ Page({
         dishImage: r.dishImage,
         num: r.num
       }))
+      // 海报副信息要写「今晚 N 人在家吃」，用家里那份开关算出来的数
+      this.setData({ eatCount: db.countEatTonight(members) })
       this.render()
     } catch (e) {
       console.error('[poster] 加载失败', e)
       toast('加载失败')
       this.setData({ generating: false })
     }
+  },
+
+  /** 换一句温馨话 */
+  onShuffleTitle() {
+    const next = poster.randomPhrase(this.data.title)
+    this.setData({ title: next }, () => this.render())
   },
 
   async render() {
@@ -72,10 +89,11 @@ Page({
         }
         const canvas = res[0].node
         const H = await poster.drawPoster(canvas, this._lines, {
-          title: this.data.title || '今天的家庭菜单',
+          title: this.data.title || poster.randomPhrase(),
           footer: this.data.footer || '今晚吃这些，幸福！',
           date: this.data.dateText,
-          variant: this.data.variant
+          variant: this.data.variant,
+          eatCount: this.data.eatCount
         })
         const dispW = wx.getSystemInfoSync().windowWidth - 32
         this.setData({ generating: false, dispH: Math.round(dispW * H / 1080) })

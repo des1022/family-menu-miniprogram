@@ -1,14 +1,33 @@
 <view class="page {{themeCls}}">
-  <!-- 标题 / 文案 -->
-  <view class="card">
-    <view class="form-row">
-      <text class="form-label">海报标题</text>
+  <!-- 文案（标题每次进页面随机给一句温馨话，也可以自己改 / 点「换一句」） -->
+  <view class="card card-pad">
+    <view class="fld">
+      <view class="fld-hd">
+        <text class="fld-l">海报标题</text>
+        <text class="fld-x" bindtap="onShuffleTitle">换一句 ↻</text>
+      </view>
+      <input
+        class="fld-in"
+        value="{{title}}"
+        maxlength="12"
+        bindinput="onTitleInput"
+        placeholder="比如：灶上有火，桌边有人"
+        placeholder-class="ph"
+      />
+      <view class="fld-h">每次进这一页都会换一句；分享时用哪句，以海报上显示为准。</view>
     </view>
-    <input class="form-input" value="{{title}}" maxlength="12" bindinput="onTitleInput" placeholder="今天的家庭菜单" placeholder-class="ph" />
-    <view class="form-row" style="margin-top: 16rpx;">
-      <text class="form-label">底部文案</text>
+
+    <view class="fld" style="margin-top: 24rpx;">
+      <view class="fld-hd"><text class="fld-l">底部文案</text></view>
+      <input
+        class="fld-in"
+        value="{{footer}}"
+        maxlength="16"
+        bindinput="onFooterInput"
+        placeholder="今晚吃这些，幸福！"
+        placeholder-class="ph"
+      />
     </view>
-    <input class="form-input" value="{{footer}}" maxlength="16" bindinput="onFooterInput" placeholder="今晚吃这些，幸福！" placeholder-class="ph" />
   </view>
 
   <!-- 模板 -->
