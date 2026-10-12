@@ -86,9 +86,14 @@
 .rk-cnt{font-size:11.5px;color:var(--ink2);font-weight:600}
 .rank-bar{height:7px;border-radius:999px;background:var(--surf2);overflow:hidden}
 .rank-fill{height:100%;border-radius:999px;background:var(--btn-bg)}
-.catrow{display:flex;align-items:center;gap:7px;margin-bottom:9px}
-.catrow:last-child{margin-bottom:0}
-.cat-nm{font-size:12.5px;width:54px}
+/* 分类占比：逐项照抄线上 calendar.wxss（rpx / 2）
+   .cat gap 14rpx · .cat-dot 18rpx 圆点 · .cat-nm 108rpx · .cat-bar 高 14rpx · .cat-pct 74rpx */
+.cat{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.cat:last-child{margin-bottom:0}
+.cat-dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto}
+.cat-nm{font-size:12.5px;width:54px;flex:0 0 auto}
+.cat-bar{flex:1;height:7px;border-radius:999px;background:var(--surf2);overflow:hidden}
+.cat-fill{height:100%;border-radius:999px}
 .cat-pct{font-size:11.5px;color:var(--ink2);width:37px;text-align:right;font-weight:600}
 .rv-tip{background:var(--acc-l);border-color:var(--acc)}
 .rv-tip .rv-tx{color:var(--acc-ink);font-weight:600}
@@ -169,17 +174,17 @@
 
         <div class="card" style="padding:13px 14px;margin-bottom:13px">
           <div class="rv-t">分类占比</div>
-          <div class="catrow"><i class="sq" style="background:#4F9367"></i><span class="cat-nm">素菜</span>
-            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:42%;background:#4F9367"></div></div>
+          <div class="cat"><span class="cat-dot" style="background:#4F9367"></span><span class="cat-nm">素菜</span>
+            <div class="cat-bar"><div class="cat-fill" style="width:42%;background:#4F9367"></div></div>
             <span class="cat-pct">42%</span></div>
-          <div class="catrow"><i class="sq" style="background:#E9A323"></i><span class="cat-nm">汤羹</span>
-            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:26%;background:#E9A323"></div></div>
+          <div class="cat"><span class="cat-dot" style="background:#E9A323"></span><span class="cat-nm">汤羹</span>
+            <div class="cat-bar"><div class="cat-fill" style="width:26%;background:#E9A323"></div></div>
             <span class="cat-pct">26%</span></div>
-          <div class="catrow"><i class="sq" style="background:#D9714E"></i><span class="cat-nm">主食</span>
-            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:19%;background:#D9714E"></div></div>
+          <div class="cat"><span class="cat-dot" style="background:#D9714E"></span><span class="cat-nm">主食</span>
+            <div class="cat-bar"><div class="cat-fill" style="width:19%;background:#D9714E"></div></div>
             <span class="cat-pct">19%</span></div>
-          <div class="catrow"><i class="sq" style="background:#8C7AA8"></i><span class="cat-nm">热菜</span>
-            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:13%;background:#8C7AA8"></div></div>
+          <div class="cat"><span class="cat-dot" style="background:#8C7AA8"></span><span class="cat-nm">热菜</span>
+            <div class="cat-bar"><div class="cat-fill" style="width:13%;background:#8C7AA8"></div></div>
             <span class="cat-pct">13%</span></div>
         </div>
 
