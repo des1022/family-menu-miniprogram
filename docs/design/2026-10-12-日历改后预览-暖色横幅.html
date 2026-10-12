@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>日历 · 「本月回顾」只换头部（④ 暖色横幅）</title>
+<link rel="stylesheet" href="_ui-plan.css">
+<style>
+.hd{display:flex;align-items:flex-start;justify-content:space-between;padding:4px 2px 11px}
+.t-h1{font-size:20px;font-weight:700;letter-spacing:-.4px}
+.t-sub{font-size:13px;color:var(--ink2);margin-top:2px}
+
+/* 月历卡（A 版：图例瘦身 + 提示收进卡内） */
+.calcard{background:var(--surf);border:1px solid var(--line);border-radius:14px;
+  box-shadow:var(--sh);padding:9px 8px 6px}
+.calh{display:flex;align-items:center;justify-content:space-between;padding:1px 2px 7px}
+.calh-a{width:28px;height:28px;border-radius:50%;background:var(--surf2);color:var(--ink2);
+  display:flex;align-items:center;justify-content:center;font-size:18px}
+.calh-m{font-size:16px;font-weight:700}
+.calgrid{display:flex;flex-wrap:wrap}
+.wd{width:14.28%;text-align:center;font-size:11px;color:var(--ink3);font-weight:600;padding-bottom:5px}
+.cell{width:14.28%;padding:2px}
+.cell--blank{visibility:hidden}
+.tile{height:48px;border-radius:8px;background:var(--surf2);display:flex;flex-direction:column;
+  align-items:center;justify-content:center;gap:2.5px}
+.cell-d{font-size:13.5px;font-weight:600;color:var(--ink2);line-height:1.2}
+.tile--rec{background:var(--acc-l)}
+.tile--rec .cell-d{color:var(--acc-ink);font-weight:700}
+.tile--today{background:var(--pri)}
+.tile--today .cell-d{color:var(--btn-ink);font-weight:800}
+.cell-dots{display:flex;gap:2.5px;height:6px;align-items:center}
+.dot{width:6px;height:6px;border-radius:50%}
+.tile--today .dot{outline:1px solid rgba(255,255,255,.7)}
+.legend{display:flex;align-items:center;gap:12px;justify-content:center;
+  margin-top:7px;padding-top:8px;border-top:1px solid var(--line)}
+.lg{font-size:10.5px;color:var(--ink2);display:flex;align-items:center;gap:4px}
+.lg-dot{width:7px;height:7px;border-radius:50%}
+.lg-dot--rec{background:var(--acc)}
+.lg-dot--today{background:var(--pri)}
+.cal-tip{margin-top:7px;padding:6px 9px;border-radius:9px;background:var(--surf2);
+  font-size:10.5px;color:var(--ink2);line-height:1.5}
+
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin:13px 2px 8px}
+.sec-t{font-size:15px;font-weight:700}
+.sec-m{font-size:12px;color:var(--pri-ink);font-weight:600}
+.hintline{font-size:11px;color:var(--ink3);margin:6px 2px 0;line-height:1.5}
+
+/* 接下来的安排（A 版：日期胶囊） */
+.up-i{display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+.up-i:last-child{border-bottom:none}
+.up-clip{width:42px;height:42px;flex:0 0 auto;border-radius:12px;background:var(--pri-l);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--pri-ink)}
+.up-clip b{font-size:16px;font-weight:800;line-height:1}
+.up-clip span{font-size:9.5px;margin-top:2px}
+.up-n{font-size:13.5px;font-weight:600;line-height:1.4;flex:1;min-width:0}
+.up-c{font-size:11px;color:var(--ink2);font-weight:600;flex:0 0 auto}
+.up-arw{color:var(--ink3);font-size:17px;line-height:1;flex:0 0 auto}
+
+/* ============ ④ 暖色横幅（只替换「23 顿」那一行） ============ */
+/* 原来：--pri-l 浅橙底 + --pri 描边的圆角卡（calstat）
+   现在：整条暖橙渐变 + 白字，左边大数字、右边「最爱」 */
+.statbar{
+  display:flex;align-items:center;justify-content:space-between;
+  background:var(--btn-bg);color:var(--btn-ink);
+  border-radius:12px;padding:14px 15px;margin-bottom:13px;
+  box-shadow:0 4px 10px rgba(196,85,58,.22);
+}
+.statbar .l{display:flex;align-items:baseline;gap:6px}
+.statbar .l b{font-size:32px;font-weight:800;letter-spacing:-1.2px;line-height:1}
+.statbar .l span{font-size:12px;opacity:.9}
+.statbar .r{text-align:right;font-size:10.5px;opacity:.85;line-height:1.45}
+.statbar .r b{display:block;font-size:14px;font-weight:700;opacity:1;margin-top:1px}
+
+/* ============ 下面三块：完全保持线上现状，一个字没改 ============ */
+.rv-t{font-size:13px;font-weight:700;margin-bottom:9px}
+.rv-tx{font-size:13px;color:var(--ink2);line-height:1.7}
+.rk{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.rk:last-child{margin-bottom:0}
+.rk-n{width:22px;height:22px;border-radius:7px;flex:0 0 auto;display:flex;align-items:center;
+  justify-content:center;font-size:12px;font-weight:800;background:var(--surf2);color:var(--ink2)}
+.rk-n--1{background:var(--acc);color:#fff}
+.rk-n--2{background:var(--acc-l);color:var(--acc-ink)}
+.rk-n--3{background:var(--pri-l);color:var(--pri-ink)}
+.rk-main{flex:1;min-width:0}
+.rk-top{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.rk-nm{font-size:13.5px;font-weight:700}
+.rk-cnt{font-size:11.5px;color:var(--ink2);font-weight:600}
+.rank-bar{height:7px;border-radius:999px;background:var(--surf2);overflow:hidden}
+.rank-fill{height:100%;border-radius:999px;background:var(--btn-bg)}
+.catrow{display:flex;align-items:center;gap:7px;margin-bottom:9px}
+.catrow:last-child{margin-bottom:0}
+.cat-nm{font-size:12.5px;width:54px}
+.cat-pct{font-size:11.5px;color:var(--ink2);width:37px;text-align:right;font-weight:600}
+.rv-tip{background:var(--acc-l);border-color:var(--acc)}
+.rv-tip .rv-tx{color:var(--acc-ink);font-weight:600}
+</style>
+</head>
+<body>
+
+<h1>日历 · 「本月回顾」只换头部（④ 暖色横幅）</h1>
+<p class="lead">
+  <b>这一版只做一件事</b>：把「23 顿在家吃 · 最爱 紫菜蛋花汤（5 次）」那一行
+  从「浅橙底卡片」换成 <b>④ 暖色横幅</b>（整条暖橙渐变 + 白字）。
+  下面「最常吃的三道」「分类占比」「小建议」<b>完全按你现在的样子，一个字没动</b> ——
+  三块还是各自独立的卡、分类还是逐行条、建议还是暖黄底那张。<br>
+  页面其余部分（月历图例瘦身 + 提示收进卡内 + 日期胶囊）是之前 A 方案里你认可的那几处。
+</p>
+
+<div class="rowc">
+  <div class="col">
+    <p class="cap">改后 <em>· 回顾区只换了最上面那一条</em></p>
+    <div class="frame">
+      <div class="nav">日历</div>
+      <div class="fbody">
+        <div class="hd">
+          <div>
+            <div class="t-h1">日历</div>
+            <div class="t-sub">这一个月的餐桌</div>
+          </div>
+        </div>
+
+        <div class="calcard">
+          <div class="calh"><div class="calh-a">‹</div><div class="calh-m">2026 年 10 月</div><div class="calh-a">›</div></div>
+          <div class="calgrid" data-cal></div>
+          <div class="legend">
+            <span class="lg"><i class="lg-dot lg-dot--rec"></i>有记录</span>
+            <span class="lg"><i class="lg-dot lg-dot--today"></i>今天</span>
+          </div>
+          <div class="cal-tip">点任意日期，就能安排那天吃什么 —— 可以提前排未来几天</div>
+        </div>
+
+        <div class="sec-h"><span class="sec-t">接下来的安排</span><span class="sec-m">2 天</span></div>
+        <div class="card">
+          <div class="up-i">
+            <div class="up-clip"><b>15</b><span>周四</span></div>
+            <div class="up-n">蒜蓉南瓜苗、酸辣土豆丝</div>
+            <div class="up-c">2 道</div>
+            <span class="up-arw">›</span>
+          </div>
+          <div class="up-i">
+            <div class="up-clip"><b>18</b><span>周日</span></div>
+            <div class="up-n">紫菜蛋花汤、清炒时蔬、红烧排骨</div>
+            <div class="up-c">3 道</div>
+            <span class="up-arw">›</span>
+          </div>
+        </div>
+        <div class="hintline">点一行就能继续加菜或撤菜</div>
+
+        <div class="sec-h"><span class="sec-t">本月回顾</span></div>
+
+        <!-- ↓↓↓ 唯一改动：这一条换成暖色横幅 ↓↓↓ -->
+        <div class="statbar">
+          <div class="l"><b>23</b><span>顿在家吃</span></div>
+          <div class="r">最爱<b>紫菜蛋花汤 · 5 次</b></div>
+        </div>
+        <!-- ↑↑↑ 下面三块和线上一模一样 ↑↑↑ -->
+
+        <div class="card" style="padding:13px 14px;margin-bottom:13px">
+          <div class="rv-t">最常吃的三道</div>
+          <div class="rk"><div class="rk-n rk-n--1">1</div><div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">紫菜蛋花汤</span><span class="rk-cnt">5 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:100%"></div></div></div></div>
+          <div class="rk"><div class="rk-n rk-n--2">2</div><div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">酸辣土豆丝</span><span class="rk-cnt">4 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:80%"></div></div></div></div>
+          <div class="rk"><div class="rk-n rk-n--3">3</div><div class="rk-main">
+            <div class="rk-top"><span class="rk-nm">蒜蓉南瓜苗</span><span class="rk-cnt">3 次</span></div>
+            <div class="rank-bar"><div class="rank-fill" style="width:60%"></div></div></div></div>
+        </div>
+
+        <div class="card" style="padding:13px 14px;margin-bottom:13px">
+          <div class="rv-t">分类占比</div>
+          <div class="catrow"><i class="sq" style="background:#4F9367"></i><span class="cat-nm">素菜</span>
+            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:42%;background:#4F9367"></div></div>
+            <span class="cat-pct">42%</span></div>
+          <div class="catrow"><i class="sq" style="background:#E9A323"></i><span class="cat-nm">汤羹</span>
+            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:26%;background:#E9A323"></div></div>
+            <span class="cat-pct">26%</span></div>
+          <div class="catrow"><i class="sq" style="background:#D9714E"></i><span class="cat-nm">主食</span>
+            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:19%;background:#D9714E"></div></div>
+            <span class="cat-pct">19%</span></div>
+          <div class="catrow"><i class="sq" style="background:#8C7AA8"></i><span class="cat-nm">热菜</span>
+            <div class="rank-bar" style="flex:1"><div class="rank-fill" style="width:13%;background:#8C7AA8"></div></div>
+            <span class="cat-pct">13%</span></div>
+        </div>
+
+        <div class="card rv-tip" style="padding:13px 14px">
+          <div class="rv-t">小建议</div>
+          <div class="rv-tx">素菜占了四成多，主食偏少。下周可以多排两道面食或米饭类。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 放大：只看这一条 -->
+  <div class="col">
+    <p class="cap">放大看这一条 <em>· 上：现在的样子 ／ 下：换成的样子</em></p>
+
+    <div class="frame" style="padding:16px 14px 10px">
+      <div class="sec-t" style="margin:0 2px 10px">现在（线上）</div>
+      <div style="display:flex;align-items:center;gap:10px;background:var(--pri-l);
+        border:1px solid var(--pri);border-radius:12px;padding:11px 13px">
+        <div style="font-size:22px;font-weight:800;color:var(--pri-ink);line-height:1">23</div>
+        <div style="font-size:12.5px;line-height:1.5">顿在家吃 · 最爱 <b>紫菜蛋花汤</b>（5 次）</div>
+      </div>
+      <div style="font-size:11px;color:var(--ink3);margin:9px 2px 0;line-height:1.6">
+        浅橙底 + 橙描边，数字和文字挤在一行里 —— 不难看，但“这个月 23 顿”这件事不够醒目，
+        「最爱」也只是句子里的半截。
+      </div>
+    </div>
+
+    <div class="frame" style="margin-top:14px;padding:16px 14px 10px">
+      <div class="sec-t" style="margin:0 2px 10px">换成的（④ 暖色横幅）</div>
+      <div class="statbar" style="margin-bottom:0">
+        <div class="l"><b>23</b><span>顿在家吃</span></div>
+        <div class="r">最爱<b>紫菜蛋花汤 · 5 次</b></div>
+      </div>
+      <div style="font-size:11px;color:var(--ink3);margin:9px 2px 0;line-height:1.6">
+        整条暖橙渐变、白字。「23 顿」在左边自己站着，「最爱」在右边有了一块小位置。
+        颜色用的是 <b>--btn-bg / --btn-ink</b>（和主按钮同一套变量），
+        所以深色模式下会自动变成“白底深绿字”，不用另外兜。
+      </div>
+    </div>
+
+    <div class="frame" style="margin-top:14px;padding:16px 14px 10px">
+      <div class="sec-t" style="margin:0 2px 10px">顺带确认：深色下长这样</div>
+      <div class="dark" style="background:var(--bg);border-radius:10px;padding:12px">
+        <div class="statbar" style="margin-bottom:0;box-shadow:0 4px 10px rgba(0,0,0,.22)">
+          <div class="l"><b>23</b><span>顿在家吃</span></div>
+          <div class="r">最爱<b>紫菜蛋花汤 · 5 次</b></div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--ink3);margin:9px 2px 0;line-height:1.6">
+        （深色主题下 <code>--btn-bg</code> 是白色、<code>--btn-ink</code> 是深墨绿，跟着走。）
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var WD = ['一', '二', '三', '四', '五', '六', '日']
+  var REC = [6, 11, 15, 21, 26]
+  var TODAY = 12
+  var BLANK = 3
+  document.querySelectorAll('.calgrid[data-cal]').forEach(function (g) {
+    var html = ''
+    WD.forEach(function (w) { html += '<div class="wd">' + w + '</div>' })
+    for (var i = 0; i < BLANK; i++) html += '<div class="cell cell--blank"></div>'
+    for (var d = 1; d <= 31; d++) {
+      var rec = REC.indexOf(d) >= 0
+      var td = d === TODAY
+      html += '<div class="cell"><div class="tile' + (rec ? ' tile--rec' : '') +
+              (td ? ' tile--today' : '') + '">' +
+              '<div class="cell-d">' + d + '</div>' +
+              (rec ? '<div class="cell-dots"><div class="dot" style="background:#E7A176"></div></div>' : '') +
+              '</div></div>'
+    }
+    g.innerHTML = html
+  })
+})()
+</script>
+
+</body>
+</html>
