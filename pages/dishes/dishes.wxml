@@ -7,7 +7,13 @@
         <view class="t-h1">菜库</view>
         <view class="t-sub">{{allCount}} 道 · 上架 {{showCount}} 道</view>
       </view>
-      <view class="layout-btn" bindtap="onToggleLayout">{{layout === 0 ? '列表' : '网格'}}</view>
+      <!-- 「新建菜品」原来是个悬浮在右下角的 ＋，跟卡片自己的 ＋ 撞在一起
+           （同一个符号两个意思，还正好压在右下那张卡上）。
+           现在挪到页头：动作分开，也不用再靠滚动去收起它。 -->
+      <view class="hd-btns">
+        <view class="layout-btn" bindtap="onToggleLayout">{{layout === 0 ? '列表' : '网格'}}</view>
+        <view class="add-btn" bindtap="goAdd">＋ 新菜</view>
+      </view>
     </view>
 
     <!-- 搜索 -->
@@ -112,16 +118,13 @@
       wx:if="{{!loading && !list.length}}"
       ico="bowl"
       text="{{keyword ? '没找到这道菜' : (hasFilter ? '这个筛选下没有菜' : '菜库还是空的')}}"
-      sub="{{keyword ? '换个关键词试试' : (hasFilter ? '换个筛选看看' : '点右下角添加，或去「今晚」一键填入示例菜库')}}"
+      sub="{{keyword ? '换个关键词试试' : (hasFilter ? '换个筛选看看' : '点右上角「＋ 新菜」添加，或去「今晚」一键填入示例菜库')}}"
     />
 
       </view>
     </view>
 
   </view>
-
-  <!-- 悬浮：添加菜品 -->
-  <view class="fab {{fabHidden ? 'fab--hide' : ''}}" bindtap="goAdd">＋</view>
 
   <!-- 详情弹层 -->
   <view class="sheet-mask" wx:if="{{detail}}" bindtap="closeDetail" catchtouchmove="noop">

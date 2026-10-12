@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>菜库页 · UI 美化方案</title>
+<link rel="stylesheet" href="_plan2.css">
+<style>
+/* ===== 菜库页：数值全部照抄 pages/dishes/dishes.wxss + app.wxss（1rpx = 0.5px）===== */
+.frame{ width:375px; background:#FAF7F3; }
+.fbody{ padding:14px 14px 18px; }          /* page-body padding: 28rpx = 14px */
+
+.hd{ display:flex; align-items:flex-start; justify-content:space-between; padding:12px 2px 10px; }
+.t-h1{ font-size:20px; font-weight:700; letter-spacing:-.2px; }   /* 40rpx */
+.t-sub{ font-size:13px; color:#8B8178; margin-top:2px; }          /* 26rpx */
+.hd-btns{ display:flex; align-items:center; gap:6px; padding-top:2px; }
+.layout-btn{ padding:5px 12px; border-radius:999px; background:#fff; border:1px solid #EFE7DE;
+  font-size:12px; font-weight:600; color:#8B8178; }
+.add-btn{ padding:5px 11px; border-radius:999px; background:linear-gradient(135deg,#DE7A56,#C4553A);
+  color:#fff; font-size:12px; font-weight:700; box-shadow:0 4px 10px rgba(196,85,58,.28); }
+
+.searchbar{ display:flex; align-items:center; gap:8px; background:#fff; border:1px solid #EFE7DE;
+  border-radius:999px; padding:9px 13px; box-shadow:0 2px 7px rgba(170,130,100,.08); }
+.sb-ico{ width:17px; height:17px; opacity:.72; }
+.sb-ph{ color:#B7AEA4; font-size:14px; }                          /* 28rpx */
+
+.cat-split{ display:flex; align-items:flex-start; margin-top:10px; }
+.cat-side{ width:59px; flex:0 0 auto; background:#F4EFE9; border-radius:11px; padding:4px; }
+.cat-i{ display:flex; flex-direction:column; align-items:center; padding:6.5px 2px 5.5px;
+  border-radius:8px; margin-bottom:2.5px; }
+.cat-i:last-child{ margin-bottom:0; }
+.cat-i-ic{ width:22px; height:22px; }
+.cat-i-nm{ margin-top:3px; font-size:10.5px; color:#8B8178; max-width:100%; overflow:hidden;
+  text-overflow:ellipsis; white-space:nowrap; }
+.cat-i-n{ font-size:8.5px; color:#B7AEA4; margin-top:.5px; }
+.cat-i--on{ background:#D9714E; }
+.cat-i--on .cat-i-nm{ color:#fff; font-weight:700; }
+.cat-i--on .cat-i-n{ color:#fff; opacity:.74; }
+.cat-main{ flex:1; min-width:0; padding-left:8px; }
+
+.chips{ display:flex; gap:7px; align-items:center; padding:13px 0 11px; white-space:nowrap; }
+.chip{ display:inline-flex; align-items:center; gap:5px; padding:6px 13px; border-radius:999px;
+  font-size:13px; font-weight:600; background:#fff; color:#8B8178; border:1px solid #EFE7DE; }
+.chip--accstar{ background:#FCF3DF; color:#8E5F0C; border-color:#E9A323; }
+.chip-n{ font-size:11px; font-weight:700; opacity:.72; }
+/* 美化的第 6 条：选完左边，右边给一行文字反馈 */
+.cat-flag{ display:flex; align-items:center; gap:6px; font-size:12px; color:#8B8178; margin:0 2px 8px; }
+.cat-flag b{ color:#A8462E; font-weight:800; }
+.pick-hint{ font-size:11.5px; color:#8B8178; margin:-3px 0 7px 2px; }
+.pick-hint b{ color:#A8462E; }
+
+.grid{ display:flex; flex-wrap:wrap; margin:0 -4.5px; }
+.card-dish{ position:relative; width:calc(50% - 9px); margin:4.5px; background:#fff;
+  border:1px solid #EFE7DE; border-radius:13px; overflow:hidden; box-shadow:0 2px 7px rgba(170,130,100,.08); }
+.cd-media{ position:relative; }
+.cd-img{ width:100%; height:110px; font-size:26px; font-weight:700; color:#fff; letter-spacing:1px;
+  display:flex; align-items:center; justify-content:center; }
+.ph1{ background:linear-gradient(140deg,#BFCB93,#6E8B4E); }   /* img-ph--2 */
+.ph2{ background:linear-gradient(140deg,#9DBCC9,#5B7F91); }   /* img-ph--5 */
+.jph{ background:linear-gradient(140deg,#E7A176,#C0613F); color:rgba(255,255,255,.7); font-size:12px; letter-spacing:3px; }
+/* 美化：图区改成正方形（原来 220rpx 高 = 1.55:1，手机竖图会被横着切掉一大条） */
+.cd-img--sq{ aspect-ratio:1/1; height:auto; }
+.cd-img--icon{ background:#F4EFE9; }      /* 没配图时：淡底 + 分类图标 */
+.cd-img--icon img{ width:64px; height:64px; opacity:.5; }
+.cd-add{ position:absolute; right:7px; bottom:7px; width:34px; height:34px; border-radius:50%;
+  background:linear-gradient(135deg,#DE7A56,#C4553A); color:#fff; display:flex; align-items:center;
+  justify-content:center; font-size:18px; font-weight:700; box-shadow:0 4px 10px rgba(196,85,58,.28); }
+.cd-fav{ position:absolute; left:7px; top:7px; width:22px; height:22px; border-radius:50%;
+  background:rgba(255,255,255,.94); color:#E9A323; display:flex; align-items:center;
+  justify-content:center; font-size:13px; }
+.cd-body{ padding:8px 9px 10px; }
+.cd-nm{ font-size:13.5px; font-weight:700; }
+.cd-tg{ display:flex; gap:4px; margin-top:5px; flex-wrap:wrap; }
+.tag{ display:inline-block; padding:2px 7px; border-radius:5px; font-size:10px; font-weight:600;
+  background:#F4EFE9; color:#8B8178; }
+.tag--pri{ background:#FBEEE8; color:#A8462E; }
+
+/* 悬浮的 ＋（要删掉的那个） */
+.fab{ position:absolute; right:12px; bottom:76px; width:54px; height:54px; border-radius:50%;
+  background:linear-gradient(135deg,#DE7A56,#C4553A); color:#fff; display:flex; align-items:center;
+  justify-content:center; font-size:26px; font-weight:300; box-shadow:0 4px 10px rgba(196,85,58,.28); z-index:5; }
+.mark{ position:absolute; border:2px dashed #C94A3F; border-radius:10px; pointer-events:none; }
+.mark--fab{ right:6px; bottom:70px; width:66px; height:66px; }
+.mark--bad{ left:12px; top:6px; right:6px; height:14px; border-radius:6px; }
+.mk-tag{ position:absolute; font-size:10px; font-weight:700; color:#C94A3F; background:#FBEBE9;
+  border-radius:6px; padding:1px 5px; }
+</style>
+</head>
+<body>
+
+<h1>菜库页 · UI 美化方案（1:1，数值照抄真机）</h1>
+<p class="lead">
+  左边是现在的样子，右边是建议改的几处。全部是<b>视觉层</b>的：不动搜索、筛选、排序这些逻辑
+  （那几条属于功能，另说）。红框标的是现在最影响观感的地方。
+</p>
+
+<div class="rowc">
+
+  <!-- ================= 现状 ================= -->
+  <div class="col">
+    <p class="cap">现状 <em>· 悬浮 ＋ 压在卡片上、0 道菜的分类也列着</em></p>
+    <div class="frame" style="position:relative">
+      <div class="fbody">
+        <div class="hd">
+          <div>
+            <div class="t-h1">菜库</div>
+            <div class="t-sub">13 道 · 上架 13 道</div>
+          </div>
+          <div class="layout-btn">列表</div>
+        </div>
+
+        <div class="searchbar">
+          <img class="sb-ico" src="../../assets/icons/search.png">
+          <span class="sb-ph">搜索菜名 / 食材</span>
+        </div>
+
+        <div class="cat-split">
+          <div class="cat-side">
+            <div class="cat-i cat-i--on"><img class="cat-i-ic" src="../../assets/icons/cat-all-w.png"><div class="cat-i-nm">全部</div><div class="cat-i-n">13</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-hot.png"><div class="cat-i-nm">热菜</div><div class="cat-i-n">5</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-veg.png"><div class="cat-i-nm">素菜</div><div class="cat-i-n">4</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-soup.png"><div class="cat-i-nm">汤羹</div><div class="cat-i-n">2</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-staple.png"><div class="cat-i-nm">主食</div><div class="cat-i-n">2</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-drink.png"><div class="cat-i-nm">酒水饮料</div><div class="cat-i-n">0</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-snack.png"><div class="cat-i-nm">小吃类</div><div class="cat-i-n">0</div></div>
+          </div>
+          <div class="cat-main">
+            <div class="chips">
+              <span class="chip chip--accstar">★ 常吃</span>
+              <span class="chip">本周没吃</span>
+            </div>
+            <div class="pick-hint">点卡片右下角的 <b>＋</b> 就加进今晚 · 点卡片本身看做法</div>
+            <div class="grid">
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img ph1">青</div><div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">青椒肉丝</div>
+                  <div class="cd-tg"><span class="tag">热菜</span></div></div></div>
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img jph">菜品照片</div><div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">酸辣土豆丝</div>
+                  <div class="cd-tg"><span class="tag">素菜</span></div></div></div>
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img jph">菜品照片</div><div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">清炒蒜蓉空心菜</div>
+                  <div class="cd-tg"><span class="tag">素菜</span></div></div></div>
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img ph2">清</div><div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">清蒸鲈鱼</div>
+                  <div class="cd-tg"><span class="tag">热菜</span></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="fab">＋</div>
+      <div class="mark mark--fab"></div>
+      <div class="mk-tag" style="right:10px; bottom:140px">和卡片自己的 ＋ 撞一起</div>
+      <div class="mark" style="left:14px; top:300px; width:59px; height:132px"></div>
+      <div class="mk-tag" style="left:78px; top:396px">0 道菜也占两行</div>
+    </div>
+  </div>
+
+  <!-- ================= 美化后（全部） ================= -->
+  <div class="col">
+    <p class="cap">美化后 <em>· 页头放主操作、图区正方形、0 项分类收起</em><span class="pill pill--ok">建议</span></p>
+    <div class="frame">
+      <div class="fbody">
+        <div class="hd">
+          <div>
+            <div class="t-h1">菜库</div>
+            <div class="t-sub">13 道菜</div>
+          </div>
+          <div class="hd-btns">
+            <div class="layout-btn">列表</div>
+            <div class="add-btn">＋ 新菜</div>
+          </div>
+        </div>
+
+        <div class="searchbar">
+          <img class="sb-ico" src="../../assets/icons/search.png">
+          <span class="sb-ph">搜索菜名 / 食材</span>
+        </div>
+
+        <div class="cat-split">
+          <div class="cat-side">
+            <div class="cat-i cat-i--on"><img class="cat-i-ic" src="../../assets/icons/cat-all-w.png"><div class="cat-i-nm">全部</div><div class="cat-i-n">13</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-hot.png"><div class="cat-i-nm">热菜</div><div class="cat-i-n">5</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-veg.png"><div class="cat-i-nm">素菜</div><div class="cat-i-n">4</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-soup.png"><div class="cat-i-nm">汤羹</div><div class="cat-i-n">2</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-staple.png"><div class="cat-i-nm">主食</div><div class="cat-i-n">2</div></div>
+          </div>
+          <div class="cat-main">
+            <div class="chips">
+              <span class="chip chip--accstar">★ 常吃<span class="chip-n">4</span></span>
+              <span class="chip">本周没吃<span class="chip-n">5</span></span>
+            </div>
+            <div class="pick-hint">点卡片右下角的 <b>＋</b> 加进今晚 · 点卡片看做法</div>
+            <div class="grid">
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img cd-img--sq cd-img--icon"><img src="../../assets/icons/cat-hot.png"></div>
+                <div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">青椒肉丝</div>
+                  <div class="cd-tg"><span class="tag">热菜</span><span class="tag tag--pri">18 天没做了</span></div></div></div>
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img cd-img--sq jph">菜品照片</div><div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">酸辣土豆丝</div>
+                  <div class="cd-tg"><span class="tag">素菜</span><span class="tag tag--pri">近一月 3 次</span></div></div></div>
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img cd-img--sq jph">菜品照片</div><div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">清炒蒜蓉空心菜</div>
+                  <div class="cd-tg"><span class="tag">素菜</span></div></div></div>
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img cd-img--sq cd-img--icon"><img src="../../assets/icons/cat-hot.png"></div>
+                <div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">清蒸鲈鱼</div>
+                  <div class="cd-tg"><span class="tag">热菜</span></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<h2>选中某个分类之后 —— 右边给一行文字反馈</h2>
+<div class="rowc">
+  <div class="col">
+    <div class="frame">
+      <div class="fbody">
+        <div class="hd">
+          <div>
+            <div class="t-h1">菜库</div>
+            <div class="t-sub">13 道菜</div>
+          </div>
+          <div class="hd-btns">
+            <div class="layout-btn">列表</div>
+            <div class="add-btn">＋ 新菜</div>
+          </div>
+        </div>
+        <div class="searchbar">
+          <img class="sb-ico" src="../../assets/icons/search.png">
+          <span class="sb-ph">搜索菜名 / 食材</span>
+        </div>
+        <div class="cat-split">
+          <div class="cat-side">
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-all.png"><div class="cat-i-nm">全部</div><div class="cat-i-n">13</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-hot.png"><div class="cat-i-nm">热菜</div><div class="cat-i-n">5</div></div>
+            <div class="cat-i cat-i--on"><img class="cat-i-ic" src="../../assets/icons/cat-veg-w.png"><div class="cat-i-nm">素菜</div><div class="cat-i-n">4</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-soup.png"><div class="cat-i-nm">汤羹</div><div class="cat-i-n">2</div></div>
+            <div class="cat-i"><img class="cat-i-ic" src="../../assets/icons/cat-staple.png"><div class="cat-i-nm">主食</div><div class="cat-i-n">2</div></div>
+          </div>
+          <div class="cat-main">
+            <div class="chips">
+              <span class="chip chip--accstar">★ 常吃<span class="chip-n">4</span></span>
+              <span class="chip">本周没吃<span class="chip-n">5</span></span>
+              <span class="chip" style="border-style:dashed;color:#B7AEA4">清除 ✕</span>
+            </div>
+            <div class="cat-flag"><b>素菜</b> · 4 道 · 久没做的排前面</div>
+            <div class="grid">
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img cd-img--sq jph">菜品照片</div><div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">酸辣土豆丝</div>
+                  <div class="cd-tg"><span class="tag">素菜</span><span class="tag tag--pri">近一月 3 次</span></div></div></div>
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img cd-img--sq jph">菜品照片</div><div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">清炒蒜蓉空心菜</div>
+                  <div class="cd-tg"><span class="tag">素菜</span></div></div></div>
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img cd-img--sq cd-img--icon"><img src="../../assets/icons/cat-veg.png"></div>
+                <div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">凉拌黄瓜</div>
+                  <div class="cd-tg"><span class="tag">素菜</span><span class="tag tag--pri">9 天没做了</span></div></div></div>
+              <div class="card-dish"><div class="cd-media">
+                <div class="cd-img cd-img--sq cd-img--icon"><img src="../../assets/icons/cat-veg.png"></div>
+                <div class="cd-add">＋</div></div>
+                <div class="cd-body"><div class="cd-nm">蒜蓉油麦菜</div>
+                  <div class="cd-tg"><span class="tag">素菜</span></div></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p class="note">选中「素菜」时，右上方多一行「<b>素菜 · 4 道 · 久没做的排前面</b>」——
+      现在选完左边，右侧除了卡片变少没有任何文字反馈，也不告诉你排序是按什么排的。</p>
+  </div>
+
+  <div class="col" style="width:375px">
+    <div class="card" style="padding:14px 16px">
+      <div style="font-size:14px;font-weight:800;margin-bottom:10px">改哪几处（都是视觉层）</div>
+      <div style="font-size:12.5px;line-height:1.95;color:#4A443E">
+        <b>① 悬浮 ＋ 挪到页头</b>：右下角那个 108rpx 的 ＋ 是「新建菜品」，卡片自己的 ＋ 是
+        「加进今晚」—— 同一个符号两个意思，还正好压在右下那张卡上（你截图里就有）。
+        现在页头变成「列表（轻）＋ 新菜（主色）」，右下角彻底空出来。<br>
+        <b>② 没配图的菜不再是一个字撑满整块</b>：改成<b>淡底 + 分类图标</b>（热菜就是小锅、素菜就是叶子），
+        和旁边有照片的卡不再是两种风格。（如果你更喜欢保留首字，就淡底 + 首字、不要彩色渐变，
+        我按你选的来。）<br>
+        <b>③ 图区从 220rpx 高改成正方形</b>：现在是 1.55:1 的横条，手机竖着拍的菜图会被横切掉一大条；
+        方形后照片看得全，也更像菜单。<br>
+        <b>④ 0 道菜的分类不列了</b>：「酒水饮料 0」「小吃类 0」白占两行还显得像坏了
+        （当前选中的那类即使 0 也保留，否则一点就消失）。<br>
+        <b>⑤ 筛选胶囊带数量</b>：「★ 常吃 <b>4</b>」「本周没吃 <b>5</b>」—— 点之前就知道有多少。<br>
+        <b>⑥ 选中分类给一行反馈</b>：「素菜 · 4 道 · 久没做的排前面」。<br>
+        <b>⑦ 页头副标题</b>：全上架时「13 道 · 上架 13 道」是重复的，写成「13 道菜」；
+        只有真有未上架时才写「13 道 · 上架 12 道」。<br>
+        <b>⑧ 那行常驻说明</b>（「点卡片右下角的 ＋ …」）改成更轻的一句，回头可以做成看过就收起。
+      </div>
+      <div style="font-size:12px;line-height:1.9;color:#8B8178;margin-top:12px">
+        另外卡上那两枚小标签（「18 天没做了」「近一月 3 次」）属于**功能**那条（上次清单的第 5 条：
+        列表排序本来就是「收藏优先 → 久没做优先」，但界面上看不出来）。这里只是顺手画出来给你看，
+        要不要做你定。
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
