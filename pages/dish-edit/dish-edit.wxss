@@ -225,3 +225,18 @@
   background: var(--fix-veil);
 }
 .fix-b { flex: 1; }
+
+/* ---------- 深色下的「浅底小标签」 ----------
+   深色主题里 --pri-l / --ok-l 都是 16% 的白，而 --pri-ink 是纯白、--ok-ink 是深绿，
+   所以「浅底 + 同色字」这类小标签（食材签、步骤号、「我」标记）会糊成一片。
+   统一换成暖色（柿橙底 + 暖白字）—— 和日历的 .up-clip、管理页的 .op-edit 一套处理。
+   注意两种深色路径都要覆盖：手动选深色是 .theme-dark，跟随系统走媒体查询。 */
+.theme-dark .chip-tag { background: var(--acc-l); color: var(--acc-ink); }
+.theme-dark .tg--on { background: var(--acc-l); color: var(--acc-ink); }
+.theme-dark .tg--on { border-color: var(--acc); }
+@media (prefers-color-scheme: dark) {
+  .chip-tag { background: var(--acc-l); color: var(--acc-ink); }
+  .tg--on { background: var(--acc-l); color: var(--acc-ink); }
+  /* 它的描边是 --pri，深色里是白色，落在暖色底上很脏 */
+  .tg--on { border-color: var(--acc); }
+}

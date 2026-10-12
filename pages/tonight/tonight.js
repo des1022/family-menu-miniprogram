@@ -166,6 +166,9 @@ Page({
     suggest: null,
     ingCount: 0,
     ingList: [],
+    // 全部确认之后，底部那颗「确认这顿饭」就不该再杵在那儿了
+    confirmedCount: 0,
+    allConfirmed: false,
 
     pickHint: '2 荤 1 素 1 汤 · 3 秒定',
     mixes: MIXES,
@@ -201,7 +204,27 @@ Page({
 
   onShow() {
     this.applyTheme()
+    this.refreshToday()
     this.loadAll()
+  },
+
+  /**
+   * 跨零点：页面在后台搁了一夜，回来时「今天」已经变了。
+   * 不刷新的话，接下来点的菜会记到昨天，桌上看不到刚加的那道
+   * （记录是挂在 this.data.today 上的，watch 也是盯的这一天）。
+   */
+  refreshToday() {
+    const t = db.todayStr()
+    if (t === this.data.today) return false
+    const now = new Date()
+    if (this._watcher && this._watcher.close) this._watcher.close()
+    this._watcher = null
+    this._watchDate = ''
+    this.setData({
+      today: t,
+      dateText: (now.getMonth() + 1) + '月' + now.getDate() + '日 周' + WEEK[now.getDay()]
+    })
+    return true
   },
 
   onUnload() {
@@ -288,8 +311,16 @@ Page({
 
       this._allRecords = await db.getAllRecords().catch(() => [])
       this._lastMap = {}
+      // 显示「上次做是几天前」用的那份：排掉今天。
+      // 桌上这道菜「今天」的那条记录就是它自己刚被加进来时建的，
+      // 拿它算永远是「今天做过」，写出来纯属噪音。
+      this._lastBefore = {}
+      const todayStr = db.todayStr()
       this._allRecords.forEach(r => {
         if (!this._lastMap[r.dishId] || r.date > this._lastMap[r.dishId]) this._lastMap[r.dishId] = r.date
+        if (r.date < todayStr && (!this._lastBefore[r.dishId] || r.date > this._lastBefore[r.dishId])) {
+          this._lastBefore[r.dishId] = r.date
+        }
       })
 
       const onDishes = dishes.filter(d => d.status === config.DISH_STATUS.ON)
@@ -322,6 +353,7 @@ Page({
         })),
         busy: false
       })
+      this.buildPickHint()
       this.applyRecords(records)
       this.attachWatcher()
     } catch (e) {
@@ -339,8 +371,24 @@ Page({
     })
   },
 
+  /**
+   * 「帮我选一顿」那颗按钮的副标题。
+   *
+   * 以前是写死的 '2 荤 1 素 1 汤 · 3 秒定' —— 跟上次实际用的搭配、跟今天几个人在家
+   * 都没关系，每次打开面板看到的默认值可能根本不是这句话说的。
+   * 现在按面板真正的默认（第一个搭配 + 今天在家人数换算的道数）算出来。
+   */
+  buildPickHint() {
+    const mix = MIXES[0]
+    const n = Number(this.data.eatCount) || 0
+    const total = n > 0 ? homeTotal(n) : SIZES[1].total
+    const planTotal = mix.main + mix.veg + mix.soup
+    this.setData({ pickHint: mix.label + ' · ' + Math.min(planTotal, total) + ' 道' })
+  },
+
   async applyRecords(records) {
     const today = db.todayStr()
+    const lastBefore = this._lastBefore || {}
     const cards = (records || []).map(r => {
       const dish = this._dishMap ? this._dishMap[r.dishId] : null
       return {
@@ -350,6 +398,8 @@ Page({
         image: r.dishImage || (dish ? dish.image : '') || '',
         category: dish ? dish.category : '',
         remark: r.remark || '',
+        // 「上次做是几天前」：用排掉今天的那份记录，免得每道都写「今天做过」
+        lastText: lastBefore[r.dishId] ? daysAgoText(lastBefore[r.dishId]) : '',
         confirmed: Number(r.confirmed) === config.RECORD_CONFIRMED.CONFIRMED,
         byName: r.byName || '',
         byColor: r.byColor || '#D9714E',
@@ -363,7 +413,13 @@ Page({
     })
     // 先换好图片链接再渲染（否则首帧是占位块，随后闪一下才变成图）
     await attachImgUrls(cards)
-    this.setData({ cards: cards, today: today })
+    const confirmedCount = cards.filter(c => c.confirmed).length
+    this.setData({
+      cards: cards,
+      today: today,
+      confirmedCount: confirmedCount,
+      allConfirmed: cards.length > 0 && confirmedCount === cards.length
+    })
     this.buildSuggest(cards)
     this.buildIngredients(records || [])
     // 「最近家里常吃」两种状态都显示，所以要跟着今晚的桌一起刷新（标记哪几道已在桌上）
@@ -641,9 +697,50 @@ Page({
     wx.navigateTo({ url: '/pages/dish-edit/dish-edit?id=' + h.dishId })
   },
 
-  /** 弹层里的「从今晚撤掉」 */
-  async onRemoveFromHow() {
+  /**
+   * 把桌上这道换成同类的另一道。
+   *
+   * 以前想换口味只能「先撤掉 → 跳菜库 → 再找一道」，多走两趟。
+   * 复用决策器那套挑法：同类优先、久没做过的排前面、跳过今晚已经在桌上的；
+   * 换的动作 = 撤掉旧记录 + 加进新的（记录按 date + dishId 唯一）。
+   * 口味条件用决策器里最后一次选的（没开过面板就是「随便」）。
+   */
+  async onSwapDish() {
     const h = this.data.how
+    if (!h || !h.dishId || this.data.busy) return
+    const raw = (this._dishMap || {})[h.dishId]
+    if (!raw) {
+      toast('这道菜已经不在菜库里了，先撤掉吧')
+      return
+    }
+    const used = {}
+    ;(this.data.cards || []).forEach(c => { used[c.dishId] = true })
+    // 当前这道**不**从排除表里拿掉：换一道不能换成它自己
+    const taste = TASTES.filter(t => t.key === this.data.dec.taste)[0] || TASTES[0]
+    const d = this.pickCandidate(roleOf(raw), taste, used)
+    if (!d) {
+      toast('这一类没有别的可换了')
+      return
+    }
+
+    try {
+      this.setData({ busy: true })
+      await db.removeFromTonight(this.data.today, h.dishId)
+      await db.addToTonight(d, this.data.today)
+      this.setData({ how: null, busy: false })
+      const records = await db.getRecordsByDate(this.data.today)
+      this.applyRecords(records)
+      wx.vibrateShort({ type: 'light', fail: () => {} })
+      toast('换成「' + d.name + '」了')
+    } catch (err) {
+      console.error('[tonight] 换一道失败', err)
+      this.setData({ busy: false })
+      toast('换不了，请重试')
+    }
+  },
+
+  /** 弹层里的「从今晚撤掉」 */
+  async onRemoveFromHow() {    const h = this.data.how
     if (!h || !h.dishId) return
     const ok = await confirm('把「' + h.name + '」从今晚的桌上撤掉？', '撤掉', '撤掉')
     if (!ok) return
@@ -826,7 +923,8 @@ Page({
 
     const used = {}
     picks.forEach(p => { used[p._id] = true })
-    delete used[cur._id]
+    // 当前这道也要继续排除：以前这里把它从表里删掉，于是「换一个」有可能
+    // 又摇回同一道菜 —— 用户点一下看着像没反应（2026-10-12 顺手修的）
 
     const raw = (this.data.allDishes || []).filter(d => d._id === cur._id)[0]
     const role = raw ? roleOf(raw) : ''

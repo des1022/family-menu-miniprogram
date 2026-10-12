@@ -249,6 +249,15 @@ view, text, input, textarea, button, picker, scroll-view {
 .tag--pri { background: var(--pri-l); color: var(--pri-ink); }
 .tag--acc { background: var(--acc-l); color: var(--acc-ink); }
 .tag--ok { background: var(--ok-l); color: var(--ok-ink); }
+/* 深色下 .tag--pri / .tag--ok 是「浅白底 + 白字 / 深绿字」，小标签会糊
+   （深色里 --pri-l/--ok-l 都是 16% 的白，而 --pri-ink 是纯白、--ok-ink 是深绿）。
+   统一换暖色兜一下，和日历的 .up-clip、管理页的 .op-edit 同一套处理。 */
+.theme-dark .tag--pri,
+.theme-dark .tag--ok { background: var(--acc-l); color: var(--acc-ink); }
+@media (prefers-color-scheme: dark) {
+  .tag--pri,
+  .tag--ok { background: var(--acc-l); color: var(--acc-ink); }
+}
 
 /* ==================== 分割线 ==================== */
 .divider { height: 2rpx; background: var(--line); }

@@ -184,6 +184,8 @@
 .dish-body { padding: 16rpx 18rpx 20rpx; }
 .dish-nm { font-size: 27rpx; font-weight: 700; }
 .dish-tg { display: flex; gap: 8rpx; margin-top: 10rpx; flex-wrap: wrap; }
+/* 「9 天没做了」这类小字：比标签弱一档，只作参考 */
+.dish-last { font-size: 20rpx; color: var(--ink3); margin-top: 8rpx; }
 .owner {
   position: absolute;
   left: 14rpx; top: 14rpx;
@@ -493,4 +495,45 @@
   font-size: 29rpx;
   line-height: 1.65;
   color: var(--ink);
+}
+
+/* ==================== 桌上有菜、没人开伙 ==================== */
+.nobody {
+  display: flex;
+  align-items: center;
+  gap: 16rpx;
+  background: var(--acc-l);
+  border: 2rpx solid var(--acc);
+  border-radius: 22rpx;
+  padding: 18rpx 22rpx;
+  margin-bottom: 18rpx;
+}
+.nobody-tx { flex: 1; font-size: 24rpx; font-weight: 600; color: var(--acc-ink); line-height: 1.5; }
+.nobody-go { flex: 0 0 auto; font-size: 23rpx; font-weight: 700; color: var(--acc-ink); }
+
+/* ==================== 确认完了的底部栏 ==================== */
+.donebar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4rpx 6rpx;
+}
+.done-tx { font-size: 28rpx; font-weight: 700; color: var(--ink2); }
+.done-ok { color: var(--pri-ink); font-weight: 800; margin-right: 8rpx; }
+.done-go { font-size: 27rpx; font-weight: 700; color: var(--pri-ink); }
+/* 「确认这顿饭」上面那行小字（还有几道没确认） */
+.cf-sub { font-size: 24rpx; font-weight: 600; opacity: 0.85; }
+
+/* ---------- 深色下的「浅底小标签」 ----------
+   深色主题里 --pri-l / --ok-l 都是 16% 的白，而 --pri-ink 是纯白、--ok-ink 是深绿，
+   所以「浅底 + 同色字」这类小标签（食材签、步骤号、「我」标记）会糊成一片。
+   统一换成暖色（柿橙底 + 暖白字）—— 和日历的 .up-clip、管理页的 .op-edit 一套处理。
+   注意两种深色路径都要覆盖：手动选深色是 .theme-dark，跟随系统走媒体查询。 */
+.theme-dark .hw-ing-i { background: var(--acc-l); color: var(--acc-ink); }
+.theme-dark .guide-n { background: var(--acc-l); color: var(--acc-ink); }
+.theme-dark .hw-step-n { background: var(--acc-l); color: var(--acc-ink); }
+@media (prefers-color-scheme: dark) {
+  .hw-ing-i { background: var(--acc-l); color: var(--acc-ink); }
+  .guide-n { background: var(--acc-l); color: var(--acc-ink); }
+  .hw-step-n { background: var(--acc-l); color: var(--acc-ink); }
 }

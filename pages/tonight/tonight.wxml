@@ -1,17 +1,12 @@
 <view class="page page--tab {{themeCls}}">
   <view class="page-body">
 
-    <!-- 页头 -->
+    <!-- 页头（右上角原来那排全家头像已去掉：和下面的「今晚在家吃」重复，
+         而且一个显示全家、一个只显示在家的，容易看成「人数对不上」） -->
     <view class="hd">
       <view class="hd-main">
         <view class="t-h1">好好吃饭，慢慢生活</view>
         <view class="t-sub">{{dateText}}</view>
-      </view>
-      <view class="avars">
-        <view class="avar" wx:for="{{members}}" wx:key="_id" style="background:{{item.color}}" wx:if="{{index < 4}}">
-          <image class="avar-img" wx:if="{{item.avatarSrc}}" src="{{item.avatarSrc}}" mode="aspectFill"/>
-          <text wx:else>{{item.initial}}</text>
-        </view>
       </view>
     </view>
 
@@ -101,6 +96,12 @@
         <text class="sec-m" bindtap="goDishes">再加一道 ›</text>
       </view>
 
+      <!-- 桌上有菜、却没人说在家吃：做饭的人容易白忙一场，先在桌前面提一句 -->
+      <view class="nobody" wx:if="{{!eatCount}}" bindtap="goFamily">
+        <text class="nobody-tx">今天还没人说在家吃 —— 是都点外卖，还是忘了拨开关？</text>
+        <text class="nobody-go">去家庭页 ›</text>
+      </view>
+
       <view class="g2">
         <view class="dish" wx:for="{{cards}}" wx:key="id" data-id="{{item.dishId}}" bindtap="onOpenDish">
           <image class="dish-img dish-dim" wx:if="{{item.imgSrc && !item.imgFailed}}" src="{{item.imgSrc}}" mode="aspectFill" binderror="onImgError" data-idx="{{index}}"/>
@@ -116,6 +117,8 @@
               <text class="tag tag--ok" wx:if="{{item.confirmed}}">已确认</text>
               <text class="tag tag--how" wx:if="{{item.hasSteps}}" catchtap="onOpenHow" data-id="{{item.dishId}}">做法</text>
             </view>
+            <!-- 这道菜上次做是几天前（排掉了今天这条，不然永远是「今天做过」） -->
+            <view class="dish-last" wx:if="{{item.lastText}}">{{item.lastText}}</view>
           </view>
           <view class="dish-x" catchtap="onRemove" data-id="{{item.dishId}}" data-name="{{item.name}}">✕</view>
         </view>
@@ -172,7 +175,14 @@
 
   <!-- 底部固定操作 -->
   <view class="fixbar" wx:if="{{cards.length}}">
-    <view class="btn btn-primary btn-block {{busy ? 'btn-disabled' : ''}}" bindtap="onConfirmTonight">确认这顿饭</view>
+    <!-- 全部确认过了：那颗「确认这顿饭」就别再杵着了，换个「已记下」+ 下一步（去买菜） -->
+    <view class="donebar" wx:if="{{allConfirmed}}">
+      <view class="done-tx"><text class="done-ok">✓</text>今晚这桌记下了</view>
+      <view class="done-go" bindtap="onOpenShopping">去买菜 ›</view>
+    </view>
+    <view class="btn btn-primary btn-block {{busy ? 'btn-disabled' : ''}}" wx:else bindtap="onConfirmTonight">
+      确认这顿饭<text class="cf-sub" wx:if="{{confirmedCount}}">（还有 {{cards.length - confirmedCount}} 道没确认）</text>
+    </view>
   </view>
 
   <!-- 菜品详情弹层（点今晚桌上的菜就地弹出，不跳页） -->
@@ -229,8 +239,12 @@
         </view>
       </scroll-view>
 
+      <!-- 换一道 / 编辑 一行，复制做法 / 撤掉 一行 —— 四个并排会挤成豆腐块 -->
       <view class="btn-row" style="margin-top:26rpx">
+        <view class="btn btn-ghost" bindtap="onSwapDish">换一道</view>
         <view class="btn btn-ghost" bindtap="onEditDish">编辑</view>
+      </view>
+      <view class="btn-row">
         <view class="btn btn-ghost" wx:if="{{how.stepList.length}}" bindtap="onCopyHow">复制做法</view>
         <view class="btn btn-plain" bindtap="onRemoveFromHow">从今晚撤掉</view>
       </view>

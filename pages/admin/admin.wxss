@@ -135,6 +135,20 @@
   background: var(--surf2);
 }
 
+/* 「上架 / 下架」这一颗以前没有样式（wxml 里挂着 op-toggle 但全项目没定义），
+   结果最要紧的那个动作反而长得最弱（默认的灰底灰字）。
+   它既不是「主操作」也不是「删除」，而且文案会随状态翻转，所以用琥珀＝提醒级：
+   「这一下会改变它在菜库/点菜里出不出现」。 */
+.op-toggle {
+  color: var(--acc-ink);
+  background: var(--acc-l);
+}
+/* 深色下 --acc 系本来就是暖白字压暖底，不用再改；这里只兜一层，防止以后有人换色值 */
+.theme-dark .op-toggle { background: var(--acc-l); color: var(--acc-ink); }
+@media (prefers-color-scheme: dark) {
+  .op-toggle { background: var(--acc-l); color: var(--acc-ink); }
+}
+
 .admin-ft {
   position: fixed;
   left: 0;
