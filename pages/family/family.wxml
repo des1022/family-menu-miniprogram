@@ -16,7 +16,10 @@
     </view>
 
     <view class="mem" wx:for="{{members}}" wx:key="_id" data-id="{{item._id}}" bindtap="onOpenEdit">
-      <view class="mem-av" style="background:{{item.color}};box-shadow:0 6rpx 18rpx {{item.color}}55">{{item.initial}}</view>
+      <view class="mem-av" style="background:{{item.color}};box-shadow:0 6rpx 18rpx {{item.color}}55">
+        <image class="mem-av-img" wx:if="{{item.avatarSrc}}" src="{{item.avatarSrc}}" mode="aspectFill"/>
+        <text wx:else>{{item.initial}}</text>
+      </view>
       <view class="mem-main">
         <view class="mem-nm">
           <text>{{item.nickname || '未命名'}}</text>
@@ -94,6 +97,31 @@
       </view>
 
       <scroll-view class="fs-scroll" scroll-y>
+        <view class="fm">
+          <view class="fm-l">头像</view>
+          <view class="av-edit">
+            <!-- 「换」= 直接用微信头像（open-type=chooseAvatar，免授权、拿得到本地图） -->
+            <button
+              class="av-btn"
+              open-type="chooseAvatar"
+              bindchooseavatar="onWechatAvatar"
+              style="{{edit.avatarSrc ? '' : 'background:' + edit.color}}"
+            >
+              <image class="av-img" wx:if="{{edit.avatarSrc}}" src="{{edit.avatarSrc}}" mode="aspectFill"/>
+              <text class="av-tx" wx:else>{{edit.initial || '新'}}</text>
+              <view class="av-cam">换</view>
+            </button>
+            <view class="av-side">
+              <view class="av-lnk av-lnk--pri">点左边的圆圈用微信头像</view>
+              <view class="av-lnks">
+                <view class="av-lnk" bindtap="onPickAvatarAlbum">从相册选</view>
+                <view class="av-lnk" wx:if="{{edit.avatar}}" bindtap="onClearAvatar">移除头像</view>
+              </view>
+              <view class="fm-h">不设头像就用昵称的第一个字 + 一个颜色。</view>
+            </view>
+          </view>
+        </view>
+
         <view class="fm">
           <view class="fm-l">昵称</view>
           <input

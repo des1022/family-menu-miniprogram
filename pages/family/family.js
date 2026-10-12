@@ -3,6 +3,7 @@ const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const build = require('../../utils/version.js')
 const { toast, confirm, alert, errText } = require('../../utils/util.js')
+const { attachImgUrls, uploadAvatarImage, deleteImage, chooseImage } = require('../../utils/image.js')
 
 function initialOf(name) {
   const s = String(name || '').trim()
@@ -35,7 +36,8 @@ Page({
 
     tasteOptions: config.TASTE_OPTIONS,
     sheet: false,
-    edit: { id: '', isNew: true, isMe: false, nickname: '' },
+    // edit: 正在编辑的成员。avatar = 云存储 fileID（存进库里），avatarSrc = 能直接显示的地址
+    edit: { id: '', isNew: true, isMe: false, nickname: '', avatar: '', avatarSrc: '', color: '', initial: '' },
     tasteMap: {}
   },
 
@@ -88,24 +90,31 @@ Page({
       members.forEach(m => { rawTastes[m._id] = m.tastes || '' })
       this._rawTastes = rawTastes
 
+      // 头像：先换成临时链接再渲染（云存储桶是私有的，fileID 直连读不到别人传的图）
+      const memberList = members.map(m => ({
+        _id: m._id,
+        color: m.color || config.MEMBER_COLORS[0],
+        nickname: m.nickname || '',
+        initial: initialOf(m.nickname),
+        avatar: m.avatar || '',
+        avatarSrc: '',
+        tasteText: splitTastes(m.tastes).join(' · '),
+        eatTonight: Number(m.eatTonight) !== config.EAT_TONIGHT.NO,
+        isMe: m._id === myId
+      }))
+      await attachImgUrls(memberList, 'avatar', 'avatarSrc')
+
       this.setData({
-        members: members.map(m => ({
-          _id: m._id,
-          color: m.color || config.MEMBER_COLORS[0],
-          nickname: m.nickname || '',
-          initial: initialOf(m.nickname),
-          tasteText: splitTastes(m.tastes).join(' · '),
-          eatTonight: Number(m.eatTonight) !== config.EAT_TONIGHT.NO,
-          isMe: m._id === myId
-        })),
+        members: memberList,
         myId: myId,
         // 认不出我是谁、但家里已经有人了 → 问一句，绝不自动新建
         whoShow: !myId && members.length > 0 && !this._whoDismissed,
-        whoList: members.map(m => ({
+        whoList: memberList.map(m => ({
           _id: m._id,
-          color: m.color || config.MEMBER_COLORS[0],
-          initial: initialOf(m.nickname),
-          nickname: m.nickname || ''
+          color: m.color,
+          initial: m.initial,
+          avatarSrc: m.avatarSrc,
+          nickname: m.nickname
         })),
         eatCount: db.countEatTonight(members),
         dishCount: dishes.length
@@ -182,7 +191,13 @@ Page({
       this.setData({
         sheet: true,
         tasteMap: {},
-        edit: { id: '', isNew: true, isMe: false, nickname: '' }
+        edit: {
+          id: '', isNew: true, isMe: false, nickname: '',
+          avatar: '', avatarSrc: '',
+          // 新成员按人数轮一个颜色，跟 db.addMember 里那套一致
+          color: config.MEMBER_COLORS[this.data.members.length % config.MEMBER_COLORS.length],
+          initial: '新'
+        }
       })
       return
     }
@@ -195,7 +210,11 @@ Page({
     this.setData({
       sheet: true,
       tasteMap: map,
-      edit: { id: id, isNew: false, isMe: m.isMe, nickname: m.nickname }
+      edit: {
+        id: id, isNew: false, isMe: m.isMe, nickname: m.nickname,
+        avatar: m.avatar || '', avatarSrc: m.avatarSrc || '',
+        color: m.color, initial: m.initial
+      }
     })
   },
 
@@ -204,7 +223,54 @@ Page({
   },
 
   onNickInput(e) {
-    this.setData({ 'edit.nickname': e.detail.value })
+    const v = e.detail.value
+    // 没设头像时，圆里那个字跟着昵称走 —— 不然改了名字头像还挂着旧的首字
+    this.setData({ 'edit.nickname': v, 'edit.initial': initialOf(v) })
+  },
+
+  /* ---------------- 头像 ---------------- */
+
+  /**
+   * 微信头像（open-type="chooseAvatar" 的回调）。
+   *
+   * 拿到的是本地临时文件，要传到云存储换成 fileID 才能给全家人看；
+   * 本机的预览先用临时路径，省得等上传完才见到变化。
+   */
+  async onWechatAvatar(e) {
+    const path = e.detail && e.detail.avatarUrl
+    if (!path) return
+    await this.saveAvatarFrom(path)
+  },
+
+  /** 从相册 / 拍照选一张当头像 */
+  async onPickAvatarAlbum() {
+    try {
+      const files = await chooseImage(1)
+      if (!files || !files.length) return
+      await this.saveAvatarFrom(files[0])
+    } catch (err) {
+      console.warn('[family] 选头像失败/取消', err)
+    }
+  },
+
+  /** 上传选中的图 → 写进 edit.avatar（老的先留着，保存成功后才删） */
+  async saveAvatarFrom(filePath) {
+    wx.showLoading({ title: '正在上传', mask: true })
+    try {
+      const fileID = await uploadAvatarImage(filePath)
+      wx.hideLoading()
+      this.setData({ 'edit.avatar': fileID, 'edit.avatarSrc': filePath })
+      toast('头像已就绪，别忘了保存')
+    } catch (e) {
+      wx.hideLoading()
+      console.error('[family] 头像上传失败', e)
+      toast(errText(e) || '头像上传失败，请重试')
+    }
+  },
+
+  /** 移除头像 → 退回「首字 + 颜色」那套 */
+  onClearAvatar() {
+    this.setData({ 'edit.avatar': '', 'edit.avatarSrc': '' })
   },
 
   /** 认错了身份：把「我」改挂到这条成员上 */
@@ -245,21 +311,30 @@ Page({
       return
     }
     const tastes = Object.keys(this.data.tasteMap)
+    const avatar = edit.avatar || ''
+
+    // 换过（或删过）头像时，老的云文件保存成功后清掉 —— 别在库里留一堆没人用的图。
+    // 只在保存成功后删：万一保存失败，老头像还在，不至于两头空。
+    const before = edit.isNew ? null : (this.data.members.filter(x => x._id === edit.id)[0] || null)
+    const staleAvatar = before && before.avatar && before.avatar !== avatar ? before.avatar : ''
+
     try {
       if (edit.isNew) {
         const count = this.data.members.length
         await db.addMember({
           nickname: nickname,
           color: config.MEMBER_COLORS[count % config.MEMBER_COLORS.length],
+          avatar: avatar,
           tastes: tastes.join(';'),
           eatTonight: config.EAT_TONIGHT.YES
         })
       } else {
-        await db.updateMember(edit.id, { nickname: nickname, tastes: tastes.join(';') })
+        await db.updateMember(edit.id, { nickname: nickname, tastes: tastes.join(';'), avatar: avatar })
       }
       this.setData({ sheet: false })
       toast('已保存')
       this.loadAll()
+      if (staleAvatar) deleteImage(staleAvatar)
     } catch (e) {
       console.error('[family] 保存成员失败', e)
       toast('保存失败，请重试')

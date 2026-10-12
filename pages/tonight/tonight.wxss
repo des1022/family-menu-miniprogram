@@ -18,7 +18,7 @@
   color: #fff; font-size: 22rpx; font-weight: 700;
 }
 .avar:first-child { margin-left: 0; }
-.avar--off { opacity: 0.32; }
+.avar-img { width: 100%; height: 100%; border-radius: 50%; display: block; }
 
 /* ==================== 今晚在家吃 ==================== */
 .eatro {
@@ -31,8 +31,12 @@
   padding: 22rpx 24rpx;
   box-shadow: var(--sh);
 }
+.eatro--hover { opacity: 0.88; }
 .eatro-l { font-size: 26rpx; color: var(--ink2); }
 .eatro-v { margin-left: auto; font-size: 30rpx; font-weight: 700; color: var(--pri-ink); }
+/* 一个都没开伙时别显示「0 人」—— 那像出错了。给一句能读懂的话 + 右边箭头提示可点 */
+.eatro-v--none { font-size: 24rpx; font-weight: 600; color: var(--ink3); }
+.eatro-go { font-size: 30rpx; color: var(--ink3); margin-left: -8rpx; }
 
 /* ==================== 未点态 ==================== */
 .hero-q {

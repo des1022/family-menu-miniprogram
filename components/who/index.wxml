@@ -17,7 +17,10 @@
         data-id="{{item._id}}"
         bindtap="onPick"
       >
-        <view class="who-av" style="background:{{item.color}}">{{item.initial}}</view>
+        <view class="who-av" style="background:{{item.color}}">
+          <image class="who-av-img" wx:if="{{item.avatarSrc}}" src="{{item.avatarSrc}}" mode="aspectFill"/>
+          <text wx:else>{{item.initial}}</text>
+        </view>
         <view class="who-nm">{{item.nickname || '未命名'}}</view>
         <text class="who-go">这是我 ›</text>
       </view>

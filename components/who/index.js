@@ -8,7 +8,8 @@
  * 用法：
  *   <who show="{{whoShow}}" members="{{whoList}}"
  *        bindpick="onWhoPick" bindcreate="onWhoCreate" bindclose="onWhoClose"/>
- *   members 每项需要：{ _id, color, initial, nickname }
+ *   members 每项需要：{ _id, color, initial, nickname, avatarSrc? }
+ *   （avatarSrc 是已经换好的头像地址；没有就退回 initial + color 那个圆）
  */
 Component({
   properties: {

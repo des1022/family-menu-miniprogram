@@ -8,7 +8,10 @@
         <view class="t-sub">{{dateText}}</view>
       </view>
       <view class="avars">
-        <view class="avar" wx:for="{{members}}" wx:key="_id" style="background:{{item.color}}" wx:if="{{index < 4}}">{{item.initial}}</view>
+        <view class="avar" wx:for="{{members}}" wx:key="_id" style="background:{{item.color}}" wx:if="{{index < 4}}">
+          <image class="avar-img" wx:if="{{item.avatarSrc}}" src="{{item.avatarSrc}}" mode="aspectFill"/>
+          <text wx:else>{{item.initial}}</text>
+        </view>
       </view>
     </view>
 
@@ -42,13 +45,18 @@
       </view>
     </view>
 
-    <!-- 今晚在家吃 -->
-    <view class="eatro" wx:if="{{members.length}}">
+    <!-- 今晚在家吃：只画今天在家的（数字和头像必须对得上）；点一下去家庭页拨开关 -->
+    <view class="eatro" wx:if="{{members.length}}" bindtap="goFamily" hover-class="eatro--hover">
       <text class="eatro-l">今晚在家吃</text>
       <view class="avars">
-        <view class="avar {{item.eatTonight ? '' : 'avar--off'}}" wx:for="{{members}}" wx:key="_id" style="background:{{item.color}}" wx:if="{{index < 5}}">{{item.initial}}</view>
+        <view class="avar" wx:for="{{eating}}" wx:key="_id" style="background:{{item.color}}" wx:if="{{index < 5}}">
+          <image class="avar-img" wx:if="{{item.avatarSrc}}" src="{{item.avatarSrc}}" mode="aspectFill"/>
+          <text wx:else>{{item.initial}}</text>
+        </view>
       </view>
-      <text class="eatro-v">{{eatCount}} 人</text>
+      <text class="eatro-v" wx:if="{{eatCount}}">{{eatCount}} 人</text>
+      <text class="eatro-v eatro-v--none" wx:else>还没人选</text>
+      <text class="eatro-go">›</text>
     </view>
 
     <!-- ============ 未点：引导 ============ -->

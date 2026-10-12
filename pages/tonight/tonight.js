@@ -156,6 +156,7 @@ Page({
     dateText: '',
 
     members: [],
+    eating: [],
     eatCount: 0,
 
     allDishes: [],
@@ -265,7 +266,7 @@ Page({
     // 先确认云环境可用：集合没建的话后面每个查询都会失败，白打一堆请求
     const env = await this.checkEnv()
     if (!env.ready) {
-      this.setData({ busy: false, members: [], eatCount: 0, cards: [], recent: [], suggest: null, allDishes: [], allCount: 0 })
+      this.setData({ busy: false, members: [], eating: [], eatCount: 0, cards: [], recent: [], suggest: null, allDishes: [], allCount: 0 })
       return
     }
 
@@ -295,20 +296,28 @@ Page({
       this._dishMap = {}
       dishes.forEach(d => { this._dishMap[d._id] = d })
 
+      // 成员头像：和菜品图一样，先把 fileID 换成临时链接再渲染（不然首帧是空的、随后闪一下）
+      const memberList = members.map(m => Object.assign({}, m, {
+        initial: initialOf(m.nickname),
+        eatTonight: Number(m.eatTonight) !== config.EAT_TONIGHT.NO
+      }))
+      await attachImgUrls(memberList, 'avatar', 'avatarSrc')
+
       this.setData({
-        members: members.map(m => Object.assign({}, m, {
-          initial: initialOf(m.nickname),
-          eatTonight: Number(m.eatTonight) !== config.EAT_TONIGHT.NO
-        })),
+        members: memberList,
+        // 「今晚在家吃」那一行只画今天在家的：以前把所有人画出来（不在家的调淡），
+        // 但右边的数字只数在家的 —— 3 个人里 2 个在家就成了「3 个头像 vs 2 人」（2026-10-12 反馈）
+        eating: memberList.filter(m => m.eatTonight),
         eatCount: db.countEatTonight(members),
         allDishes: onDishes,
         allCount: dishes.length,
         // 认不出我是谁、但家里已经有人了 → 让用户指认，绝不自动新建
         whoShow: !me && members.length > 0 && !this._whoDismissed,
-        whoList: members.map(m => ({
+        whoList: memberList.map(m => ({
           _id: m._id,
           color: m.color || config.MEMBER_COLORS[0],
-          initial: initialOf(m.nickname),
+          initial: m.initial,
+          avatarSrc: m.avatarSrc || '',
           nickname: m.nickname || ''
         })),
         busy: false
@@ -475,6 +484,11 @@ Page({
 
   goDishes() {
     wx.switchTab({ url: '/pages/dishes/dishes' })
+  },
+
+  /** 「今晚在家吃」那一行点了就去家庭页 —— 谁在家吃是在那页拨的开关，这里只是显示 */
+  goFamily() {
+    wx.switchTab({ url: '/pages/family/family' })
   },
 
   async onQuickAdd(e) {

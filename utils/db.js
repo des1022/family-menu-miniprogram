@@ -221,6 +221,7 @@ async function createSelfMember(count) {
     data: {
       nickname: legacyNick,
       color: color,
+      avatar: '',
       eatTonight: config.EAT_TONIGHT.YES,
       tastes: '',
       self: 1,
@@ -329,6 +330,8 @@ function addMember(data) {
     data: Object.assign({
       nickname: '',
       color: '#D9714E',
+      // 头像（云存储 fileID）。留空就用昵称第一个字 + 自己那套颜色
+      avatar: '',
       tastes: '',
       eatTonight: 1,
       self: 0

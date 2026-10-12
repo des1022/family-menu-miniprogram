@@ -9,6 +9,9 @@ module.exports = {
   // 云存储中菜品图片存放目录（必须以 / 结尾）
   DISH_IMAGE_DIR: 'dish-images/',
 
+  // 成员头像目录（和菜品图分开存，删菜时不会误删头像）
+  AVATAR_IMAGE_DIR: 'member-avatars/',
+
   // 图片压缩阈值：宽度 <= 800px，单张 <= 200KB
   MAX_IMAGE_WIDTH: 800,
   MAX_IMAGE_SIZE: 200 * 1024,

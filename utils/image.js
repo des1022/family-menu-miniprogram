@@ -163,27 +163,38 @@ function extOf(filePath) {
 }
 
 /**
- * 上传菜品图片到云存储
+ * 上传图片到云存储（压缩 → 按文件头定扩展名 → uploadFile）
  * @param {string} filePath 本地临时路径
+ * @param {string} dir 云存储目录（必须以 / 结尾），默认菜品图目录
  * @returns {Promise<string>} 云文件 ID（cloud://...）
  */
-async function uploadDishImage(filePath) {
+async function uploadImage(filePath, dir) {
   const { initCloud } = require('./cloud.js')
   initCloud()
   const compressed = await compressImage(filePath)
   const ext = extOf(compressed)
-  const cloudPath = `${config.DISH_IMAGE_DIR}${Date.now()}-${randomStr(8)}.${ext}`
+  const cloudPath = `${dir || config.DISH_IMAGE_DIR}${Date.now()}-${randomStr(8)}.${ext}`
   const res = await wx.cloud.uploadFile({ cloudPath, filePath: compressed })
   return res.fileID
 }
 
-/** 删除云存储中的菜品图片 */
-async function deleteDishImage(fileID) {
+/** 上传菜品图片（老名字，保留：菜库/菜品编辑页都在用） */
+function uploadDishImage(filePath) {
+  return uploadImage(filePath, config.DISH_IMAGE_DIR)
+}
+
+/** 上传成员头像 */
+function uploadAvatarImage(filePath) {
+  return uploadImage(filePath, config.AVATAR_IMAGE_DIR)
+}
+
+/** 删除云存储里的文件（按 fileID；菜品图、成员头像都走它） */
+async function deleteImage(fileID) {
   if (!fileID || String(fileID).indexOf('cloud://') !== 0) return
   try {
     await wx.cloud.deleteFile({ fileList: [fileID] })
   } catch (e) {
-    console.warn('[image] 云存储图片删除失败（可忽略）', e)
+    console.warn('[image] 云存储文件删除失败（可忽略）', e)
   }
 }
 
@@ -292,28 +303,37 @@ function cachedImgUrl(fileID) {
 }
 
 /**
- * 给一批「带 image 字段」的数据补上 imgSrc（可直接喂给 <image> 的地址），原地改。
+ * 给一批「带图片字段」的数据补上可直接喂给 <image> 的地址（原地改）。
  *
  * **必须在 setData 之前调**：否则第一帧喂给 <image> 的是读不到的 fileID（占位块），
  * 等云函数回来再换成网址 —— 用户看到的就是「空白闪一下变成图」。
  * 换不到就退回原始 fileID（传图的人自己仍然看得见），不会更差。
+ *
+ * @param {Array} items
+ * @param {string} [field] 源字段名，默认 'image'（成员头像是传 'avatar'）
+ * @param {string} [outKey] 目标字段名，默认 'imgSrc'（成员头像是传 'avatarSrc'）
  */
-async function attachImgUrls(items) {
+async function attachImgUrls(items, field, outKey) {
+  const f = field || 'image'
+  const o = outKey || 'imgSrc'
   const list = items || []
-  const urls = await resolveCloudImages(list.map(it => it && it.image))
+  const urls = await resolveCloudImages(list.map(it => it && it[f]))
   let changed = false
   list.forEach(it => {
-    if (!it || !it.image) return
-    const u = urls[it.image] || it.image
-    if (u && u !== it.imgSrc) { it.imgSrc = u; changed = true }
+    if (!it || !it[f]) return
+    const u = urls[it[f]] || it[f]
+    if (u && u !== it[o]) { it[o] = u; changed = true }
   })
   return changed
 }
 
 module.exports = {
   compressImage,
+  uploadImage,
   uploadDishImage,
-  deleteDishImage,
+  uploadAvatarImage,
+  deleteImage,
+  deleteDishImage: deleteImage,   // 老名字，菜品相关的调用点还在用
   chooseImage,
   tempUrlOf,
   resolveCloudImages,
