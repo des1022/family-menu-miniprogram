@@ -53,6 +53,8 @@
 }
 .chips::-webkit-scrollbar { width: 0; height: 0; }
 .chip--accstar { background: var(--acc-l); color: var(--acc-ink); border-color: var(--acc); }
+/* 胶囊上的数量：比主词弱一档，点之前就知道会出现几道 */
+.chip-n { font-size: 21rpx; font-weight: 700; opacity: 0.72; margin-left: 8rpx; }
 .chip--clear { background: transparent; color: var(--ink3); border-style: dashed; }
 
 /* ---------- 网格 ---------- */

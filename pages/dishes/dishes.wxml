@@ -56,7 +56,7 @@
             wx:key="key"
             data-key="{{item.key}}"
             bindtap="onSwitchFilter"
-          >{{item.label}}</view>
+          >{{item.label}}<text class="chip-n">{{item.count}}</text></view>
 
           <view class="chip chip--clear" wx:if="{{hasFilter}}" bindtap="onClearFilter">清除 ✕</view>
         </view>

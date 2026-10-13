@@ -186,7 +186,6 @@ Page({
 
       this.setData({ allCount: dishes.length, catNames: catNames })
       this.buildCatList()
-      this.buildChips()
       this.filterList()
     } catch (e) {
       console.error('[dishes] 加载失败', e)
@@ -194,15 +193,6 @@ Page({
     } finally {
       this.setData({ loading: false })
     }
-  },
-
-  buildChips() {
-    // 「全部」已经放到左侧分类列的第一项，这里只留两种状态筛选
-    const chips = [
-      { key: config.CAT_FAV, label: '★ 常吃', acc: true },
-      { key: config.CAT_RECENT, label: '本周没吃', acc: false }
-    ]
-    this.setData({ chips: chips })
   },
 
   /** 左侧分类列（含每类数量，「全部」排第一） */
@@ -258,6 +248,23 @@ Page({
     this.setData({ keyword: '' }, () => this.filterList())
   },
 
+  /**
+   * 一道菜过不过当前这组条件（关键词 + 分类/胶囊）。
+   * 抽出来是为了让胶囊上的数量能跟列表用**同一套判断**算 ——
+   * 否则「★ 常吃 4」点下去出来 3 张，用户会以为坏了。
+   */
+  matchDish(d, kw, key, freq, recent) {
+    if (kw) {
+      const hit = String(d.name || '').indexOf(kw) > -1
+        || String(d.ingredients || '').indexOf(kw) > -1
+      if (!hit) return false
+    }
+    if (key === config.CAT_FAV) return d.favorite === 1 || (freq[d._id] || 0) > 0
+    if (key === config.CAT_RECENT) return !recent[d._id]
+    if (key) return d.category === key
+    return true
+  },
+
   filterList() {
     const all = this._all || []
     const kw = String(this.data.keyword || '').trim()
@@ -267,17 +274,7 @@ Page({
     const tonight = this._tonight || {}
     const lastMap = this._lastMap || {}
 
-    let list = all.filter(d => {
-      if (kw) {
-        const hit = String(d.name || '').indexOf(kw) > -1
-          || String(d.ingredients || '').indexOf(kw) > -1
-        if (!hit) return false
-      }
-      if (key === config.CAT_FAV) return d.favorite === 1 || (freq[d._id] || 0) > 0
-      if (key === config.CAT_RECENT) return !recent[d._id]
-      if (key) return d.category === key
-      return true
-    })
+    let list = all.filter(d => this.matchDish(d, kw, key, freq, recent))
 
     if (key === config.CAT_FAV) {
       list = list.slice().sort((a, b) => {
@@ -311,7 +308,17 @@ Page({
       imgFailed: false
     }))
 
-    this.setData({ list: decorated, showCount: decorated.length })
+    // 胶囊上的数量：按「点下去会出现几道」算。
+    // 点胶囊会清掉左边的分类（onSwitchFilter 里 activeCat 置空），所以这里只叠关键词、
+    // 不叠分类 —— 这样数出来的和点完看到的完全一致（点之前就知道有多少）。
+    const chips = [
+      { key: config.CAT_FAV, label: '★ 常吃', acc: true,
+        count: all.filter(d => this.matchDish(d, kw, config.CAT_FAV, freq, recent)).length },
+      { key: config.CAT_RECENT, label: '本周没吃', acc: false,
+        count: all.filter(d => this.matchDish(d, kw, config.CAT_RECENT, freq, recent)).length }
+    ]
+
+    this.setData({ list: decorated, showCount: decorated.length, chips: chips })
     this._listRaw = list
   },
 
