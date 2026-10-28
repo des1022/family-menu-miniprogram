@@ -386,14 +386,18 @@ async function findRecord(date, dishId) {
 /**
  * 把一道菜加进今晚的桌（去掉份数后：已在桌上就只刷新点单人，不再累加）
  * 冗余 dishName/dishImage，菜品删除后历史日历仍可读
+ *
+ * @param {string} [flavor] 点菜时选的口味（菜品没有口味时留空）
  */
-async function addToTonight(dish, date) {
+async function addToTonight(dish, date, flavor) {
   const d = date || todayStr()
   const me = await getMyMember()
   const payload = {
     dishName: dish.name,
     dishImage: dish.image || '',
     price: dish.price || 0,
+    // 口味记在记录上（不是菜品上）：同一道菜今天做的是「中辣」
+    flavor: flavor || '',
     byId: me ? me._id : '',
     byName: me && me.nickname ? me.nickname : '',
     byColor: me ? me.color : '',
@@ -409,9 +413,18 @@ async function addToTonight(dish, date) {
       dishId: dish._id,
       num: 1,
       remark: '',
+      flavor: flavor || '',
       confirmed: config.RECORD_CONFIRMED.DRAFT,
       createTime: db().serverDate()
     }, payload)
+  })
+}
+
+/** 改「今晚这道菜做哪种口味」（点菜后想换，不用撤掉重加） */
+function updateRecordFlavor(id, flavor) {
+  if (!id) return null
+  return colRecords().doc(id).update({
+    data: { flavor: flavor || '', updateTime: db().serverDate() }
   })
 }
 
@@ -870,6 +883,7 @@ module.exports = {
   removeRecord,
   clearDrafts,
   markConfirmed,
+  updateRecordFlavor,
   countConfirmed,
   getAllRecords,
   watchRecordsByDate,

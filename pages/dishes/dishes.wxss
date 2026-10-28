@@ -171,6 +171,8 @@
 .dt-sec { margin-top: 24rpx; }
 .dt-h { font-size: 22rpx; font-weight: 700; color: var(--ink2); letter-spacing: 0.08em; margin-bottom: 12rpx; }
 .dt-ing { display: flex; flex-wrap: wrap; gap: 12rpx; }
+/* 详情里「今天做：中辣（再点一下取消）」那行小提示 */
+.dt-fh { font-size: 22rpx; font-weight: 600; color: var(--acc-ink); margin-top: 12rpx; }
 .dt-ing-i {
   font-size: 24rpx; font-weight: 600;
   background: var(--ok-l); color: var(--ok-ink);

@@ -258,6 +258,13 @@ view, text, input, textarea, button, picker, scroll-view {
   color: var(--acc-ink);
   box-shadow: inset 0 0 0 2rpx var(--acc);
 }
+/* 选中（详情里点选的「今天做哪种」）：琥珀实底 + --acc-ink 的字。
+   和口味弹层里那颗选中胶囊是同一套做法（不写死颜色，两种主题都读得清）。 */
+.fchip--on {
+  background: var(--acc);
+  color: var(--acc-ink);
+  font-weight: 700;
+}
 
 .tag--pri { background: var(--pri-l); color: var(--pri-ink); }
 .tag--acc { background: var(--acc-l); color: var(--acc-ink); }

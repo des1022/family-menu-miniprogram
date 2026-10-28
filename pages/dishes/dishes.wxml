@@ -152,12 +152,19 @@
             <text class="dt-ing-i" wx:for="{{detail.ingList}}" wx:key="*this">{{item}}</text>
           </view>
         </view>
-        <!-- 口味：编辑页填了才出现（微辣 / 中辣 / 特辣 这种） -->
+        <!-- 口味：编辑页填了才出现。详情里可以直接点选「今天做哪种」，再按下面的「加入今晚」 -->
         <view class="dt-sec" wx:if="{{detail.flavorList.length}}">
-          <view class="dt-h">口味</view>
+          <view class="dt-h">口味 <text class="dt-h-n">点一下选今天做的</text></view>
           <view class="dt-ing">
-            <text class="fchip" wx:for="{{detail.flavorList}}" wx:key="*this">{{item}}</text>
+            <text
+              class="fchip {{detail.pickedFlavor === item ? 'fchip--on' : ''}}"
+              wx:for="{{detail.flavorList}}"
+              wx:key="*this"
+              data-v="{{item}}"
+              bindtap="onPickDetailFlavor"
+            >{{item}}</text>
           </view>
+          <view class="dt-fh" wx:if="{{detail.pickedFlavor}}">今天做：{{detail.pickedFlavor}}（再点一下取消）</view>
         </view>
         <view class="dt-sec" wx:if="{{detail.desc}}">
           <view class="dt-h">备注</view>
@@ -182,6 +189,17 @@
       </view>
     </view>
   </view>
+
+  <!-- 点菜时问「今天做哪种口味」（菜品没填过口味就不会出现） -->
+  <flavor-pick
+    show="{{flavorPick.show}}"
+    title="{{flavorPick.name}}"
+    options="{{flavorPick.options}}"
+    current="{{flavorPick.current}}"
+    bindpick="onFlavorPick"
+    bindclear="onFlavorClear"
+    bindclose="onFlavorClose"
+  />
 
   <!-- 统一确认弹窗：utils/util.js 的 confirm()/alert() 会自动找到它 -->
   <ui-dialog id="uiDialog"/>

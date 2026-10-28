@@ -4,6 +4,7 @@
   "backgroundTextStyle": "@bgTxtStyle",
   "usingComponents": {
     "ui-dialog": "/components/ui-dialog/index",
-    "empty": "/components/empty/index"
+    "empty": "/components/empty/index",
+    "flavor-pick": "/components/flavor-pick/index"
   }
 }

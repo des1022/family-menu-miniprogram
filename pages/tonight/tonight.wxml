@@ -113,6 +113,8 @@
           <view class="dish-body">
             <view class="dish-nm ellipsis">{{item.name}}</view>
             <view class="dish-tg">
+              <!-- 今天这道做哪种口味：点了能改（不用撤掉重加） -->
+              <text class="tag tag--acc tag--tap" wx:if="{{item.flavor}}" catchtap="onTapFlavor" data-id="{{item.dishId}}">{{item.flavor}}</text>
               <text class="tag" wx:if="{{item.category}}">{{item.category}}</text>
               <text class="tag tag--ok" wx:if="{{item.confirmed}}">已确认</text>
               <text class="tag tag--how" wx:if="{{item.hasSteps}}" catchtap="onOpenHow" data-id="{{item.dishId}}">做法</text>
@@ -218,11 +220,17 @@
           </view>
         </view>
 
-        <!-- 口味：编辑页填了才出现 -->
+        <!-- 口味：编辑页填了才出现。今天做的那种高亮；点一下就能改（再点一次取消） -->
         <view class="hw-sec" wx:if="{{how.flavorList.length}}">
-          <view class="hw-h">口味</view>
+          <view class="hw-h">口味 <text class="hw-h-n">{{how.flavor ? '今天做 ' + how.flavor : '点一下选'}}</text></view>
           <view class="hw-ing">
-            <text class="fchip" wx:for="{{how.flavorList}}" wx:key="*this">{{item}}</text>
+            <text
+              class="fchip {{how.flavor === item ? 'fchip--on' : ''}}"
+              wx:for="{{how.flavorList}}"
+              wx:key="*this"
+              data-v="{{item}}"
+              bindtap="onTapHowFlavor"
+            >{{item}}</text>
           </view>
         </view>
 
@@ -364,6 +372,17 @@
     bindpick="onWhoPick"
     bindcreate="onWhoCreate"
     bindclose="onWhoClose"
+  />
+
+  <!-- 点菜时问「今天做哪种口味」/ 点小签改口味 -->
+  <flavor-pick
+    show="{{flavorPick.show}}"
+    title="{{flavorPick.name}}"
+    options="{{flavorPick.options}}"
+    current="{{flavorPick.current}}"
+    bindpick="onFlavorPick"
+    bindclear="onFlavorClear"
+    bindclose="onFlavorClose"
   />
 
   <!-- 统一确认弹窗：utils/util.js 的 confirm()/alert() 会自动找到它 -->

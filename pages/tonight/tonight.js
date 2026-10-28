@@ -166,6 +166,8 @@ Page({
     suggest: null,
     ingCount: 0,
     ingList: [],
+    // 「今天做哪种口味？」弹层：mode = 'add'（点菜时选）/ 'change'（改桌上那道）
+    flavorPick: { show: false, mode: 'add', dishId: '', recordId: '', name: '', options: [], current: '' },
     // 全部确认之后，底部那颗「确认这顿饭」就不该再杵在那儿了
     confirmedCount: 0,
     allConfirmed: false,
@@ -398,6 +400,7 @@ Page({
         image: r.dishImage || (dish ? dish.image : '') || '',
         category: dish ? dish.category : '',
         remark: r.remark || '',
+        flavor: r.flavor || '',
         // 「上次做是几天前」：用排掉今天的那份记录，免得每道都写「今天做过」
         lastText: lastBefore[r.dishId] ? daysAgoText(lastBefore[r.dishId]) : '',
         confirmed: Number(r.confirmed) === config.RECORD_CONFIRMED.CONFIRMED,
@@ -568,14 +571,109 @@ Page({
       return
     }
 
-    await this.addDishToTonight(dish)
+    // 这道菜填过口味 → 先问今天做哪种；没填过直接加
+    const options = parseFlavors(dish.flavors)
+    if (options.length) {
+      this.setData({
+        flavorPick: {
+          show: true, mode: 'add', dishId: dish._id, recordId: '',
+          name: dish.name, options: options, current: ''
+        }
+      })
+      return
+    }
+    await this.addDishToTonight(dish, '')
   },
 
-  async addDishToTonight(dish) {
+  /* ---------------- 点菜时选口味 / 改口味 ---------------- */
+
+  /** 点今晚卡片上的口味小签：改今天这道菜做哪种 */
+  onTapFlavor(e) {
+    const dishId = e.currentTarget.dataset.id
+    const card = (this.data.cards || []).filter(c => c.dishId === dishId)[0]
+    if (!card) return
+    const dish = (this._dishMap || {})[dishId]
+    const options = parseFlavors(dish && dish.flavors)
+    if (!options.length) {
+      // 菜品的口味被清空了：给个说法，别让点击没反应
+      toast('这道菜还没填口味，去编辑里加')
+      return
+    }
+    this.setData({
+      flavorPick: {
+        show: true, mode: 'change', dishId: dishId, recordId: card.id || '',
+        name: card.name, options: options, current: card.flavor || ''
+      }
+    })
+  },
+
+  /**
+   * 详情弹层里点口味胶囊：直接改成那个口味（再点同一个 = 清空）。
+   * 桌上卡片的「口味小签」只在这道菜已经选了口味时才有，所以
+   * 决策器自动加进来的菜（没选过口味）只能从这里补上。
+   */
+  async onTapHowFlavor(e) {
+    const v = e.currentTarget.dataset.v || ''
+    const h = this.data.how
+    if (!h) return
+    if (!h.recordId) {
+      toast('这道菜还没加进今晚')
+      return
+    }
+    const next = v === h.flavor ? '' : v
     try {
-      await db.addToTonight(dish, this.data.today)
+      await db.updateRecordFlavor(h.recordId, next)
+      this.setData({ 'how.flavor': next })
+      const records = await db.getRecordsByDate(this.data.today)
+      await this.applyRecords(records)
+      toast(next ? '今天做「' + next + '」' : '口味已清空')
+    } catch (err) {
+      console.error('[tonight] 改口味失败', err)
+      toast('改不了，请重试')
+    }
+  },
+
+  async onFlavorPick(e) {
+    const p = this.data.flavorPick
+    const flavor = e.detail.flavor || ''
+    this.setData({ 'flavorPick.show': false })
+    await this.applyFlavorChoice(p, flavor)
+  },
+
+  async onFlavorClear() {
+    const p = this.data.flavorPick
+    this.setData({ 'flavorPick.show': false })
+    await this.applyFlavorChoice(p, '')
+  },
+
+  onFlavorClose() {
+    this.setData({ 'flavorPick.show': false })
+  },
+
+  /** 选完之后：点菜就加进去，改口味就更新记录 */
+  async applyFlavorChoice(p, flavor) {
+    try {
+      if (p.mode === 'change' && p.recordId) {
+        await db.updateRecordFlavor(p.recordId, flavor)
+        const records = await db.getRecordsByDate(this.data.today)
+        await this.applyRecords(records)
+        toast(flavor ? '改成「' + flavor + '」了' : '口味已清空')
+        return
+      }
+      const dish = (this.data.allDishes || []).filter(d => d._id === p.dishId)[0]
+      if (!dish) return
+      await this.addDishToTonight(dish, flavor)
+    } catch (err) {
+      console.error('[tonight] 口味操作失败', err)
+      toast('操作失败，请重试')
+    }
+  },
+
+  async addDishToTonight(dish, flavor) {
+    try {
+      await db.addToTonight(dish, this.data.today, flavor)
       wx.vibrateShort({ type: 'light', fail: () => {} })
-      toast('已加进今晚的桌')
+      toast(flavor ? '已加进今晚 · ' + flavor : '已加进今晚的桌')
       const records = await db.getRecordsByDate(this.data.today)
       this.applyRecords(records)
     } catch (err) {
@@ -685,6 +783,7 @@ Page({
         byName: (card && card.byName) || '',
         ingList: parseIngredients(dish && dish.ingredients),
         flavorList: parseFlavors(dish && dish.flavors),
+        flavor: (card && card.flavor) || '',
         desc: (dish && dish.desc) || '',
         stepList: parseSteps(dish && dish.steps)
       }

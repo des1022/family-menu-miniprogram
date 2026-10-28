@@ -1,0 +1,26 @@
+<view class="fp-mask" wx:if="{{show}}" bindtap="onClose" catchtouchmove="noop">
+  <view class="fp-sheet" catchtap="noop">
+    <view class="fp-grab"></view>
+
+    <view class="fp-hd">
+      <text class="fp-t">今天做哪种口味？</text>
+      <view class="fp-x" bindtap="onClose">✕</view>
+    </view>
+    <view class="fp-sub" wx:if="{{title}}">{{title}} · 选一个，以后还能改</view>
+    <view class="fp-sub" wx:else>选一个，以后还能改</view>
+
+    <view class="fp-opts">
+      <view
+        class="fp-o {{item === current ? 'fp-o--on' : ''}}"
+        wx:for="{{options}}"
+        wx:key="*this"
+        data-v="{{item}}"
+        bindtap="onPick"
+      >{{item}}</view>
+    </view>
+
+    <view class="fp-acts">
+      <view class="fp-btn" bindtap="onClear">不选口味</view>
+    </view>
+  </view>
+</view>

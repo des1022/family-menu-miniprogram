@@ -97,7 +97,9 @@ Page({
     showCount: 0,
     list: [],
     loading: true,
-    detail: null
+    detail: null,
+    // 「今天做哪种口味？」弹层（点菜时用；菜品没填过口味就不会出现）
+    flavorPick: { show: false, dishId: '', name: '', options: [], current: '' }
   },
 
   onShow() {
@@ -174,7 +176,11 @@ Page({
 
       const todayRecords = records.filter(r => r.date === db.todayStr())
       this._tonight = {}
-      todayRecords.forEach(r => { this._tonight[r.dishId] = true })
+      this._tonightFlavor = {}
+      todayRecords.forEach(r => {
+        this._tonight[r.dishId] = true
+        this._tonightFlavor[r.dishId] = r.flavor || ''
+      })
 
       const fromDishes = Array.from(new Set(onShelf.map(d => d.category).filter(Boolean)))
       const catNames = Array.from(new Set(cats.map(c => c.name).concat(fromDishes)))
@@ -388,6 +394,8 @@ Page({
         ingredients: dish.ingredients || '',
         ingList: parseIngredients(dish.ingredients).slice(0, 12),
         flavorList: parseFlavors(dish.flavors),
+        // 详情里点选的「今天做哪种」，默认用今天已经点过的那种
+        pickedFlavor: (this._tonightFlavor || {})[dish._id] || '',
         stepList: parseSteps(dish.steps),
         tagList: parseTags(dish.tags).slice(0, 4),
         favorite: dish.favorite === 1 ? 1 : 0,
@@ -418,20 +426,82 @@ Page({
         if (!ok) return
         await db.removeFromTonight(db.todayStr(), id)
         delete this._tonight[id]
-      } else {
-        await db.addToTonight(dish, db.todayStr())
-        this._tonight[id] = true
-        wx.vibrateShort({ type: 'light', fail: () => {} })
+        if (this._tonightFlavor) delete this._tonightFlavor[id]
+        toast('已撤掉')
+        this.filterList()
+        if (this.data.detail && this.data.detail._id === id) {
+          this.setData({ 'detail.onTonight': false, 'detail.pickedFlavor': '' })
+        }
+        return
       }
-      toast(on ? '已撤掉' : '已加进今晚的桌')
-      this.filterList()
-      if (this.data.detail && this.data.detail._id === id) {
-        this.setData({ 'detail.onTonight': !on })
+
+      // 详情弹层里本来就有一排「口味」可以点选，直接用它选的那个；
+      // 卡片上那个 ＋ 没地方选，才弹一层问「今天做哪种」。
+      const fromDetail = !!(this.data.detail && this.data.detail._id === id)
+      const options = parseFlavors(dish.flavors)
+      if (options.length && !fromDetail) {
+        this.setData({
+          flavorPick: { show: true, dishId: id, name: dish.name, options: options, current: '' }
+        })
+        return
       }
+      await this.addOne(dish, fromDetail ? (this.data.detail.pickedFlavor || '') : '')
     } catch (err) {
       console.error('[dishes] 操作失败', err)
       toast('操作失败，请重试')
     }
+  },
+
+  /** 真正把菜加进今晚（flavor 为空表示不选口味） */
+  async addOne(dish, flavor) {
+    try {
+      await db.addToTonight(dish, db.todayStr(), flavor)
+      this._tonight[dish._id] = true
+      if (this._tonightFlavor) this._tonightFlavor[dish._id] = flavor || ''
+      wx.vibrateShort({ type: 'light', fail: () => {} })
+      toast(flavor ? '已加进今晚 · ' + flavor : '已加进今晚的桌')
+      this.filterList()
+      if (this.data.detail && this.data.detail._id === dish._id) {
+        this.setData({ 'detail.onTonight': true, 'detail.pickedFlavor': flavor || '' })
+      }
+    } catch (err) {
+      console.error('[dishes] 加菜失败', err)
+      toast('操作失败，请重试')
+    }
+  },
+
+  /* ---------------- 口味选择弹层 ---------------- */
+
+  _findDish(id) {
+    return (this._all || []).filter(d => d._id === id)[0] || null
+  },
+
+  async onFlavorPick(e) {
+    const p = this.data.flavorPick
+    const dish = this._findDish(p.dishId)
+    this.setData({ 'flavorPick.show': false })
+    if (!dish) return
+    await this.addOne(dish, e.detail.flavor || '')
+  },
+
+  async onFlavorClear() {
+    const p = this.data.flavorPick
+    const dish = this._findDish(p.dishId)
+    this.setData({ 'flavorPick.show': false })
+    if (!dish) return
+    await this.addOne(dish, '')
+  },
+
+  onFlavorClose() {
+    // 关掉＝不加了（点菜这一步还没确认）
+    this.setData({ 'flavorPick.show': false })
+  },
+
+  /** 详情弹层里点口味胶囊：只是选，按「加入今晚」才真的加 */
+  onPickDetailFlavor(e) {
+    const v = e.currentTarget.dataset.v || ''
+    const cur = this.data.detail && this.data.detail.pickedFlavor
+    this.setData({ 'detail.pickedFlavor': v === cur ? '' : v })
   },
 
   async onToggleFav() {

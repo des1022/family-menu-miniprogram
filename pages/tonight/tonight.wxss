@@ -186,6 +186,8 @@
 .dish-tg { display: flex; gap: 8rpx; margin-top: 10rpx; flex-wrap: wrap; }
 /* 「9 天没做了」这类小字：比标签弱一档，只作参考 */
 .dish-last { font-size: 20rpx; color: var(--ink3); margin-top: 8rpx; }
+/* 能点的标签（口味）：加一点下点线，暗示「可以改」 */
+.tag--tap { border-bottom: 2rpx dotted currentColor; }
 .owner {
   position: absolute;
   left: 14rpx; top: 14rpx;

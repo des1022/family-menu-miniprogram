@@ -1,0 +1,89 @@
+/**
+ * 自包含样式：自定义组件默认样式隔离（app.wxss 里的 class 不生效），
+ * 所以弹层和胶囊都写全，只依赖继承下来的 CSS 变量（--bg/--surf/--ink/--acc…）。
+ * 配色沿用「口味＝琥珀」这套（菜品详情里的口味签也是琥珀）。
+ */
+
+.fp-mask {
+  position: fixed;
+  left: 0; right: 0; top: 0; bottom: 0;
+  background: rgba(30, 20, 14, 0.45);
+  z-index: 130;            /* 比详情弹层（120）高：详情里点「加入今晚」也能弹出来 */
+  display: flex;
+  align-items: flex-end;
+}
+
+.fp-sheet {
+  width: 100%;
+  background: var(--bg);
+  border-radius: 32rpx 32rpx 0 0;
+  padding: 0 32rpx calc(28rpx + env(safe-area-inset-bottom));
+  box-sizing: border-box;
+}
+
+.fp-grab {
+  width: 68rpx; height: 8rpx;
+  border-radius: 999rpx;
+  background: var(--line);
+  margin: 16rpx auto 6rpx;
+}
+
+.fp-hd {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12rpx 0 0;
+}
+.fp-t { font-size: 32rpx; font-weight: 700; color: var(--ink); }
+.fp-x {
+  width: 56rpx; height: 56rpx;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 30rpx; color: var(--ink3);
+}
+
+.fp-sub {
+  font-size: 24rpx;
+  color: var(--ink2);
+  margin-top: 8rpx;
+  line-height: 1.5;
+}
+
+.fp-opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 18rpx;
+  margin: 28rpx 0 8rpx;
+}
+/* 胶囊：默认浅底描边，选中＝琥珀实底 + 白/深字（深色下 acc 系本身就是暖白字，安全） */
+.fp-o {
+  padding: 18rpx 30rpx;
+  border-radius: 999rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+}
+/* 选中＝琥珀实底 + --acc-ink 的字。
+   注意：组件是样式隔离的，写 `.theme-dark .fp-o--on` 选不到（组件外的 class 看不见），
+   所以这里只靠 CSS 变量：浅色是深棕字压琥珀、深色是暖白字压深琥珀，两边都读得清。 */
+.fp-o--on {
+  background: var(--acc);
+  border-color: var(--acc);
+  color: var(--acc-ink);
+  font-weight: 700;
+}
+
+.fp-acts { margin-top: 22rpx; }
+.fp-btn {
+  height: 88rpx;
+  border-radius: 999rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28rpx;
+  font-weight: 600;
+  color: var(--ink2);
+  background: var(--surf);
+  border: 2rpx solid var(--line);
+}
