@@ -186,6 +186,22 @@ function parseIngredients(raw) {
 }
 
 /**
+ * 口味解析：一道菜可以有几种做法（微辣/中辣/特辣、三分熟/五分熟），
+ * 用户在编辑页用 逗号 / 顿号 / 分号 / 斜杠 隔开写，这里统一成数组。
+ *
+ * 去重 + 最多留 6 个：它是详情里一排小签，多了会换行铺满。
+ */
+function parseFlavors(raw) {
+  const out = []
+  String(raw || '')
+    .split(/[,，、;；\/|\s]+/)
+    .map(s => s.trim())
+    .filter(Boolean)
+    .forEach(s => { if (out.indexOf(s) === -1 && out.length < 6) out.push(s) })
+  return out
+}
+
+/**
  * 做法步骤解析：每行一步。
  *
  * 用户可能自己写「1. 番茄切块」这种编号 —— 这里会把行首编号去掉，
@@ -215,5 +231,6 @@ module.exports = {
   errText,
   parseTags,
   parseIngredients,
+  parseFlavors,
   parseSteps
 }

@@ -2,7 +2,7 @@ const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
 const { SAMPLE_DISHES } = require('../../utils/samples.js')
-const { toast, confirm, alert, errText, parseSteps, parseIngredients, parseTags } = require('../../utils/util.js')
+const { toast, confirm, alert, errText, parseSteps, parseIngredients, parseTags, parseFlavors } = require('../../utils/util.js')
 const { resolveCloudImages, cachedImgUrl, attachImgUrls } = require('../../utils/image.js')
 
 const WEEK = ['日', '一', '二', '三', '四', '五', '六']
@@ -684,6 +684,7 @@ Page({
         tagList: parseTags(dish && dish.tags),
         byName: (card && card.byName) || '',
         ingList: parseIngredients(dish && dish.ingredients),
+        flavorList: parseFlavors(dish && dish.flavors),
         desc: (dish && dish.desc) || '',
         stepList: parseSteps(dish && dish.steps)
       }

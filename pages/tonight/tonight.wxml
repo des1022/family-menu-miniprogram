@@ -218,6 +218,14 @@
           </view>
         </view>
 
+        <!-- 口味：编辑页填了才出现 -->
+        <view class="hw-sec" wx:if="{{how.flavorList.length}}">
+          <view class="hw-h">口味</view>
+          <view class="hw-ing">
+            <text class="fchip" wx:for="{{how.flavorList}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
+
         <view class="hw-sec" wx:if="{{how.desc}}">
           <view class="hw-h">备注</view>
           <view class="hw-tx">{{how.desc}}</view>

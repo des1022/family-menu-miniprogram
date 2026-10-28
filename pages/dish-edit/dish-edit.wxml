@@ -72,6 +72,29 @@
       </view>
     </view>
 
+    <!-- 口味：一道菜可以有好几种做法（微辣/中辣/特辣、三分熟/五分熟），
+         填了才会在菜品详情里显示成一排小签，不填就整块不出现。 -->
+    <view class="fld">
+      <view class="fld-lb">口味</view>
+      <view class="ib ib--row {{focusField === 'flavors' ? 'ib--focus' : ''}}">
+        <input
+          class="ib-in"
+          value="{{form.flavors}}"
+          maxlength="40"
+          placeholder="选填，如：微辣 / 中辣 / 特辣"
+          placeholder-class="ph"
+          bindinput="onInput"
+          bindfocus="onFieldFocus"
+          bindblur="onFieldBlur"
+          data-field="flavors"
+        />
+      </view>
+      <view class="flavor-pv" wx:if="{{flavorList.length}}">
+        <text class="fchip" wx:for="{{flavorList}}" wx:key="*this">{{item}}</text>
+      </view>
+      <view class="cnote" wx:else>填了之后，菜品详情里会显示这几个口味；不填就不显示。</view>
+    </view>
+
     <view class="fld">
       <view class="fld-lb">价格</view>
       <view class="ib ib--row {{focusField === 'price' ? 'ib--focus' : ''}}">
@@ -91,7 +114,7 @@
     </view>
 
     <view class="fld">
-      <view class="fld-lb">描述</view>
+      <view class="fld-lb">备注</view>
       <view class="ib ib--block {{focusField === 'desc' ? 'ib--focus' : ''}}">
         <textarea
           class="ib-ta"

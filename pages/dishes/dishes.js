@@ -1,7 +1,7 @@
 const config = require('../../utils/config.js')
 const db = require('../../utils/db.js')
 const theme = require('../../utils/theme.js')
-const { toast, confirm, parseTags, parseIngredients, parseSteps } = require('../../utils/util.js')
+const { toast, confirm, parseTags, parseIngredients, parseFlavors, parseSteps } = require('../../utils/util.js')
 const { resolveCloudImages, cachedImgUrl, attachImgUrls } = require('../../utils/image.js')
 
 const PH = ['', 'img-ph--2', 'img-ph--3', 'img-ph--4', 'img-ph--5']
@@ -387,6 +387,7 @@ Page({
         desc: dish.desc || '',
         ingredients: dish.ingredients || '',
         ingList: parseIngredients(dish.ingredients).slice(0, 12),
+        flavorList: parseFlavors(dish.flavors),
         stepList: parseSteps(dish.steps),
         tagList: parseTags(dish.tags).slice(0, 4),
         favorite: dish.favorite === 1 ? 1 : 0,

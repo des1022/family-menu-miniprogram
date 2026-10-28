@@ -152,6 +152,13 @@
             <text class="dt-ing-i" wx:for="{{detail.ingList}}" wx:key="*this">{{item}}</text>
           </view>
         </view>
+        <!-- 口味：编辑页填了才出现（微辣 / 中辣 / 特辣 这种） -->
+        <view class="dt-sec" wx:if="{{detail.flavorList.length}}">
+          <view class="dt-h">口味</view>
+          <view class="dt-ing">
+            <text class="fchip" wx:for="{{detail.flavorList}}" wx:key="*this">{{item}}</text>
+          </view>
+        </view>
         <view class="dt-sec" wx:if="{{detail.desc}}">
           <view class="dt-h">备注</view>
           <view class="dt-tx">{{detail.desc}}</view>

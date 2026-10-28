@@ -2,7 +2,7 @@ const config = require('../../utils/config.js')
 const { resolveCloudImages, cachedImgUrl } = require('../../utils/image.js')
 const db = require('../../utils/db.js')
 const { chooseImage, uploadDishImage, deleteDishImage } = require('../../utils/image.js')
-const { toast, showLoading, hideLoading, parseTags, parseIngredients } = require('../../utils/util.js')
+const { toast, showLoading, hideLoading, parseTags, parseIngredients, parseFlavors } = require('../../utils/util.js')
 const theme = require('../../utils/theme.js')
 
 const NEW_CAT_FLAG = '＋ 新增分类…'
@@ -41,6 +41,7 @@ Page({
       category: '',
       image: '',
       price: '',
+      flavors: '',      // 可选口味，分号拼接存库（微辣;中辣;特辣）
       desc: '',
       ingredients: '',
       steps: '',
@@ -60,6 +61,7 @@ Page({
     ico: SEC_ICONS.light,
     switchColor: SWITCH_LIGHT,
     ingList: [],      // 食材解析结果，填完显示成小签，方便一眼看出有没有写错
+    flavorList: [],   // 口味解析结果（同上，填完给个预览）
     focusField: ''    // 当前聚焦的字段（输入块变白底 + 橙色光圈）
   },
 
@@ -119,6 +121,7 @@ Page({
           // 只用于显示：别人传的图客户端读不到，得先换成临时链接（保存时仍然存 image）
           imgSrc: cachedImgUrl(dish.image) || dish.image || '',
           price: dish.price ? String(dish.price) : '',
+          flavors: parseFlavors(dish.flavors).join(' / '),
           desc: dish.desc || '',
           ingredients: dish.ingredients || '',
           steps: dish.steps || '',
@@ -126,6 +129,7 @@ Page({
         },
         oldImage: dish.image || '',
         ingList: parseIngredients(dish.ingredients || ''),
+        flavorList: parseFlavors(dish.flavors),
         selectedTags: parseTags(dish.tags),
         selectedMap: (function (arr) { const m = {}; arr.forEach(x => { m[x] = true }); return m })(parseTags(dish.tags))
       })
@@ -138,6 +142,11 @@ Page({
   onInput(e) {
     const field = e.currentTarget.dataset.field
     let value = e.detail.value
+    // 口味：边打边把预览小签更新出来，和食材一样的做法
+    if (field === 'flavors') {
+      this.setData({ 'form.flavors': value, flavorList: parseFlavors(value) })
+      return
+    }
     if (field === 'newCategory') {
       this.setData({
         newCategory: value,
@@ -224,6 +233,7 @@ Page({
       category,
       image: form.image,
       price,
+      flavors: parseFlavors(form.flavors).join(';'),
       desc: (form.desc || '').trim(),
       ingredients: (form.ingredients || '').trim(),
       steps: (form.steps || '').trim(),

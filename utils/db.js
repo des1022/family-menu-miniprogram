@@ -51,7 +51,7 @@ async function getAllDishes() {
 
 function addDish(data) {
   return colDishes().add({
-    data: Object.assign({ image: '', price: 0 }, data, { createTime: db().serverDate() })
+    data: Object.assign({ image: '', price: 0, flavors: '' }, data, { createTime: db().serverDate() })
   })
 }
 

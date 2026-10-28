@@ -172,6 +172,13 @@
   gap: 12rpx;
   padding: 0 28rpx 26rpx;
 }
+/* 口味的预览小签：跟在输入块下面一行，和食材那排（在卡片底部）不一样 */
+.flavor-pv {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12rpx;
+  margin-top: 16rpx;
+}
 .chip-tag {
   font-size: 24rpx;
   font-weight: 600;
