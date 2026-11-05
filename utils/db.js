@@ -40,13 +40,13 @@ function recentDates(n) {
 
 /** 只取上架菜品 */
 async function getOnDishes() {
-  return fetchAll(colDishes, q => q.orderBy('createTime', 'desc'))
+  return fetchAll(COLLECTIONS.DISHES, { orderBy: [{ field: 'createTime', dir: 'desc' }] })
     .then(list => list.filter(item => item.status === config.DISH_STATUS.ON))
 }
 
 /** 取全部菜品（管理端） */
 async function getAllDishes() {
-  return fetchAll(colDishes, q => q.orderBy('createTime', 'desc'))
+  return fetchAll(COLLECTIONS.DISHES, { orderBy: [{ field: 'createTime', dir: 'desc' }] })
 }
 
 function addDish(data) {
@@ -116,7 +116,9 @@ function watchDishes(onChange) {
 /* ==================== 分类 ==================== */
 
 async function getCategories() {
-  return fetchAll(colCategories, q => q.orderBy('sort', 'asc').orderBy('createTime', 'asc'))
+  return fetchAll(COLLECTIONS.CATEGORIES, {
+    orderBy: [{ field: 'sort', dir: 'asc' }, { field: 'createTime', dir: 'asc' }]
+  })
 }
 
 function addCategory(name, sort) {
@@ -321,7 +323,7 @@ async function ensureMyMember() {
 }
 
 async function getMembers() {
-  return fetchAll(colMembers, q => q.orderBy('createTime', 'asc'))
+  return fetchAll(COLLECTIONS.MEMBERS, { orderBy: [{ field: 'createTime', dir: 'asc' }] })
 }
 
 /** 手动新增成员（给家人加的那条，self = 0：绝不被当成「我」） */
@@ -371,10 +373,10 @@ function countEatTonight(members) {
 
 /** 某日全部记录（按创建时间正序 = 点菜顺序） */
 async function getRecordsByDate(date) {
-  return fetchAll(
-    () => colRecords().where({ date: date }),
-    q => q.orderBy('createTime', 'asc')
-  )
+  return fetchAll(COLLECTIONS.RECORDS, {
+    where: { date: date },
+    orderBy: [{ field: 'createTime', dir: 'asc' }]
+  })
 }
 
 /** 同菜找当日已有记录 */
@@ -464,7 +466,7 @@ async function countConfirmed(date) {
 
 /** 全部记录（日历聚合用） */
 async function getAllRecords() {
-  return fetchAll(colRecords, q => q.orderBy('createTime', 'desc'))
+  return fetchAll(COLLECTIONS.RECORDS, { orderBy: [{ field: 'createTime', dir: 'desc' }] })
 }
 
 /** 某日记录实时监听 */
@@ -488,12 +490,15 @@ const colShopping = () => db().collection(COLLECTIONS.SHOPPING)
 
 /** 某日全部采购项 */
 async function getShopping(date) {
-  return fetchAll(() => colShopping().where({ date: date }), q => q.orderBy('createTime', 'asc'))
+  return fetchAll(COLLECTIONS.SHOPPING, {
+    where: { date: date },
+    orderBy: [{ field: 'createTime', dir: 'asc' }]
+  })
 }
 
 /** 全部采购项（备份导出用） */
 async function getAllShopping() {
-  return fetchAll(colShopping, q => q.orderBy('createTime', 'desc'))
+  return fetchAll(COLLECTIONS.SHOPPING, { orderBy: [{ field: 'createTime', dir: 'desc' }] })
 }
 
 function addShoppingItem(date, name, qty) {

@@ -42,3 +42,10 @@ jobs:
         with:
           name: preview-qr
           path: preview-qr.png
+      - name: Deploy cloud functions
+        # 放在最后：云函数传失败不该耽误小程序发出去（客户端有「云函数不通就退回
+        # 客户端分页」的兜底）。改了 cloudfunctions/ 里的代码就会走到这里。
+        env:
+          MP_APPID: ${{ secrets.MP_APPID }}
+          MP_KEY_PATH: ${{ github.workspace }}/private.key
+        run: node scripts/deploy-functions.js

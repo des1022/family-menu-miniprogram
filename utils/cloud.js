@@ -40,7 +40,7 @@ const COLLECTIONS = {
 }
 
 /**
- * 小程序端单次 get 的硬上限：20 条（云函数里才是 100）。
+ * 小程序端单次 get 的硬上限：20 条（云函数里是 100）。
  * 写死在这里，别依赖调用方传的值。
  */
 const CLIENT_PAGE_MAX = 20
@@ -48,15 +48,26 @@ const CLIENT_PAGE_MAX = 20
 /** 一次并发几页。读并发比写宽松，但别贪：4 页在真机上稳，8 页开始偶尔超时 */
 const FETCH_CONCURRENCY = 4
 
-/** 取一页（skip/limit 由调用方算好） */
-async function fetchPage(collFn, orderFn, skip, size) {
-  let query = collFn()
-  if (orderFn) query = orderFn(query)
-  const res = await query.skip(skip).limit(size).get()
+/** 云函数单次能带回来多少（db-fetch 侧也会再夹一次） */
+const FN_LIMIT = 500
+
+/** 云函数读不通（没部署 / 报错）就记下来，本次会话别再试，直接走客户端分页 */
+let fnBroken = false
+
+/** 按 name + opts 构造客户端查询（where 只支持等值，和现有用法一致） */
+function clientQuery(name, opts) {
+  let q = opts && opts.where ? db().collection(name).where(opts.where) : db().collection(name)
+  const order = (opts && opts.orderBy) || []
+  order.forEach(o => { if (o && o.field) q = q.orderBy(o.field, o.dir === 'desc' ? 'desc' : 'asc') })
+  return q
+}
+
+async function fetchPage(name, opts, skip, size) {
+  const res = await clientQuery(name, opts).skip(skip).limit(size).get()
   return res.data || []
 }
 
-/** 按 _id 去重（并发分页的兜底：排序里时间并列时，skip 可能重复/漏一条） */
+/** 按 _id 去重（并发/跨批分页的兜底：排序里时间并列时 skip 可能重复一条） */
 function dedupeById(list) {
   const seen = {}
   const out = []
@@ -70,12 +81,12 @@ function dedupeById(list) {
   return out
 }
 
-/** 串行分页（count 不可用时的兜底路径） */
-async function fetchAllSequential(collFn, orderFn, size) {
+/** 串行分页（云函数和 count 都不可用时的最后一条路） */
+async function fetchAllSequential(name, opts, size) {
   const all = []
   let skip = 0
   for (let guard = 0; guard < 200; guard++) {
-    const list = await fetchPage(collFn, orderFn, skip, size)
+    const list = await fetchPage(name, opts, skip, size)
     all.push.apply(all, list)
     if (!list.length || list.length < size) break
     skip += list.length
@@ -84,29 +95,72 @@ async function fetchAllSequential(collFn, orderFn, size) {
 }
 
 /**
+ * 走云函数 db-fetch：服务端翻页（一次 100 条），一次调用就把整集合带回来。
+ * 返回 null 表示「这条路不通」（没部署/报错），交给客户端分页兜底。
+ */
+async function fetchAllViaFunction(name, opts) {
+  if (fnBroken) return null
+  if (!wx.cloud || typeof wx.cloud.callFunction !== 'function') return null
+  try {
+    let all = []
+    let skip = 0
+    for (let guard = 0; guard < 40; guard++) {
+      const res = await wx.cloud.callFunction({
+        name: 'db-fetch',
+        data: {
+          collection: name,
+          where: (opts && opts.where) || null,
+          orderBy: (opts && opts.orderBy) || null,
+          skip: skip,
+          limit: FN_LIMIT
+        }
+      })
+      const r = res && res.result
+      if (!r || r.ok === false) throw new Error((r && r.error) || 'db-fetch 返回异常')
+      const list = r.docs || []
+      all = all.concat(list)
+      skip += list.length
+      const total = typeof r.total === 'number' ? r.total : -1
+      if (!list.length || list.length < FN_LIMIT) break
+      if (total >= 0 && all.length >= total) break
+    }
+    return dedupeById(all)
+  } catch (e) {
+    fnBroken = true
+    console.warn('[cloud] db-fetch 走不通，退回客户端分页（云函数没部署过就是这条）', e)
+    return null
+  }
+}
+
+/**
  * 分页拉取集合全部数据。
  *
- * 这里踩过一个很贵的坑：以前 PAGE_SIZE 写成 100，`limit(100)` 在客户端会被
- * 悄悄截成 20 条，而判断是「返回条数 < 请求条数就认为拉完了」——
- * 于是第一页 20 条就 break，菜库永远只显示 20 道（2026-11-05 反馈）。
+ * 两条路：
+ *  ① 云函数 db-fetch（首选）：服务端一次 100 条、自己翻页，42 道 / 300 道都只是 1 次往返；
+ *  ② 客户端分页（兜底）：先 count 问总数，再并发 4 页拉；count 不可用就串行。
  *
- * 现在：请求条数按 20 夹紧；先 count 问总数，再**并发**拉页（每轮 4 页），
- * 中间那次往返省掉了 —— 42 道菜从 3 次串行变 1 次往返，300 道也只是 4 轮。
- * count 失败（权限/网络）就退回串行，不会因为数不出总数就不显示。
+ * 这条路以前踩过两个坑，都在这儿堵着：
+ *  - 小程序端 limit 上限是 20，写 100 会被 SDK 悄悄截断 → 只在 page 里用 20，且按实际返回条数翻页；
+ *  - 菜多了串行分页太慢（300 道 15 次往返）→ 客户端兜底也做了并发。
+ *
+ * @param {string} name 集合名（和 COLLECTIONS 里的值一致）
+ * @param {{where?: object, orderBy?: Array<{field: string, dir: string}>}} [opts]
  */
-async function fetchAll(collFn, orderFn) {
-  const size = Math.min(Number(config.PAGE_SIZE) || CLIENT_PAGE_MAX, CLIENT_PAGE_MAX)
+async function fetchAll(name, opts) {
+  const viaFn = await fetchAllViaFunction(name, opts)
+  if (viaFn) return viaFn
 
+  const size = Math.min(Number(config.PAGE_SIZE) || CLIENT_PAGE_MAX, CLIENT_PAGE_MAX)
   let total = -1
   try {
-    const res = await collFn().count()
+    const res = await clientQuery(name, opts).count()
     total = res && typeof res.total === 'number' ? res.total : -1
   } catch (e) {
     console.warn('[cloud] count 失败，退回串行分页', e)
     total = -1
   }
   if (total === 0) return []
-  if (total < 0) return fetchAllSequential(collFn, orderFn, size)
+  if (total < 0) return fetchAllSequential(name, opts, size)
 
   const pages = Math.ceil(total / size)
   let all = []
@@ -114,7 +168,7 @@ async function fetchAll(collFn, orderFn) {
     const batch = []
     const end = Math.min(start + FETCH_CONCURRENCY, pages)
     for (let p = start; p < end; p++) {
-      batch.push(fetchPage(collFn, orderFn, p * size, size))
+      batch.push(fetchPage(name, opts, p * size, size))
     }
     const lists = await Promise.all(batch)
     lists.forEach(l => { all = all.concat(l) })
