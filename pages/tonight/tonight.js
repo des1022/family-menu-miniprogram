@@ -368,8 +368,12 @@ Page({
   attachWatcher() {
     if (this._watcher) return
     this._watchDate = this.data.today
-    this._watcher = db.watchRecordsByDate(this._watchDate, docs => {
-      this.applyRecords(docs)
+    this._watcher = db.watchRecordsByDate(this._watchDate, () => {
+      // 收到变化就重新查一次，而不是直接用 snapshot.docs ——
+      // watch 也有「单次最多 20 条」的上限，菜多了会少几道。
+      db.getRecordsByDate(this._watchDate)
+        .then(docs => this.applyRecords(docs))
+        .catch(err => console.warn('[tonight] 刷新点单失败', err))
     })
   },
 

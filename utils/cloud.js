@@ -40,20 +40,31 @@ const COLLECTIONS = {
 }
 
 /**
- * 分页拉取集合全部数据（客户端单次最多 100 条）
+ * 小程序端单次 get 的硬上限：20 条（云函数里才是 100）。
+ * 写死在这里，别依赖调用方传的值。
+ */
+const CLIENT_PAGE_MAX = 20
+
+/**
+ * 分页拉取集合全部数据。
+ *
+ * 这里踩过一个很贵的坑：以前 PAGE_SIZE 写成 100，`limit(100)` 在客户端会被
+ * 悄悄截成 20 条，而下面的判断是「返回条数 < 请求条数就认为拉完了」——
+ * 于是第一页 20 条就 break，菜库永远只显示 20 道（2026-11-05 反馈）。
+ * 现在两处都堵上：请求条数按 20 夹紧，翻页按**实际返回条数**推进。
  */
 async function fetchAll(collFn, orderFn) {
-  const size = config.PAGE_SIZE
+  const size = Math.min(Number(config.PAGE_SIZE) || CLIENT_PAGE_MAX, CLIENT_PAGE_MAX)
   let all = []
   let skip = 0
-  for (let guard = 0; guard < 20; guard++) {
+  for (let guard = 0; guard < 200; guard++) {
     let query = collFn()
     if (orderFn) query = orderFn(query)
     const res = await query.skip(skip).limit(size).get()
     const list = res.data || []
     all = all.concat(list)
-    if (list.length < size) break
-    skip += size
+    if (!list.length || list.length < size) break
+    skip += list.length
   }
   return all
 }

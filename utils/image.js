@@ -277,16 +277,21 @@ async function resolveCloudImages(fileIDs, force) {
   initCloud()
 
   try {
-    const res = await wx.cloud.callFunction({
-      name: 'img-url',
-      data: { fileIDs: need.slice(0, 50) }
-    })
-    const urls = (res && res.result && res.result.urls) || {}
-    if (!Object.keys(urls).length) console.warn('[image] 云函数没换到链接', res && res.result)
-    Object.keys(urls).forEach(k => {
-      urlCache[k] = { url: urls[k], at: Date.now() }
-      out[k] = urls[k]
-    })
+    // 云函数单次最多 50 个，菜多了要分批 —— 以前直接 need.slice(0, 50)，
+    // 第 51 张之后的菜图永远换不到，只能显示首字占位（看起来像「图丢了」）。
+    const BATCH = 50
+    for (let i = 0; i < need.length; i += BATCH) {
+      const res = await wx.cloud.callFunction({
+        name: 'img-url',
+        data: { fileIDs: need.slice(i, i + BATCH) }
+      })
+      const urls = (res && res.result && res.result.urls) || {}
+      if (!Object.keys(urls).length) console.warn('[image] 云函数没换到链接', res && res.result)
+      Object.keys(urls).forEach(k => {
+        urlCache[k] = { url: urls[k], at: Date.now() }
+        out[k] = urls[k]
+      })
+    }
     return out
   } catch (e) {
     console.warn('[image] 云函数换链接失败（云函数没部署时会走到这里）', e)

@@ -85,7 +85,12 @@ Page({
 
   attachWatcher() {
     if (this._watcher) return
-    this._watcher = db.watchShopping(this.data.date, docs => this.render(docs))
+    // 同理：watch 单次最多 20 条，收到变化后重新查一次更稳
+    this._watcher = db.watchShopping(this.data.date, () => {
+      db.getShopping(this.data.date)
+        .then(docs => this.render(docs))
+        .catch(err => console.warn('[shopping] 刷新清单失败', err))
+    })
   },
 
   /** 按货架分组渲染；常备调料默认折叠 */
