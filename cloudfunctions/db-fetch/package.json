@@ -1,9 +1,0 @@
-{
-  "name": "db-fetch",
-  "version": "1.0.0",
-  "description": "服务端分页读取集合（一次 100 条），给小程序端省掉十几次往返",
-  "main": "index.js",
-  "dependencies": {
-    "wx-server-sdk": "~2.6.3"
-  }
-}

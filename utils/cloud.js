@@ -48,7 +48,7 @@ const CLIENT_PAGE_MAX = 20
 /** 一次并发几页。读并发比写宽松，但别贪：4 页在真机上稳，8 页开始偶尔超时 */
 const FETCH_CONCURRENCY = 4
 
-/** 云函数单次能带回来多少（db-fetch 侧也会再夹一次） */
+/** 云函数单次能带回来多少（云函数那边也会再夹一次 500） */
 const FN_LIMIT = 500
 
 /** 云函数读不通（没部署 / 报错）就记下来，本次会话别再试，直接走客户端分页 */
@@ -95,8 +95,13 @@ async function fetchAllSequential(name, opts, size) {
 }
 
 /**
- * 走云函数 db-fetch：服务端翻页（一次 100 条），一次调用就把整集合带回来。
+ * 走云函数读集合：服务端翻页（一次 100 条），一次调用就把整集合带回来。
  * 返回 null 表示「这条路不通」（没部署/报错），交给客户端分页兜底。
+ *
+ * 为什么调的是 `img-url` 而不是一个叫 db-fetch 的函数：CI 的
+ * `ci.cloud.uploadFunction()` 只能更新**已存在**的云函数，新建必须在云开发控制台点一次。
+ * 为了不让你手动去点，读集合就挂在已经部署的 img-url 里（`action: 'query'` 分支），
+ * 详见 cloudfunctions/img-url/index.js 顶部注释。想拆出去随时可以。
  */
 async function fetchAllViaFunction(name, opts) {
   if (fnBroken) return null
@@ -106,8 +111,9 @@ async function fetchAllViaFunction(name, opts) {
     let skip = 0
     for (let guard = 0; guard < 40; guard++) {
       const res = await wx.cloud.callFunction({
-        name: 'db-fetch',
+        name: 'img-url',
         data: {
+          action: 'query',
           collection: name,
           where: (opts && opts.where) || null,
           orderBy: (opts && opts.orderBy) || null,
@@ -116,7 +122,7 @@ async function fetchAllViaFunction(name, opts) {
         }
       })
       const r = res && res.result
-      if (!r || r.ok === false) throw new Error((r && r.error) || 'db-fetch 返回异常')
+      if (!r || r.ok === false) throw new Error((r && r.error) || '读集合返回异常')
       const list = r.docs || []
       all = all.concat(list)
       skip += list.length
@@ -127,7 +133,7 @@ async function fetchAllViaFunction(name, opts) {
     return dedupeById(all)
   } catch (e) {
     fnBroken = true
-    console.warn('[cloud] db-fetch 走不通，退回客户端分页（云函数没部署过就是这条）', e)
+    console.warn('[cloud] 云函数读集合走不通，退回客户端分页（云函数没部署/没更新就是这条）', e)
     return null
   }
 }
@@ -136,7 +142,7 @@ async function fetchAllViaFunction(name, opts) {
  * 分页拉取集合全部数据。
  *
  * 两条路：
- *  ① 云函数 db-fetch（首选）：服务端一次 100 条、自己翻页，42 道 / 300 道都只是 1 次往返；
+ *  ① 云函数读集合（首选）：服务端一次 100 条、自己翻页，42 道 / 300 道都只是 1 次往返；
  *  ② 客户端分页（兜底）：先 count 问总数，再并发 4 页拉；count 不可用就串行。
  *
  * 这条路以前踩过两个坑，都在这儿堵着：

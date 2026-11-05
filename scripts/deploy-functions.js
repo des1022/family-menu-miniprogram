@@ -30,7 +30,10 @@ if (!ENV_ID) {
 }
 
 // 需要部署的云函数（新增云函数记得加进来）
-const FUNCTIONS = ['img-url', 'db-fetch']
+// ⚠️ ci.cloud.uploadFunction() 只能更新**已存在**的云函数：名字不存在会报
+//    ResourceNotFound.Function。新建函数必须在「云开发控制台 → 云函数 → 新建」点一次，
+//    之后 CI 就能一直更新它了。
+const FUNCTIONS = ['img-url']
 
 async function main() {
   const project = new ci.Project({
