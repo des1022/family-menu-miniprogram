@@ -73,6 +73,10 @@ async function main() {
     process.exit(1)
   }
   console.log('[fn] 全部完成')
+  // ⚠️ 必须显式退出：miniprogram-ci 内部会留下没关的 socket/handle，
+  // 事件循环不结束，CI 里就会「日志打完了但这一步一直挂着」，直到 timeout 才失败
+  // （2026-11-05 就这样白等了 6 分钟）。
+  process.exit(0)
 }
 
 main().catch(e => {
