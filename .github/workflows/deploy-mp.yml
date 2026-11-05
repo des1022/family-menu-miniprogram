@@ -12,6 +12,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -45,6 +46,8 @@ jobs:
       - name: Deploy cloud functions
         # 放在最后：云函数传失败不该耽误小程序发出去（客户端有「云函数不通就退回
         # 客户端分页」的兜底）。改了 cloudfunctions/ 里的代码就会走到这里。
+        # timeout：云端装依赖偶尔会卡住，别让整个 job 挂在那儿（2026-11-05 遇到一次）。
+        timeout-minutes: 6
         env:
           MP_APPID: ${{ secrets.MP_APPID }}
           MP_KEY_PATH: ${{ github.workspace }}/private.key
